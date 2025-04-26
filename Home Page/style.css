@@ -288,6 +288,8 @@ header nav{
     color : var(--border-color);
 }
 
+
+
 .best-selling-section{
     display: flex;
     flex-direction : unset;
