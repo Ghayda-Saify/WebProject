@@ -4,58 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alandalus</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script src="app.js"></script>
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+
+
     <style>
 
     </style>
 </head>
 <body>
-    <header class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-auto">
-                <div class="logo"><img src="imgs/logo-removebg-preview.png" class="img-fluid"></div>
-            </div>
-            <nav class="col main-nav">
-                <ul class="nav justify-content-end align-items-center">
-                    <li class="nav-item"><a class="nav-link" href="">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="">Products</a></li>
-                    <li class="nav-item"><a class="nav-link" href="">Connect</a></li>
-                    <li class="nav-item"><i class="fa-solid fa-user"></i></li>
-                </ul>
-            </nav>
-        </div>
+    <header>
+<!--        <figure class="logo">-->
+<!--            <img src="imgs/logo-removebg-preview.png" alt="Alandalus">-->
+<!--        </figure>-->
+        <div class="logo"><img src="imgs/ChatGPT Image Apr 26, 2025, 01_57_16 PM.PNG" alt=""></div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="">Home</a></li>
+                <li><a href="">Products</a></li>
+                <li><a href="">Connect</a></li>
+                <i class="fa-regular fa-user" style="color: #b82638;"><a href=""></a></i>
+            </ul>
+        </nav>
+
     </header>
     <main>
+<!--        Home-->
         <section class="carousel next">
             <div class="list">
                 <article class="item other_1">
-                    <div class="main-content" style="background-color: #ffffff;">
+                    <div class="main-content"
+                         style="background-color: #ffffff;">
                         <div class="content">
-                            <h2 class="display-4">Caffe Latte, a new product</h2>
-                            <p class="price display-6">$ 20</p>
-                            <p class="description lead">
+                            <h2>Caffe Latte, a new product</h2>
+                            <p class="price">₪ 20</p>
+                            <p class="description">
                                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores labore animi voluptatibus sequi illo, earum molestias explicabo officiis iste neque? Quis quod eligendi fugit, dolore nam itaque modi exercitationem voluptatem corrupti aut aspernatur. Quos non in sed ratione tenetur harum.
                             </p>
-                            <button class="btn btn-primary addToCard">
+                            <button class="addToCard">
                                 Add To Card
                             </button>
                         </div>
                     </div>
                     <figure class="image">
-                        <img src="imgs/hoodi-removebg-preview.png" alt="" class="img-fluid">
+                        <img src="imgs/hoodi-removebg-preview.png" alt="">
                         <figcaption>Caffe Latte, a new product</figcaption>
                     </figure>
                 </article>
                 <article class="item active">
                     <div class="main-content"
-                         style="background-color: #40d872;">
+                         style="background-color: #ADB5AA;">
                         <div class="content">
                             <h2>Strawberry mocha, a new product</h2>
-                            <p class="price">$ 20</p>
+                            <p class="price">₪ 20</p>
                             <p class="description">
                                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores labore animi voluptatibus sequi illo, earum molestias explicabo officiis iste neque? Quis quod eligendi fugit, dolore nam itaque modi exercitationem voluptatem corrupti aut aspernatur. Quos non in sed ratione tenetur harum.
                             </p>
@@ -65,16 +69,16 @@
                         </div>
                     </div>
                     <figure class="image">
-                        <img src="imgs/mug-removebg-preview.png" alt="">
+                        <img src="imgs/notebook2-removebg-preview.png" alt="">
                         <figcaption>Strawberry mocha, a new product</figcaption>
                     </figure>
                 </article>
                 <article class="item other_2">
                     <div class="main-content"
-                         style="background-color: #122c6f;">
+                         style="background-color: #AF9864;">
                         <div class="content">
                             <h2>Doppio espresso, a new product</h2>
-                            <p class="price">$ 20</p>
+                            <p class="price">₪ 20</p>
                             <p class="description">
                                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores labore animi voluptatibus sequi illo, earum molestias explicabo officiis iste neque? Quis quod eligendi fugit, dolore nam itaque modi exercitationem voluptatem corrupti aut aspernatur. Quos non in sed ratione tenetur harum.
                             </p>
@@ -84,16 +88,16 @@
                         </div>
                     </div>
                     <figure class="image">
-                        <img src="imgs/دبابيس.png" alt="">
+                        <img src="imgs/cover2-removebg-preview.png" alt="">
                         <figcaption>Doppio espresso, a new product</figcaption>
                     </figure>
                 </article>
                 <article class="item">
                     <div class="main-content"
-                         style="background-color: #7eb63d;">
+                         style="background-color: #D5CEB1;">
                         <div class="content">
                             <h2>Matcha latte macchiato, a new product</h2>
-                            <p class="price">$ 20</p>
+                            <p class="price">₪ 20</p>
                             <p class="description">
                                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores labore animi voluptatibus sequi illo, earum molestias explicabo officiis iste neque? Quis quod eligendi fugit, dolore nam itaque modi exercitationem voluptatem corrupti aut aspernatur. Quos non in sed ratione tenetur harum.
                             </p>
@@ -109,116 +113,68 @@
                 </article>
             </div>
             <div class="arrows">
-                <button id="prev" class="btn btn-outline-light"><</button>
-                <button id="next" class="btn btn-outline-light">></button>
+                <button id="prev" style="color : #b82638"><</button>
+                <button id="next" style="color : #b82638">></button>
             </div>
         </section>
-    </main>
-    <!-- Best Selling Plants Section -->
-    <section class="container my-5 best-selling-section">
-        <div class="row align-items-center">
-            <div class="col-lg-3 mb-4 mb-lg-0">
-                <h2 class="fw-bold">Best Selling Plants</h2>
-                <p class="text-muted">Easiest way to healthy life by buying your favorite plants</p>
-                <a href="#" class="btn btn-outline-success d-flex align-items-center gap-2">See more <span class="bi bi-arrow-right"></span></a>
-            </div>
-            <div class="col-lg-9">
-                <div class="scrolling-cards d-flex flex-nowrap gap-4">
-                    <div class="card h-100 shadow-sm border-0" style="min-width: 300px; max-width: 320px;">
-                        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80" class="card-img-top rounded-4" alt="Natural Plants">
-                        <div class="card-body text-center">
-                            <h6 class="card-title mb-1">Natural Plants</h6>
-                            <p class="card-text text-muted small mb-0">₱ 1,400.00</p>
-                        </div>
-                    </div>
-                    <div class="card h-100 shadow-sm border-0" style="min-width: 300px; max-width: 320px;">
-                        <img src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80" class="card-img-top rounded-4" alt="Artificial Plants">
-                        <div class="card-body text-center">
-                            <h6 class="card-title mb-1">Artificial Plants</h6>
-                            <p class="card-text text-muted small mb-0">₱ 900.00</p>
-                        </div>
-                    </div>
-                    <div class="card h-100 shadow-sm border-0" style="min-width: 300px; max-width: 320px;">
-                        <img src="https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=400&q=80" class="card-img-top rounded-4" alt="Artificial Plants">
-                        <div class="card-body text-center">
-                            <h6 class="card-title mb-1">Artificial Plants</h6>
-                            <p class="card-text text-muted small mb-0">₱ 3,500.00</p>
-                        </div>
-                    </div>
-                    <!-- Add more cards here if needed -->
+<!--      categories  -->
+        <section class="categories container section ">
+            <h3 class="section__title "><span>Popular</span> Categories</h3>
+
+            <div class="categories__container swiper">
+                <div class="swiper-wrapper">
+                    <a href="shop.html" class="categore__item swiper-slide">
+                        <img src="imgs/fasil.jpg" class="category__img" alt="">
+                        <h3 class="category__title">فواصل</h3>
+
+                    </a>
+                    <a href="shop.html" class="categore__item swiper-slide">
+                        <img src="imgs/dababees.jpg" class="category__img" alt="">
+                        <h3 class="category__title">دبابيس</h3>
+
+                    </a>
+
+                    <div class="swiper-slide"></div>
                 </div>
             </div>
-        </div>
-    </section>
-    <!-- End Best Selling Plants Section -->
-    <div class="catigories container-fluid py-5">
-        <!-- Categories content will go here -->
-    </div>
+        </section>
+<!--        Products-->
+        <section class="products"></section>
+<!--        deals-->
+        <section class="deals"></section>
+<!--        new arrival-->
+        <section class="new-arrivals"></section>
+    </main>
 
-    <!-- Bootstrap JS and Popper.js -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-    <script>
-        let next = document.getElementById('next');
-        let prev = document.getElementById('prev');
-        let carousel = document.querySelector('.carousel');
-        let items = document.querySelectorAll('.carousel .item');
-        let countItem = items.length;
-        let active = 1;
-        let other_1 = null;
-        let other_2 = null;
-        next.onclick = () => {
-            carousel.classList.remove('prev');
-            carousel.classList.add('next');
-            active =active + 1 >= countItem ? 0 : active + 1;
-            other_1 =active - 1 < 0 ? countItem -1 : active - 1;
-            other_2 = active + 1 >= countItem ? 0 : active + 1;
-            changeSlider();
-        }
-        prev.onclick = () => {
-            carousel.classList.remove('next');
-            carousel.classList.add('prev');
-            active = active - 1 < 0 ? countItem - 1 : active - 1;
-            other_1 = active + 1 >= countItem ? 0 : active + 1;
-            other_2 = other_1 + 1 >= countItem ? 0 : other_1 + 1;
-            changeSlider();
-        }
-        const changeSlider = () => {
-            let itemOldActive = document.querySelector('.carousel .item.active');
-            if(itemOldActive) itemOldActive.classList.remove('active');
 
-            let itemOldOther_1 = document.querySelector('.carousel .item.other_1');
-            if(itemOldOther_1) itemOldOther_1.classList.remove('other_1');
+<!--&lt;!&ndash;    best selling section&ndash;&gt;-->
+<!--    <div class="slideshow-container">-->
+<!--        <div class="banner">-->
+<!--            <h1>Best Selling</h1>-->
+<!--            <p>Easiest way to healthy life by buying your favorite plants</p>-->
+<!--            <button>See more →</button>-->
+<!--        </div>-->
+<!--        <div class="slides">-->
+<!--            <div class="slide">-->
+<!--                <img src="imgs/notebook2.jpg" alt="Natural Plant">-->
+<!--                <p>Natural Plants</p>-->
+<!--                <p class="price">₪ 20</p>-->
+<!--            </div>-->
+<!--            <div class="slide">-->
+<!--                <img src="imgs/notebook.jpg" alt="Artificial Plant 1">-->
+<!--                <p>Artificial Plants</p>-->
+<!--                <p class="price">₪ 20</p>-->
+<!--            </div>-->
+<!--            <div class="slide">-->
+<!--                <img src="imgs/زرف.jpg" alt="Artificial Plant 2">-->
+<!--                <p>Artificial Plants</p>-->
+<!--                <p class="price">₪ 15</p>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
 
-            let itemOldOther_2 = document.querySelector('.carousel .item.other_2');
-            if(itemOldOther_2) itemOldOther_2.classList.remove('other_2');
+    <script src="app.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
-            items.forEach(e => {
-                e.querySelector('.image img').style.animation = 'none';
-                e.querySelector('.image figcaption').style.animation = 'none';
-                void e.offsetWidth;
-                e.querySelector('.image img').style.animation = '';
-                e.querySelector('.image figcaption').style.animation = '';
-            })
-
-            items[active].classList.add('active');
-            items[other_1].classList.add('other_1');
-            items[other_2].classList.add('other_2');
-
-            clearInterval(autoPlay);
-            autoPlay = setInterval(() => {
-                next.click();
-            }, 5000);
-        }
-        let autoPlay = setInterval(() => {
-            next.click();
-        }, 5000);
-
-        var myCarousel = document.querySelector('#plantsCarousel');
-        var plantsCarousel = new bootstrap.Carousel(myCarousel, {
-            interval: 3000,
-            ride: 'carousel'
-        });
-    </script>
 </body>
 </html>
