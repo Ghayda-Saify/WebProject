@@ -6,6 +6,7 @@ let countItem = items.length;
 let active = 1;
 let other_1 = null;
 let other_2 = null;
+
 next.onclick = () => {
     carousel.classList.remove('prev');
     carousel.classList.add('next');
@@ -52,6 +53,3 @@ const changeSlider = () => {
 let autoPlay = setInterval(() => {
     next.click();
 }, 5000);
-
-
-
