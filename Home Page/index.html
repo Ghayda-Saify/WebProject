@@ -9,24 +9,57 @@
     <link
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
-
-
-    <style>
-
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+            rel="stylesheet"
+    />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet"
+    />
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
+    />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: "#122c6f", secondary: "#f13b1c" },
+                    borderRadius: {
+                        none: "0px",
+                        sm: "4px",
+                        DEFAULT: "8px",
+                        md: "12px",
+                        lg: "16px",
+                        xl: "20px",
+                        "2xl": "24px",
+                        "3xl": "32px",
+                        full: "9999px",
+                        button: "8px",
+                    },
+                },
+            },
+        };
+    </script>
 </head>
 <body>
     <header>
 <!--        <figure class="logo">-->
 <!--            <img src="imgs/logo-removebg-preview.png" alt="Alandalus">-->
 <!--        </figure>-->
-        <div class="logo"><img src="imgs/ChatGPT Image Apr 26, 2025, 01_57_16 PM.PNG" alt=""></div>
+
+        <a href="#" class="logo text-primary font-['Pacifico'] text-2xl">Alandalus Design</a>
         <nav class="main-nav">
             <ul>
                 <li><a href="">Home</a></li>
                 <li><a href="">Products</a></li>
                 <li><a href="">Connect</a></li>
-                <i class="fa-regular fa-user" style="color: #b82638;"><a href=""></a></i>
+                <a href=""><i class="fa-solid fa-user" style="color: #122c6f;"></i></a>
             </ul>
         </nav>
 
@@ -44,7 +77,7 @@
                             <p class="description">
                                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores labore animi voluptatibus sequi illo, earum molestias explicabo officiis iste neque? Quis quod eligendi fugit, dolore nam itaque modi exercitationem voluptatem corrupti aut aspernatur. Quos non in sed ratione tenetur harum.
                             </p>
-                            <button class="addToCard">
+                            <button class="addToCard" style="background-color: #122c6f;">
                                 Add To Card
                             </button>
                         </div>
@@ -58,7 +91,7 @@
                     <div class="main-content"
                          style="background-color: #ADB5AA;">
                         <div class="content">
-                            <h2>Strawberry mocha, a new product</h2>
+                            <h2>Caffe Latte, a new product</h2>
                             <p class="price">₪ 20</p>
                             <p class="description">
                                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores labore animi voluptatibus sequi illo, earum molestias explicabo officiis iste neque? Quis quod eligendi fugit, dolore nam itaque modi exercitationem voluptatem corrupti aut aspernatur. Quos non in sed ratione tenetur harum.
@@ -77,7 +110,7 @@
                     <div class="main-content"
                          style="background-color: #AF9864;">
                         <div class="content">
-                            <h2>Doppio espresso, a new product</h2>
+                            <h2>Caffe Latte, a new product</h2>
                             <p class="price">₪ 20</p>
                             <p class="description">
                                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores labore animi voluptatibus sequi illo, earum molestias explicabo officiis iste neque? Quis quod eligendi fugit, dolore nam itaque modi exercitationem voluptatem corrupti aut aspernatur. Quos non in sed ratione tenetur harum.
@@ -96,7 +129,7 @@
                     <div class="main-content"
                          style="background-color: #D5CEB1;">
                         <div class="content">
-                            <h2>Matcha latte macchiato, a new product</h2>
+                            <h2>Caffe Latte, a new product</h2>
                             <p class="price">₪ 20</p>
                             <p class="description">
                                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores labore animi voluptatibus sequi illo, earum molestias explicabo officiis iste neque? Quis quod eligendi fugit, dolore nam itaque modi exercitationem voluptatem corrupti aut aspernatur. Quos non in sed ratione tenetur harum.
@@ -113,67 +146,833 @@
                 </article>
             </div>
             <div class="arrows">
-                <button id="prev" style="color : #b82638"><</button>
-                <button id="next" style="color : #b82638">></button>
+                <button id="prev" style="--tw-text-opacity:1;
+    color: rgb(18 44 111 / var(--tw-text-opacity, 1))"><</button>
+                <button id="next" style="--tw-text-opacity:1;
+    color: rgb(18 44 111 / var(--tw-text-opacity, 1))">></button>
             </div>
         </section>
+
 <!--      categories  -->
-        <section class="categories container section ">
-            <h3 class="section__title "><span>Popular</span> Categories</h3>
-
-            <div class="categories__container swiper">
-                <div class="swiper-wrapper">
-                    <a href="shop.html" class="categore__item swiper-slide">
-                        <img src="imgs/fasil.jpg" class="category__img" alt="">
-                        <h3 class="category__title">فواصل</h3>
-
-                    </a>
-                    <a href="shop.html" class="categore__item swiper-slide">
-                        <img src="imgs/dababees.jpg" class="category__img" alt="">
-                        <h3 class="category__title">دبابيس</h3>
-
-                    </a>
-
-                    <div class="swiper-slide"></div>
+        <!-- Featured Categories -->
+        <section class="py-16 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-2">
+                    Our Product Categories
+                </h2>
+                <p class="text-gray-600 text-center mb-12">
+                    Discover our range of customizable products
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Category 1 -->
+                    <div
+                            class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all"
+                    >
+                        <div class="h-64 overflow-hidden">
+                            <img
+                                    src="imgs/hoodi-removebg-preview.png"
+                                    alt="Custom T-Shirts"
+                                    class="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
+                            />
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-2">Custom T-Shirts</h3>
+                            <p class="text-gray-600 mb-4">
+                                Design your perfect t-shirt with our easy-to-use customization
+                                tools.
+                            </p>
+                            <a
+                                    href="#"
+                                    class="text-primary font-medium hover:text-secondary flex items-center"
+                            >
+                                Customize Now <i class="ri-arrow-right-line ml-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Category 2 -->
+                    <div
+                            class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all"
+                    >
+                        <div class="h-64 overflow-hidden">
+                            <img
+                                    src="imgs/mugs.jpg"
+                                    alt="Custom Mugs"
+                                    class="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
+                            />
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-2">Custom Mugs</h3>
+                            <p class="text-gray-600 mb-4">
+                                Create personalized mugs with your favorite photos or designs.
+                            </p>
+                            <a
+                                    href="#"
+                                    class="text-primary font-medium hover:text-secondary flex items-center"
+                            >
+                                Customize Now <i class="ri-arrow-right-line ml-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Category 3 -->
+                    <div
+                            class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all"
+                    >
+                        <div class="h-64 overflow-hidden">
+                            <img
+                                    src="imgs/bord.jpg"
+                                    alt="Wall Art"
+                                    class="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
+                            />
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-2">Wall Art & Prints</h3>
+                            <p class="text-gray-600 mb-4">
+                                Turn your photos and artwork into stunning wall decorations.
+                            </p>
+                            <a
+                                    href="#"
+                                    class="text-primary font-medium hover:text-secondary flex items-center"
+                            >
+                                Customize Now <i class="ri-arrow-right-line ml-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Category 4 -->
+                    <div
+                            class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all"
+                    >
+                        <div class="h-64 overflow-hidden">
+                            <img
+                                    src="imgs/covers.jpg"
+                                    alt="Phone Accessories"
+                                    class="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
+                            />
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold mb-2">Phone Accessories</h3>
+                            <p class="text-gray-600 mb-4">
+                                Personalize your phone cases with unique designs and photos.
+                            </p>
+                            <a
+                                    href="#"
+                                    class="text-primary font-medium hover:text-secondary flex items-center"
+                            >
+                                Customize Now <i class="ri-arrow-right-line ml-2"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
-<!--        Products-->
-        <section class="products"></section>
-<!--        deals-->
-        <section class="deals"></section>
-<!--        new arrival-->
-        <section class="new-arrivals"></section>
+        <section class="categories container section ">
+            <h3 class="section__title "><span>Popular</span> Categories</h3>
+
+            <div class="categories__container swiper ">
+                <div class="swiper-wrapper">
+                    <a href="#shop.html" class="categore__item swiper-slide">
+                        <img src="imgs/fasil.jpg" class="category__img" alt="">
+                        <h3 class="category__title">فواصل</h3>
+                    </a>
+                    <a href="#shop.html" class="categore__item swiper-slide">
+                        <img src="imgs/dababees.jpg" class="category__img" alt="">
+                        <h3 class="category__title">دبابيس</h3>
+                    </a>
+                    <a href="#shop.html" class="categore__item swiper-slide">
+                        <img src="imgs/covers.jpg" class="category__img" alt="">
+                        <h3 class="category__title">كفرات</h3>
+                    </a>
+                    <a href="#shop.html" class="categore__item swiper-slide">
+                        <img src="imgs/bord.jpg" class="category__img" alt="">
+                        <h3 class="category__title">لوحات</h3>
+                    </a>
+                    <a href="#shop.html" class="categore__item swiper-slide">
+                        <img src="imgs/hoodies.jpg" class="category__img" alt="">
+                        <h3 class="category__title">ملابس</h3>
+                    </a>
+
+                </div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+            </div>
+        </section>
+
+        <!--        Products-->
+        <!-- Featured Products -->
+        <section class="py-16">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-2">Featured Products</h2>
+                <p class="text-gray-600 text-center mb-12">
+                    Discover our most popular items
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Product 1 -->
+                    <div
+                            class="product-card bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
+                    >
+                        <div class="relative">
+                            <div class="h-64 overflow-hidden">
+                                <img
+                                        src="imgs/weshah.jpg"
+                                        alt="Modern Armchair"
+                                        class="w-full h-full object-cover object-top"
+                                />
+                            </div>
+                            <div
+                                    class="quick-actions absolute top-4 right-4 flex flex-col gap-2"
+                            >
+                                <button
+                                        class="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100"
+                                >
+                                    <i class="ri-heart-line text-gray-700"></i>
+                                </button>
+                                <button
+                                        class="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100"
+                                >
+                                    <i class="ri-eye-line text-gray-700"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-lg font-medium mb-1">Modern Armchair</h3>
+                            <div class="flex items-center mb-2">
+                                <div class="flex text-yellow-400">
+                                    <i class="ri-star-fill ri-xs"></i>
+                                    <i class="ri-star-fill ri-xs"></i>
+                                    <i class="ri-star-fill ri-xs"></i>
+                                    <i class="ri-star-fill ri-xs"></i>
+                                    <i class="ri-star-half-fill ri-xs"></i>
+                                </div>
+                                <span class="text-xs text-gray-500 ml-1">(24)</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-primary font-semibold">$249.99</span>
+                                <button
+                                        class="bg-primary text-white py-2 px-3 rounded-button text-sm hover:bg-opacity-90 transition-colors whitespace-nowrap"
+                                >
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Product 2 -->
+                    <div
+                            class="product-card bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
+                    >
+                        <div class="relative">
+                            <div class="h-64 overflow-hidden">
+                                <img
+                                        src="imgs/maska.jpg"
+                                        alt="Glass Coffee Table"
+                                        class="w-full h-full object-cover object-top"
+                                />
+                            </div>
+                            <div
+                                    class="quick-actions absolute top-4 right-4 flex flex-col gap-2"
+                            >
+                                <button
+                                        class="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100"
+                                >
+                                    <i class="ri-heart-line text-gray-700"></i>
+                                </button>
+                                <button
+                                        class="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100"
+                                >
+                                    <i class="ri-eye-line text-gray-700"></i>
+                                </button>
+                            </div>
+                            <div
+                                    class="absolute top-4 left-4 bg-secondary text-white text-xs py-1 px-2 rounded"
+                            >
+                                New
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-lg font-medium mb-1">Glass Coffee Table</h3>
+                            <div class="flex items-center mb-2">
+                                <div class="flex text-yellow-400">
+                                    <i class="ri-star-fill ri-xs"></i>
+                                    <i class="ri-star-fill ri-xs"></i>
+                                    <i class="ri-star-fill ri-xs"></i>
+                                    <i class="ri-star-fill ri-xs"></i>
+                                    <i class="ri-star-line ri-xs"></i>
+                                </div>
+                                <span class="text-xs text-gray-500 ml-1">(18)</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-primary font-semibold">$179.99</span>
+                                <button
+                                        class="bg-primary text-white py-2 px-3 rounded-button text-sm hover:bg-opacity-90 transition-colors whitespace-nowrap"
+                                >
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Product 3 -->
+                    <div
+                            class="product-card bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
+                    >
+                        <div class="relative">
+                            <div class="h-64 overflow-hidden">
+                                <img
+                                        src="https://readdy.ai/api/search-image?query=modern%20pendant%20lamp%20with%20brass%20details%20and%20glass%20shade%2C%20professional%20product%20photography%20on%20white%20background%2C%20high%20quality%2C%20detailed&width=500&height=500&seq=11&orientation=squarish"
+                                        alt="Pendant Lamp"
+                                        class="w-full h-full object-cover object-top"
+                                />
+                            </div>
+                            <div
+                                    class="quick-actions absolute top-4 right-4 flex flex-col gap-2"
+                            >
+                                <button
+                                        class="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100"
+                                >
+                                    <i class="ri-heart-line text-gray-700"></i>
+                                </button>
+                                <button
+                                        class="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100"
+                                >
+                                    <i class="ri-eye-line text-gray-700"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-lg font-medium mb-1">Pendant Lamp</h3>
+                            <div class="flex items-center mb-2">
+                                <div class="flex text-yellow-400">
+                                    <i class="ri-star-fill ri-xs"></i>
+                                    <i class="ri-star-fill ri-xs"></i>
+                                    <i class="ri-star-fill ri-xs"></i>
+                                    <i class="ri-star-fill ri-xs"></i>
+                                    <i class="ri-star-fill ri-xs"></i>
+                                </div>
+                                <span class="text-xs text-gray-500 ml-1">(32)</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-primary font-semibold">$129.99</span>
+                                <button
+                                        class="bg-primary text-white py-2 px-3 rounded-button text-sm hover:bg-opacity-90 transition-colors whitespace-nowrap"
+                                >
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Product 4 -->
+                    <div
+                            class="product-card bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
+                    >
+                        <div class="relative">
+                            <div class="h-64 overflow-hidden">
+                                <img
+                                        src="https://readdy.ai/api/search-image?query=decorative%20ceramic%20vases%20set%20in%20different%20sizes%2C%20blue%20and%20white%20colors%2C%20professional%20product%20photography%20on%20white%20background%2C%20high%20quality%2C%20detailed&width=500&height=500&seq=12&orientation=squarish"
+                                        alt="Ceramic Vases Set"
+                                        class="w-full h-full object-cover object-top"
+                                />
+                            </div>
+                            <div
+                                    class="quick-actions absolute top-4 right-4 flex flex-col gap-2"
+                            >
+                                <button
+                                        class="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100"
+                                >
+                                    <i class="ri-heart-line text-gray-700"></i>
+                                </button>
+                                <button
+                                        class="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100"
+                                >
+                                    <i class="ri-eye-line text-gray-700"></i>
+                                </button>
+                            </div>
+                            <div
+                                    class="absolute top-4 left-4 bg-red-500 text-white text-xs py-1 px-2 rounded"
+                            >
+                                Sale
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-lg font-medium mb-1">Ceramic Vases Set</h3>
+                            <div class="flex items-center mb-2">
+                                <div class="flex text-yellow-400">
+                                    <i class="ri-star-fill ri-xs"></i>
+                                    <i class="ri-star-fill ri-xs"></i>
+                                    <i class="ri-star-fill ri-xs"></i>
+                                    <i class="ri-star-fill ri-xs"></i>
+                                    <i class="ri-star-line ri-xs"></i>
+                                </div>
+                                <span class="text-xs text-gray-500 ml-1">(12)</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <span class="text-primary font-semibold">$79.99</span>
+                                    <span class="text-gray-400 text-sm line-through ml-2"
+                                    >$99.99</span
+                                    >
+                                </div>
+                                <button
+                                        class="bg-primary text-white py-2 px-3 rounded-button text-sm hover:bg-opacity-90 transition-colors whitespace-nowrap"
+                                >
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-10">
+                    <a
+                            href="#"
+                            class="inline-block border-2 border-primary text-primary px-6 py-3 rounded-button font-medium hover:bg-primary hover:text-white transition-colors whitespace-nowrap"
+                    >View All Products</a
+                    >
+                </div>
+            </div>
+        </section>
+        <!--        deals-->
+        <section class="deals">
+            <!-- Promotional Banner -->
+            <section class="py-16 bg-gray-50">
+                <div class="container mx-auto px-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Promo Banner 1 -->
+                        <div class="relative h-80 rounded-lg overflow-hidden">
+                            <img
+                                    src="https://readdy.ai/api/search-image?query=luxurious%20living%20room%20interior%20with%20elegant%20furniture%20and%20decor%2C%20soft%20lighting%2C%20blue%20accent%20colors%2C%20professional%20interior%20photography&width=800&height=500&seq=13&orientation=landscape"
+                                    alt="New Collection"
+                                    class="w-full h-full object-cover object-top"
+                            />
+                            <div
+                                    class="absolute inset-0 bg-gradient-to-r from-primary/80 to-primary/40 flex items-center"
+                            >
+                                <div class="p-8">
+                                    <h3 class="text-white text-2xl font-bold mb-2">
+                                        Spring Collection 2025
+                                    </h3>
+                                    <p class="text-white text-sm mb-4">
+                                        Refresh your space with our latest designs
+                                    </p>
+                                    <a
+                                            href="#"
+                                            class="bg-white text-primary px-4 py-2 rounded-button text-sm font-medium hover:bg-gray-100 transition-colors inline-block whitespace-nowrap"
+                                    >Shop Now</a
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Promo Banner 2 -->
+                        <div class="relative h-80 rounded-lg overflow-hidden">
+                            <img
+                                    src="https://readdy.ai/api/search-image?query=modern%20bedroom%20interior%20with%20elegant%20furniture%20and%20decor%2C%20soft%20lighting%2C%20orange%20accent%20colors%2C%20professional%20interior%20photography&width=800&height=500&seq=14&orientation=landscape"
+                                    alt="Special Offer"
+                                    class="w-full h-full object-cover object-top"
+                            />
+                            <div
+                                    class="absolute inset-0 bg-gradient-to-r from-secondary/80 to-secondary/40 flex items-center"
+                            >
+                                <div class="p-8">
+                                    <h3 class="text-white text-2xl font-bold mb-2">
+                                        Limited Time Offer
+                                    </h3>
+                                    <p class="text-white text-sm mb-4">
+                                        Get up to 30% off on selected items
+                                    </p>
+                                    <a
+                                            href="#"
+                                            class="bg-white text-secondary px-4 py-2 rounded-button text-sm font-medium hover:bg-gray-100 transition-colors inline-block whitespace-nowrap"
+                                    >View Offers</a
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </section>
+<!--        feedback-->
+        <!-- Testimonials -->
+        <section class="py-16">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-2">
+                    What Our Customers Say
+                </h2>
+                <p class="text-gray-600 text-center mb-12">
+                    Hear from our satisfied customers
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Testimonial 1 -->
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <div class="flex text-yellow-400 mb-4">
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                        </div>
+                        <p class="text-gray-700 mb-6">
+                            "The quality of their furniture is exceptional. I purchased the
+                            Modern Armchair and it has transformed my living room. The
+                            customer service was also outstanding."
+                        </p>
+                        <div class="flex items-center">
+                            <div
+                                    class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden mr-4"
+                            >
+                                <img
+                                        src="https://readdy.ai/api/search-image?query=professional%20headshot%20of%20a%20middle-aged%20woman%20with%20short%20brown%20hair%2C%20smiling%2C%20neutral%20background%2C%20high%20quality%20portrait&width=100&height=100&seq=15&orientation=squarish"
+                                        alt="Emily Robertson"
+                                        class="w-full h-full object-cover object-top"
+                                />
+                            </div>
+                            <div>
+                                <h4 class="font-medium">Emily Robertson</h4>
+                                <p class="text-gray-500 text-sm">New York, USA</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Testimonial 2 -->
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <div class="flex text-yellow-400 mb-4">
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                        </div>
+                        <p class="text-gray-700 mb-6">
+                            "I've ordered multiple items from Alandalus Design and have
+                            never been disappointed. Their attention to detail and
+                            craftsmanship is unmatched. Highly recommend!"
+                        </p>
+                        <div class="flex items-center">
+                            <div
+                                    class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden mr-4"
+                            >
+                                <img
+                                        src="https://readdy.ai/api/search-image?query=professional%20headshot%20of%20a%20young%20man%20with%20glasses%20and%20dark%20hair%2C%20smiling%2C%20neutral%20background%2C%20high%20quality%20portrait&width=100&height=100&seq=16&orientation=squarish"
+                                        alt="Michael Chen"
+                                        class="w-full h-full object-cover object-top"
+                                />
+                            </div>
+                            <div>
+                                <h4 class="font-medium">Michael Chen</h4>
+                                <p class="text-gray-500 text-sm">San Francisco, USA</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Testimonial 3 -->
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <div class="flex text-yellow-400 mb-4">
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-half-fill"></i>
+                        </div>
+                        <p class="text-gray-700 mb-6">
+                            "The pendant lamp I purchased exceeded my expectations. It's not
+                            just a lighting fixture but a piece of art. Delivery was prompt
+                            and packaging was secure."
+                        </p>
+                        <div class="flex items-center">
+                            <div
+                                    class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden mr-4"
+                            >
+                                <img
+                                        src="https://readdy.ai/api/search-image?query=professional%20headshot%20of%20a%20woman%20with%20curly%20hair%2C%20smiling%2C%20neutral%20background%2C%20high%20quality%20portrait&width=100&height=100&seq=17&orientation=squarish"
+                                        alt="Sophia Martinez"
+                                        class="w-full h-full object-cover object-top"
+                                />
+                            </div>
+                            <div>
+                                <h4 class="font-medium">Sophia Martinez</h4>
+                                <p class="text-gray-500 text-sm">London, UK</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!--        new arrival-->
+        <section class="new-arrivals">
+            <!-- Newsletter -->
+            <section class="py-16 bg-primary">
+                <div class="container mx-auto px-4">
+                    <div class="max-w-2xl mx-auto text-center">
+                        <h2 class="text-3xl font-bold text-white mb-2">
+                            Join Our Newsletter
+                        </h2>
+                        <p class="text-white/80 mb-8">
+                            Subscribe to receive updates on new products, special offers, and
+                            design tips.
+                        </p>
+                        <form class="flex flex-col sm:flex-row gap-3">
+                            <input
+                                    type="email"
+                                    placeholder="Your email address"
+                                    class="flex-1 px-4 py-3 rounded-button border-none focus:outline-none focus:ring-2 focus:ring-white/30 text-sm"
+                            />
+                            <button
+                                    type="submit"
+                                    class="bg-secondary text-white px-6 py-3 rounded-button font-medium hover:bg-opacity-90 transition-colors whitespace-nowrap"
+                            >
+                                Subscribe
+                            </button>
+                        </form>
+                        <p class="text-white/60 text-sm mt-4">
+                            By subscribing, you agree to our Privacy Policy and consent to
+                            receive updates from our company.
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </section>
+<!--        &lt;!&ndash;        contact us&ndash;&gt;-->
+<!--        <section class="">-->
+<!--            <div class="container mx-auto ">-->
+<!--                <h2 class="text-3xl font-bold text-center ">Contact Us</h2>-->
+<!--                <p class="text-gray-600 text-center ">-->
+<!--                    Have questions? We're here to help-->
+<!--                </p>-->
+<!--                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">-->
+<!--                    &lt;!&ndash; Contact Form &ndash;&gt;-->
+<!--                    <div class="bg-white p-8 rounded-lg shadow-sm">-->
+<!--                        <form>-->
+<!--                            <div class="mb-6">-->
+<!--                                <label for="name" class="block text-gray-700 mb-2"-->
+<!--                                >Full Name</label-->
+<!--                                >-->
+<!--                                <input-->
+<!--                                        type="text"-->
+<!--                                        id="name"-->
+<!--                                        class="w-full px-4 py-3 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-sm"-->
+<!--                                        placeholder="Enter your full name"-->
+<!--                                />-->
+<!--                            </div>-->
+<!--                            <div class="mb-6">-->
+<!--                                <label for="email" class="block text-gray-700 mb-2"-->
+<!--                                >Email Address</label-->
+<!--                                >-->
+<!--                                <input-->
+<!--                                        type="email"-->
+<!--                                        id="email"-->
+<!--                                        class="w-full px-4 py-3 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-sm"-->
+<!--                                        placeholder="Enter your email address"-->
+<!--                                />-->
+<!--                            </div>-->
+<!--                            <div class="mb-6">-->
+<!--                                <label for="subject" class="block text-gray-700 mb-2"-->
+<!--                                >Subject</label-->
+<!--                                >-->
+<!--                                <input-->
+<!--                                        type="text"-->
+<!--                                        id="subject"-->
+<!--                                        class="w-full px-4 py-3 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-sm"-->
+<!--                                        placeholder="Enter subject"-->
+<!--                                />-->
+<!--                            </div>-->
+<!--                            <div class="mb-6">-->
+<!--                                <label for="message" class="block text-gray-700 mb-2"-->
+<!--                                >Message</label-->
+<!--                                >-->
+<!--                                <textarea-->
+<!--                                        id="message"-->
+<!--                                        rows="5"-->
+<!--                                        class="w-full px-4 py-3 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-sm"-->
+<!--                                        placeholder="Enter your message"-->
+<!--                                ></textarea>-->
+<!--                            </div>-->
+<!--                            <div class="mb-6 flex items-center">-->
+<!--                                <div class="custom-checkbox" id="privacy-checkbox"></div>-->
+<!--                                <label-->
+<!--                                        for="privacy-checkbox"-->
+<!--                                        class="ml-2 text-sm text-gray-700 cursor-pointer"-->
+<!--                                >I agree to the Privacy Policy and Terms of Service</label-->
+<!--                                >-->
+<!--                            </div>-->
+<!--                            <button-->
+<!--                                    type="submit"-->
+<!--                                    class="w-full bg-primary text-white py-3 px-6 rounded-button font-medium hover:bg-opacity-90 transition-colors whitespace-nowrap"-->
+<!--                            >-->
+<!--                                Send Message-->
+<!--                            </button>-->
+<!--                        </form>-->
+<!--                    </div>-->
+
+
+    <!-- Map + Footer -->
+    <footer class="bg-primary text-white pt-16 pb-6">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                <!-- Company Info -->
+                <div>
+                    <a
+                            href="#"
+                            class="text-white font-['Pacifico'] text-2xl mb-4 inline-block"
+                    >Alandalus Design</a
+                    >
+                    <p class="text-white/70 mb-6">
+                        Transforming spaces with premium furniture and home decor since
+                        2010. Our mission is to bring elegance and comfort to every home.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a
+                                href="#"
+                                class="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                        >
+                            <i class="ri-facebook-fill text-white"></i>
+                        </a>
+                        <a
+                                href="#"
+                                class="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                        >
+                            <i class="ri-instagram-fill text-white"></i>
+                        </a>
+                        <a
+                                href="#"
+                                class="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                        >
+                            <i class="ri-twitter-x-fill text-white"></i>
+                        </a>
+                        <a
+                                href="#"
+                                class="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                        >
+                            <i class="ri-pinterest-fill text-white"></i>
+                        </a>
+                    </div>
+                </div>
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Quick Links</h3>
+                    <ul class="space-y-3">
+                        <li>
+                            <a
+                                    href="#"
+                                    class="text-white/70 hover:text-white transition-colors"
+                            >Home</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                    href="#"
+                                    class="text-white/70 hover:text-white transition-colors"
+                            >Shop</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                    href="#"
+                                    class="text-white/70 hover:text-white transition-colors"
+                            >About Us</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                    href="#"
+                                    class="text-white/70 hover:text-white transition-colors"
+                            >Contact</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                    href="#"
+                                    class="text-white/70 hover:text-white transition-colors"
+                            >Blog</a
+                            >
+                        </li>
+                    </ul>
+                </div>
+                <!-- Customer Service -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Customer Service</h3>
+                    <ul class="space-y-3">
+                        <li>
+                            <a
+                                    href="#"
+                                    class="text-white/70 hover:text-white transition-colors"
+                            >FAQ</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                    href="#"
+                                    class="text-white/70 hover:text-white transition-colors"
+                            >Shipping & Returns</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                    href="#"
+                                    class="text-white/70 hover:text-white transition-colors"
+                            >Store Policy</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                    href="#"
+                                    class="text-white/70 hover:text-white transition-colors"
+                            >Payment Methods</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                    href="#"
+                                    class="text-white/70 hover:text-white transition-colors"
+                            >Warranty</a
+                            >
+                        </li>
+                    </ul>
+                </div>
+                <!-- Newsletter -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Newsletter</h3>
+                    <p class="text-white/70 mb-4">
+                        Subscribe to receive updates, access to exclusive deals, and more.
+                    </p>
+                    <form class="flex mb-4">
+                        <input
+                                type="email"
+                                placeholder="Your email address"
+                                class="flex-1 px-4 py-2 rounded-l-button border-none focus:outline-none text-gray-800 text-sm"
+                        />
+                        <button
+                                type="submit"
+                                class="bg-secondary text-white px-4 py-2 rounded-r-button hover:bg-opacity-90 transition-colors whitespace-nowrap"
+                        >
+                            Subscribe
+                        </button>
+                    </form>
+                    <div class="flex items-center space-x-3">
+                        <span class="text-white/70 text-sm">We Accept:</span>
+                        <div class="flex space-x-2">
+                            <i class="ri-visa-fill text-white"></i>
+                            <i class="ri-mastercard-fill text-white"></i>
+                            <i class="ri-paypal-fill text-white"></i>
+                            <i class="ri-apple-fill text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-8 border-t border-white/20 text-center">
+                <p class="text-white/60 text-sm">
+                    © 2025 Alandalus Design. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+    <!-- Back to Top Button -->
+    <button
+            id="back-to-top"
+            class="fixed bottom-6 right-6 w-12 h-12 bg-primary text-white rounded-full shadow-lg flex items-center justify-center opacity-0 invisible transition-all duration-300"
+    >
+        <i class="ri-arrow-up-line ri-lg"></i>
+    </button>
     </main>
 
 
-<!--&lt;!&ndash;    best selling section&ndash;&gt;-->
-<!--    <div class="slideshow-container">-->
-<!--        <div class="banner">-->
-<!--            <h1>Best Selling</h1>-->
-<!--            <p>Easiest way to healthy life by buying your favorite plants</p>-->
-<!--            <button>See more →</button>-->
-<!--        </div>-->
-<!--        <div class="slides">-->
-<!--            <div class="slide">-->
-<!--                <img src="imgs/notebook2.jpg" alt="Natural Plant">-->
-<!--                <p>Natural Plants</p>-->
-<!--                <p class="price">₪ 20</p>-->
-<!--            </div>-->
-<!--            <div class="slide">-->
-<!--                <img src="imgs/notebook.jpg" alt="Artificial Plant 1">-->
-<!--                <p>Artificial Plants</p>-->
-<!--                <p class="price">₪ 20</p>-->
-<!--            </div>-->
-<!--            <div class="slide">-->
-<!--                <img src="imgs/زرف.jpg" alt="Artificial Plant 2">-->
-<!--                <p>Artificial Plants</p>-->
-<!--                <p class="price">₪ 15</p>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
 
     <script src="app.js" defer></script>
+
+    <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
 </body>
