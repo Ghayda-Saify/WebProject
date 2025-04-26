@@ -20,16 +20,17 @@ body{
 }
 header{
     display: grid;
-    grid-template-columns: 80px 1fr calc(var(--w-image) * var(--calculate));
-    grid-template-rows: 80px;
+    grid-template-columns: 100px 1fr calc(var(--w-image) * var(--calculate));
+    grid-template-rows: 78px;
     position: relative;
     z-index: 10;
     border-bottom: 1px solid var(--border-color);
 }
 header .logo img{
-    width: 100%;
+    width: 100px;
 }
-header .logo{
+.logo{
+    width:100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -285,4 +286,79 @@ header nav{
     height: 500px;
     display: flex;
     color : var(--border-color);
+}
+
+.best-selling-section{
+    display: flex;
+    flex-direction : unset;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+}
+/* Best Selling Plants Section */
+.best-selling-section h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+.best-selling-section p {
+    color: #7a7a7a;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+}
+.best-selling-section .btn {
+    background: #eaf6ef;
+    color: #2d6a4f;
+    border: none;
+    font-weight: 500;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    transition: background 0.2s, color 0.2s;
+}
+.best-selling-section .btn:hover {
+    background: #2d6a4f;
+    color: #fff;
+}
+.best-selling-section .card {
+    border-radius: 18px;
+    box-shadow: 0 2px 16px 0 rgba(60,72,88,.08);
+    border: none;
+    transition: box-shadow 0.2s;
+}
+.best-selling-section .card:hover {
+    box-shadow: 0 4px 24px 0 rgba(60,72,88,.16);
+}
+.best-selling-section .card-img-top {
+    border-radius: 18px 18px 0 0;
+    object-fit: cover;
+    height: 260px;
+    background: #f8f9fa;
+}
+.best-selling-section .card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+.best-selling-section .card-text {
+    color: #a0a0a0;
+    font-size: 1rem;
+}
+@media (max-width: 991.98px) {
+    .best-selling-section .card-img-top {
+        height: 200px;
+    }
+}
+@media (max-width: 767.98px) {
+    .best-selling-section .card-img-top {
+        height: 160px;
+    }
+}
+.scrolling-cards {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+}
+.scrolling-cards::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
 }

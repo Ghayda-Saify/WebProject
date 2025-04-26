@@ -6,7 +6,7 @@
     <title>Alandalus</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script src="app.js"></script>
+
     <style>
 
     </style>
@@ -16,13 +16,13 @@
 <!--        <figure class="logo">-->
 <!--            <img src="imgs/logo-removebg-preview.png" alt="Alandalus">-->
 <!--        </figure>-->
-        <div class="logo"><img src="imgs/logo-removebg-preview.png"></div>
+        <div class="logo"><img src="imgs/logo-removebg-preview.png" alt=""></div>
         <nav class="main-nav">
             <ul>
                 <li><a href="">Home</a></li>
                 <li><a href="">Products</a></li>
                 <li><a href="">Connect</a></li>
-                <i class="fa-solid fa-user"></i>
+                <i class="fa-regular fa-user" style="color: #ef3d1e;"><a href=""></a></i>
             </ul>
         </nav>
 
@@ -125,6 +125,7 @@
         let active = 1;
         let other_1 = null;
         let other_2 = null;
+
         next.onclick = () => {
             carousel.classList.remove('prev');
             carousel.classList.add('next');
