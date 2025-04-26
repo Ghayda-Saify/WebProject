@@ -77,7 +77,7 @@ header nav{
     top: 50px;
     left: 50px;
     content: '';
-    background-color: red;
+    background-color: #b82638;
     width: 400px;
     height: 300px;
     z-index: 10;
@@ -109,7 +109,7 @@ header nav{
 .carousel .list .item .image img{
     width: 90%;
     margin-bottom: 20px;
-    filter: drop-shadow(0 150px 50px #f13b1c);
+    filter: drop-shadow(0 150px 50px #b82638);
 }
 .carousel .list .item .image figcaption{
     font-family: 'Aboreto';
@@ -364,3 +364,87 @@ header nav{
 .scrolling-cards::-webkit-scrollbar {
     display: none; /* Chrome/Safari */
 }
+
+
+.empty{
+    display: none;
+    width: 100%;
+    height: 50px;
+}
+.slideshow-container {
+    display: flex;
+    align-items: center;
+    margin : 100px;
+    padding: 50px;
+    background-color: #f5f5f5;
+    font-family: Arial, sans-serif;
+}
+
+.banner {
+    flex: 1;
+    padding: 20px;
+}
+
+.banner h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+.banner p {
+    font-size: 1em;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.banner button {
+    padding: 10px 20px;
+    background-color: #e0f7fa;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    color: #007bff;
+}
+
+.banner button:hover {
+    background-color: #b3e5fc;
+}
+
+.slides {
+    flex: 4;
+    display: flex;
+    /*overflow: hidden;*/
+    position: relative;
+}
+
+.slide {
+    display: none;
+    flex: 0 0 33.33%;
+    padding: 10px;
+    text-align: center;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.slide.active {
+    display: block;
+    opacity: 1;
+}
+
+.slide img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.slide p {
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: #333;
+}
+
+.slide .price {
+    font-weight: bold;
+    color: #000;
+}
+

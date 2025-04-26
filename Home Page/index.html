@@ -6,6 +6,9 @@
     <title>Alandalus</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
 
 
     <style>
@@ -23,12 +26,13 @@
                 <li><a href="">Home</a></li>
                 <li><a href="">Products</a></li>
                 <li><a href="">Connect</a></li>
-                <i class="fa-regular fa-user" style="color: #ef3d1e;"><a href=""></a></i>
+                <i class="fa-regular fa-user" style="color: #b82638;"><a href=""></a></i>
             </ul>
         </nav>
 
     </header>
     <main>
+<!--        Home-->
         <section class="carousel next">
             <div class="list">
                 <article class="item other_1">
@@ -36,7 +40,7 @@
                          style="background-color: #ffffff;">
                         <div class="content">
                             <h2>Caffe Latte, a new product</h2>
-                            <p class="price">$ 20</p>
+                            <p class="price">₪ 20</p>
                             <p class="description">
                                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores labore animi voluptatibus sequi illo, earum molestias explicabo officiis iste neque? Quis quod eligendi fugit, dolore nam itaque modi exercitationem voluptatem corrupti aut aspernatur. Quos non in sed ratione tenetur harum.
                             </p>
@@ -52,10 +56,10 @@
                 </article>
                 <article class="item active">
                     <div class="main-content"
-                         style="background-color: #40d872;">
+                         style="background-color: #ADB5AA;">
                         <div class="content">
                             <h2>Strawberry mocha, a new product</h2>
-                            <p class="price">$ 20</p>
+                            <p class="price">₪ 20</p>
                             <p class="description">
                                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores labore animi voluptatibus sequi illo, earum molestias explicabo officiis iste neque? Quis quod eligendi fugit, dolore nam itaque modi exercitationem voluptatem corrupti aut aspernatur. Quos non in sed ratione tenetur harum.
                             </p>
@@ -65,16 +69,16 @@
                         </div>
                     </div>
                     <figure class="image">
-                        <img src="imgs/mug-removebg-preview.png" alt="">
+                        <img src="imgs/notebook2-removebg-preview.png" alt="">
                         <figcaption>Strawberry mocha, a new product</figcaption>
                     </figure>
                 </article>
                 <article class="item other_2">
                     <div class="main-content"
-                         style="background-color: #122c6f;">
+                         style="background-color: #AF9864;">
                         <div class="content">
                             <h2>Doppio espresso, a new product</h2>
-                            <p class="price">$ 20</p>
+                            <p class="price">₪ 20</p>
                             <p class="description">
                                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores labore animi voluptatibus sequi illo, earum molestias explicabo officiis iste neque? Quis quod eligendi fugit, dolore nam itaque modi exercitationem voluptatem corrupti aut aspernatur. Quos non in sed ratione tenetur harum.
                             </p>
@@ -84,16 +88,16 @@
                         </div>
                     </div>
                     <figure class="image">
-                        <img src="imgs/دبابيس.png" alt="">
+                        <img src="imgs/cover2-removebg-preview.png" alt="">
                         <figcaption>Doppio espresso, a new product</figcaption>
                     </figure>
                 </article>
                 <article class="item">
                     <div class="main-content"
-                         style="background-color: #7eb63d;">
+                         style="background-color: #D5CEB1;">
                         <div class="content">
                             <h2>Matcha latte macchiato, a new product</h2>
-                            <p class="price">$ 20</p>
+                            <p class="price">₪ 20</p>
                             <p class="description">
                                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores labore animi voluptatibus sequi illo, earum molestias explicabo officiis iste neque? Quis quod eligendi fugit, dolore nam itaque modi exercitationem voluptatem corrupti aut aspernatur. Quos non in sed ratione tenetur harum.
                             </p>
@@ -109,14 +113,68 @@
                 </article>
             </div>
             <div class="arrows">
-                <button id="prev"><</button>
-                <button id="next">></button>
+                <button id="prev" style="color : #b82638"><</button>
+                <button id="next" style="color : #b82638">></button>
             </div>
         </section>
+<!--      categories  -->
+        <section class="categories container section ">
+            <h3 class="section__title "><span>Popular</span> Categories</h3>
+
+            <div class="categories__container swiper">
+                <div class="swiper-wrapper">
+                    <a href="shop.html" class="categore__item swiper-slide">
+                        <img src="imgs/fasil.jpg" class="category__img" alt="">
+                        <h3 class="category__title">فواصل</h3>
+
+                    </a>
+                    <a href="shop.html" class="categore__item swiper-slide">
+                        <img src="imgs/dababees.jpg" class="category__img" alt="">
+                        <h3 class="category__title">دبابيس</h3>
+
+                    </a>
+
+                    <div class="swiper-slide"></div>
+                </div>
+            </div>
+        </section>
+<!--        Products-->
+        <section class="products"></section>
+<!--        deals-->
+        <section class="deals"></section>
+<!--        new arrival-->
+        <section class="new-arrivals"></section>
     </main>
-    <div class="catigories"></div>
+
+
+<!--&lt;!&ndash;    best selling section&ndash;&gt;-->
+<!--    <div class="slideshow-container">-->
+<!--        <div class="banner">-->
+<!--            <h1>Best Selling</h1>-->
+<!--            <p>Easiest way to healthy life by buying your favorite plants</p>-->
+<!--            <button>See more →</button>-->
+<!--        </div>-->
+<!--        <div class="slides">-->
+<!--            <div class="slide">-->
+<!--                <img src="imgs/notebook2.jpg" alt="Natural Plant">-->
+<!--                <p>Natural Plants</p>-->
+<!--                <p class="price">₪ 20</p>-->
+<!--            </div>-->
+<!--            <div class="slide">-->
+<!--                <img src="imgs/notebook.jpg" alt="Artificial Plant 1">-->
+<!--                <p>Artificial Plants</p>-->
+<!--                <p class="price">₪ 20</p>-->
+<!--            </div>-->
+<!--            <div class="slide">-->
+<!--                <img src="imgs/زرف.jpg" alt="Artificial Plant 2">-->
+<!--                <p>Artificial Plants</p>-->
+<!--                <p class="price">₪ 15</p>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
 
     <script src="app.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
 </body>
 </html>
