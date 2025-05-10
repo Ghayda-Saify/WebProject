@@ -4,6 +4,22 @@ header {
     top: 0;
     z-index: 10;
 }
+.logo{
+    /*font-family: 'Brush Script MT', cursive; !* Cursive font for the logo *!*/
+    font-size: 1.5em;
+    color: #333;
+    align-self: center; /* Moves the logo to the bottom of the header */
+    margin-bottom: 5px; /* Fine-tune the position */
+    width:100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+header nav a{
+    --tw-text-opacity:1;
+    color: rgb(18 44 111 / var(--tw-text-opacity, 1));
+    font-weight: 400;
+}
 
 .product-card {
     transition: transform 0.2s;
