@@ -9,9 +9,13 @@
 </head>
 <body>
 
+
+
 <div class="container"  id="container">
+<!--    Sign up-->
+
     <div class="form-container sign-up">
-        <form>
+        <form method="POST" action="validation.php">
             <h1>Create Account</h1>
             <div class="social-icons">
                 <a href="#" class="icon">
@@ -22,16 +26,20 @@
                 </a>
             </div>
             <span>or use your email to register</span>
-            <label for="txtName"></label><input type="text" placeholder="Name" id="txtName">
-            <label for="txtEmail"></label><input type="email" placeholder="Email" id="txtEmail">
-            <label for="txtPassword"></label><input type="password" placeholder="password" id="txtPassword">
-            <label for="txtConfirmPass"></label><input type="password" placeholder="Confirm your password" id="txtConfirmPass">
+            <label for="txtName"></label><input type="text" placeholder="Name" name="txtName" id="txtName">
+            <label for="txtEmail"></label><input type="email" placeholder="Email" name="txtEmail" id="txtEmail">
+            <label for="txtPassword"></label><input type="password" placeholder="password" name="txtPassword" id="txtPassword">
+            <label for="txtConfirmPass"></label><input type="password" placeholder="Confirm your password" name="txtConfirmPass" id="txtConfirmPass">
             <button>Sign Up</button>
         </form>
     </div>
+<!--    sign in-->
+    <?php
+        include 'validation.php';
+    ?>
 
     <div class="form-container sign-in">
-        <form>
+        <form method="POST" action="validation.php">
             <h1>Sign in</h1>
             <div class="social-icons">
                 <a href="#" class="icon">
@@ -42,8 +50,8 @@
                 </a>
             </div>
             <span>or use your email & password</span>
-            <label for="txtEmailSignIn"></label><input type="email" placeholder="Email" id="txtEmailSignIn">
-            <label for="txtPasswordSignIn"></label><input type="password" placeholder="password" id="txtPasswordSignIn">
+            <label for="txtEmailSignIn"></label><input type="email" placeholder="Email" name="txtEmailSignIn" id="txtEmailSignIn">
+            <label for="txtPasswordSignIn"></label><input type="password" placeholder="password" name="txtPasswordSignIn" id="txtPasswordSignIn">
             <a href="#">Forget Your Password?</a>
             <button>Sign In</button>
         </form>
