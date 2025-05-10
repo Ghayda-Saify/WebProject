@@ -1,0 +1,30 @@
+/* Custom styles to complement Tailwind */
+header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.product-card {
+    transition: transform 0.2s;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+.category-filter.active {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+/* Add any custom styles for the new design below */
+
+/* Example: For Visily badge at the bottom */
+footer .visily-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+    color: #a0aec0;
+}
