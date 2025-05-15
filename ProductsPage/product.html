@@ -1,326 +1,632 @@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Listing</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <title>Alandalus Design | Products</title>
+    <link rel="stylesheet" href="../HomePage/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 
+                        primary: "#122c6f", 
+                        secondary: "#f13b1c",
+                        beige: "#F5F5DC",
+                        gold: "#FFD700"
+                    }
+                },
+            },
+        };
+    </script>
 </head>
-<body class="bg-gray-50">
-    <!-- Header -->
-    <header class="bg-white border-b">
-        <div class="container mx-auto flex items-center justify-between py-3 px-4">
-            <div class="flex items-center space-x-2">
-                <a href="#" class="logo text-primary font-['Pacifico'] text-2xl">Alandalus Design</a>
-            </div>
-            <nav class="hidden md:flex space-x-6">
-                <a href="../HomePage/index.html" class="hover:text-blue-600">Home</a>
-                <a href="#" class="hover:text-blue-600">Categories</a>
-            </nav>
-            <div class="flex items-center space-x-4">
-                <input type="text" placeholder="Search product..." class="border rounded px-2 py-1 text-sm hidden md:block">
-                <a href="#" class="text-gray-700">Cart (0)</a>
-                <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="User" class="h-8 w-8 rounded-full border">
-            </div>
-        </div>
+<body class="font-poppins bg-beige/10">
+    <header>
+        <a href="../HomePage/index.html" class="logo text-primary font-['Pacifico'] text-2xl">Alandalus Design</a>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="../HomePage/index.html">Home</a></li>
+                <li><a href="product.html" class="text-primary font-bold">Products</a></li>
+                <li><a href="../ContactPage/contact.html">Connect</a></li>
+                <li>
+                    <a href="../CartPage/cart.html" class="relative">
+                        <i class="fa-solid fa-cart-shopping text-primary"></i>
+                        <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center cart-count">0</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../SignIn&Up/sign.html">
+                        <i class="fa-solid fa-user text-primary"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="relative" id="wishlist-icon">
+                        <i class="fa-solid fa-heart text-primary"></i>
+                        <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center wishlist-count">0</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </header>
-    <!-- Hero Section -->
-    <section class="bg-pink-100 py-12 relative overflow-hidden">
-        <div class="container mx-auto flex flex-col md:flex-row items-center justify-between px-4">
-            <div class="max-w-lg z-10">
-                <h1 class="text-3xl md:text-4xl font-bold text-blue-700 mb-4">Special product</h1>
-                <p class="text-gray-600 mb-6">Nen enim eu excepteur cupidatat consectetur et co ea est reprehenderit incididunt inure veniam cupidatat est non amet. Elim duis aute tempor laboris ipsum dolore non.</p>
-                <button class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Shop now</button>
+
+    <main class="container mx-auto px-4 py-8">
+        <!-- Breadcrumb -->
+        <nav class="flex mb-8" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                <li class="inline-flex items-center">
+                    <a href="../HomePage/index.html" class="text-gray-700 hover:text-primary">
+                        <i class="fas fa-home mr-2"></i>
+                        Home
+                    </a>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+                        <a href="product.html" class="text-primary font-medium">Products</a>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+
+        <!-- Product Grid -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-2 font-aboreto">Our Products</h2>
+            <p class="text-gray-600 text-center mb-12">Discover our collection of personalized creations</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Product Card 1 -->
+                <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer product-card group"
+                     data-name="Custom Notebook" 
+                     data-price="20.00"
+                     data-description="PERSONALIZED CREATIONS, CRAFTED FOR YOU"
+                     data-images='["../HomePage/imgs/notebook2-removebg-preview.png", "../HomePage/imgs/notebook2.jpg", "../HomePage/imgs/notebook.jpg"]'>
+                    <div class="h-64 overflow-hidden relative">
+                        <img src="../HomePage/imgs/notebook2-removebg-preview.png" alt="Custom Notebook" 
+                             class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center">
+                            <button class="view-details bg-primary text-white px-6 py-2 rounded-full opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-aboreto text-xl mb-2">Custom Notebook</h3>
+                        <p class="text-primary font-aboreto text-lg">₪ 20.00</p>
+                    </div>
+                </div>
+
+                <!-- Product Card 2 -->
+                <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer product-card group"
+                     data-name="Custom Cover" 
+                     data-price="20.00"
+                     data-description="Elegant and personalized covers for your books and devices"
+                     data-images='["../HomePage/imgs/cover2-removebg-preview.png", "../HomePage/imgs/cover.jpg", "../HomePage/imgs/covers.jpg"]'>
+                    <div class="h-64 overflow-hidden relative">
+                        <img src="../HomePage/imgs/cover2-removebg-preview.png" alt="Custom Cover" 
+                             class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center">
+                            <button class="view-details bg-primary text-white px-6 py-2 rounded-full opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-aboreto text-xl mb-2">Custom Cover</h3>
+                        <p class="text-primary font-aboreto text-lg">₪ 20.00</p>
+                    </div>
+                </div>
+
+                <!-- Product Card 3 -->
+                <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer product-card group"
+                     data-name="Custom Hoodie" 
+                     data-price="60.00"
+                     data-description="Comfortable and stylish hoodies with Arabic calligraphy"
+                     data-images='["../HomePage/imgs/hoodi-removebg-preview.png", "../HomePage/imgs/hoodies.jpg"]'>
+                    <div class="h-64 overflow-hidden relative">
+                        <img src="../HomePage/imgs/hoodi-removebg-preview.png" alt="Custom Hoodie" 
+                             class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center">
+                            <button class="view-details bg-primary text-white px-6 py-2 rounded-full opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-aboreto text-xl mb-2">Custom Hoodie</h3>
+                        <p class="text-primary font-aboreto text-lg">₪ 60.00</p>
+                    </div>
+                </div>
+
+                <!-- Product Card 4 -->
+                <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer product-card group"
+                     data-name="Custom Mug" 
+                     data-price="15.00"
+                     data-description="Personalized mugs with Arabic calligraphy and Islamic designs"
+                     data-images='["../HomePage/imgs/mug-removebg-preview.png", "../HomePage/imgs/mugs.jpg"]'>
+                    <div class="h-64 overflow-hidden relative">
+                        <img src="../HomePage/imgs/mug-removebg-preview.png" alt="Custom Mug" 
+                             class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center">
+                            <button class="view-details bg-primary text-white px-6 py-2 rounded-full opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-aboreto text-xl mb-2">Custom Mug</h3>
+                        <p class="text-primary font-aboreto text-lg">₪ 15.00</p>
+                    </div>
+                </div>
+
+                <!-- Product Card 5 -->
+                <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer product-card group"
+                     data-name="Custom Handbag" 
+                     data-price="45.00"
+                     data-description="Elegant handbags with unique Arabic and Islamic designs"
+                     data-images='["../HomePage/imgs/زرف-removebg-preview.png", "../HomePage/imgs/زرف.jpg"]'>
+                    <div class="h-64 overflow-hidden relative">
+                        <img src="../HomePage/imgs/زرف-removebg-preview.png" alt="Custom Handbag" 
+                             class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center">
+                            <button class="view-details bg-primary text-white px-6 py-2 rounded-full opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-aboreto text-xl mb-2">Custom Handbag</h3>
+                        <p class="text-primary font-aboreto text-lg">₪ 45.00</p>
+                    </div>
+                </div>
+
+                <!-- Product Card 6 -->
+                <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer product-card group"
+                     data-name="Custom Pins" 
+                     data-price="10.00"
+                     data-description="Beautiful pins featuring Arabic calligraphy and Islamic patterns"
+                     data-images='["../HomePage/imgs/دبابيس.png", "../HomePage/imgs/مجموعة دبابيس.jpg", "../HomePage/imgs/dababees.jpg"]'>
+                    <div class="h-64 overflow-hidden relative">
+                        <img src="../HomePage/imgs/دبابيس.png" alt="Custom Pins" 
+                             class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center">
+                            <button class="view-details bg-primary text-white px-6 py-2 rounded-full opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-aboreto text-xl mb-2">Custom Pins</h3>
+                        <p class="text-primary font-aboreto text-lg">₪ 10.00</p>
+                    </div>
+                </div>
+
+                <!-- Product Card 7 -->
+                <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer product-card group"
+                     data-name="Custom Book" 
+                     data-price="25.00"
+                     data-description="Personalized books with beautiful Arabic and Islamic designs"
+                     data-images='["../HomePage/imgs/book.jpg"]'>
+                    <div class="h-64 overflow-hidden relative">
+                        <img src="../HomePage/imgs/book.jpg" alt="Custom Book" 
+                             class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center">
+                            <button class="view-details bg-primary text-white px-6 py-2 rounded-full opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-aboreto text-xl mb-2">Custom Book</h3>
+                        <p class="text-primary font-aboreto text-lg">₪ 25.00</p>
+                    </div>
+                </div>
+
+                <!-- Product Card 8 -->
+                <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer product-card group"
+                     data-name="Custom Package" 
+                     data-price="35.00"
+                     data-description="Beautiful gift packages with Islamic designs"
+                     data-images='["../HomePage/imgs/backage.jpg"]'>
+                    <div class="h-64 overflow-hidden relative">
+                        <img src="../HomePage/imgs/backage.jpg" alt="Custom Package" 
+                             class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center">
+                            <button class="view-details bg-primary text-white px-6 py-2 rounded-full opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-aboreto text-xl mb-2">Custom Package</h3>
+                        <p class="text-primary font-aboreto text-lg">₪ 35.00</p>
+                    </div>
+                </div>
+
+                <!-- Product Card 9 -->
+                <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer product-card group"
+                     data-name="Wall Board" 
+                     data-price="40.00"
+                     data-description="Decorative wall boards with Arabic calligraphy"
+                     data-images='["../HomePage/imgs/bord.jpg"]'>
+                    <div class="h-64 overflow-hidden relative">
+                        <img src="../HomePage/imgs/bord.jpg" alt="Wall Board" 
+                             class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center">
+                            <button class="view-details bg-primary text-white px-6 py-2 rounded-full opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-aboreto text-xl mb-2">Wall Board</h3>
+                        <p class="text-primary font-aboreto text-lg">₪ 40.00</p>
+                    </div>
+                </div>
             </div>
-            <div class="relative mt-8 md:mt-0 md:ml-8 flex-1 flex justify-center">
-                <img src="https://i.imgur.com/1Q9Z1Zm.png" alt="Cart" class="w-80 md:w-96 z-10">
-                <span class="absolute top-0 left-0 bg-orange-300 rounded-full w-10 h-10 flex items-center justify-center text-xl" style="transform: translate(-30%,-30%)">💡</span>
-                <span class="absolute bottom-0 left-1/2 bg-green-300 rounded-full w-12 h-12 flex items-center justify-center text-2xl" style="transform: translate(-50%,30%)">😍</span>
-                <span class="absolute top-8 right-0 bg-purple-300 rounded-full w-12 h-12 flex items-center justify-center text-2xl">🎉</span>
+        </section>
+
+        <!-- Product Reviews Section -->
+        <section class="mt-16">
+            <h2 class="text-3xl font-bold mb-8">Customer Reviews</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Review Form -->
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-semibold mb-4">Write a Review</h3>
+                    <form id="review-form" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Rating</label>
+                            <div class="flex space-x-2">
+                                <i class="far fa-star text-2xl cursor-pointer rating-star"></i>
+                                <i class="far fa-star text-2xl cursor-pointer rating-star"></i>
+                                <i class="far fa-star text-2xl cursor-pointer rating-star"></i>
+                                <i class="far fa-star text-2xl cursor-pointer rating-star"></i>
+                                <i class="far fa-star text-2xl cursor-pointer rating-star"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Your Review</label>
+                            <textarea class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-primary focus:border-transparent" rows="4" placeholder="Share your thoughts about the product..."></textarea>
+                        </div>
+                        <button type="submit" class="bg-primary text-white px-6 py-2 rounded-full hover:bg-opacity-90 transition">
+                            Submit Review
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Review List -->
+                <div class="space-y-6">
+                    <!-- Sample Review 1 -->
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <div class="flex items-center mb-2">
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <span class="ml-2 text-sm text-gray-500">1 week ago</span>
+                        </div>
+                        <p class="text-gray-700">Beautiful design and excellent quality! The customization options are amazing.</p>
+                        <p class="text-sm text-gray-500 mt-2">- Sarah M.</p>
+                    </div>
+
+                    <!-- Sample Review 2 -->
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <div class="flex items-center mb-2">
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                            <span class="ml-2 text-sm text-gray-500">2 weeks ago</span>
+                        </div>
+                        <p class="text-gray-700">Great product! The Arabic calligraphy design exceeded my expectations.</p>
+                        <p class="text-sm text-gray-500 mt-2">- Ahmed K.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Product Detail Modal -->
+        <div id="product-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-8 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+                <div class="flex justify-end mb-4">
+                    <button class="text-gray-400 hover:text-gray-600" id="close-modal">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Left: Product Images -->
+                    <div>
+                        <div class="mb-4 relative">
+                            <img src="" alt="" id="modal-main-image" class="w-full h-auto rounded-lg shadow-lg">
+                        </div>
+                        <div class="grid grid-cols-4 gap-4" id="modal-thumbnails">
+                            <!-- Thumbnails will be dynamically added here -->
+                        </div>
+                    </div>
+                    <!-- Right: Product Info -->
+                    <div>
+                        <h2 id="modal-product-name" class="text-3xl font-bold mb-4"></h2>
+                        <p id="modal-product-price" class="text-2xl text-primary font-bold mb-4"></p>
+                        <p id="modal-product-description" class="text-gray-600 mb-6"></p>
+                        
+                        <!-- Design Options -->
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold mb-4">Select Design Style:</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <button class="design-option border rounded-lg p-4 hover:border-primary transition" data-design="arabic">
+                                    Arabic Calligraphy
+                                </button>
+                                <button class="design-option border rounded-lg p-4 hover:border-primary transition" data-design="geometric">
+                                    Geometric Pattern
+                                </button>
+                                <button class="design-option border rounded-lg p-4 hover:border-primary transition" data-design="modern">
+                                    Modern Arabic
+                                </button>
+                                <button class="design-option border rounded-lg p-4 hover:border-primary transition" data-design="custom">
+                                    Custom Design
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Quantity -->
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold mb-4">Quantity:</h3>
+                            <div class="flex items-center space-x-4">
+                                <button class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:border-primary transition" id="modal-decrease-quantity">-</button>
+                                <input type="number" value="1" min="1" class="w-20 text-center border-gray-300 rounded" id="modal-quantity">
+                                <button class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:border-primary transition" id="modal-increase-quantity">+</button>
+                            </div>
+                        </div>
+
+                        <!-- Add to Cart Button -->
+                        <button id="modal-add-to-cart" class="w-full bg-primary text-white px-8 py-3 rounded-full text-lg font-medium hover:bg-opacity-90 transition flex items-center justify-center">
+                            <i class="fas fa-shopping-cart mr-2"></i>
+                            Add To Cart | أضف إلى السلة
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
-    </section>
-    <!-- Category Icons -->
-    <section class="bg-white py-6">
-        <div class="container mx-auto flex flex-wrap justify-center gap-6 px-4">
-            <div class="flex flex-col items-center">
-                <span class="bg-pink-100 p-4 rounded-full mb-2"><img src="https://img.icons8.com/ios-filled/50/000000/shopping-bag.png" class="h-8 w-8"/></span>
-                <span class="text-xs text-gray-600">Sit esse ull</span>
-            </div>
-            <div class="flex flex-col items-center">
-                <span class="bg-blue-100 p-4 rounded-full mb-2"><img src="https://img.icons8.com/ios-filled/50/000000/dress-front-view.png" class="h-8 w-8"/></span>
-                <span class="text-xs text-gray-600">Aliquip sunt</span>
-            </div>
-            <div class="flex flex-col items-center">
-                <span class="bg-purple-100 p-4 rounded-full mb-2"><img src="https://img.icons8.com/ios-filled/50/000000/dress-back-view.png" class="h-8 w-8"/></span>
-                <span class="text-xs text-gray-600">Dolore labo</span>
-            </div>
-            <div class="flex flex-col items-center">
-                <span class="bg-blue-100 p-4 rounded-full mb-2"><img src="https://img.icons8.com/ios-filled/50/000000/heart-with-arrow.png" class="h-8 w-8"/></span>
-                <span class="text-xs text-gray-600">Elusmod</span>
-            </div>
-            <div class="flex flex-col items-center">
-                <span class="bg-pink-100 p-4 rounded-full mb-2"><img src="https://img.icons8.com/ios-filled/50/000000/gift-card.png" class="h-8 w-8"/></span>
-                <span class="text-xs text-gray-600">Cupidatat e</span>
-            </div>
-            <div class="flex flex-col items-center">
-                <span class="bg-purple-100 p-4 rounded-full mb-2"><img src="https://img.icons8.com/ios-filled/50/000000/winter-hat.png" class="h-8 w-8"/></span>
-                <span class="text-xs text-gray-600">Aliquip ulla</span>
-            </div>
-            <div class="flex flex-col items-center">
-                <span class="bg-pink-100 p-4 rounded-full mb-2"><img src="https://img.icons8.com/ios-filled/50/000000/wallet.png" class="h-8 w-8"/></span>
-                <span class="text-xs text-gray-600">Lorem quis</span>
-            </div>
-            <div class="flex flex-col items-center">
-                <span class="bg-blue-100 p-4 rounded-full mb-2"><img src="https://img.icons8.com/ios-filled/50/000000/airplane-take-off.png" class="h-8 w-8"/></span>
-                <span class="text-xs text-gray-600">Nostrud vel</span>
-            </div>
-        </div>
-    </section>
-    <!-- Category 1 -->
-    <section class="container mx-auto px-4 py-8">
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-bold">Category 1</h2>
-            <a href="#" class="text-blue-600 text-sm">See more &rarr;</a>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div class="bg-white rounded-lg shadow p-4 flex flex-col items-center">
-                <img src="https://i.imgur.com/1.png" alt="Product" class="h-32 w-32 object-cover rounded mb-2">
-                <h3 class="font-semibold text-sm">Product title</h3>
-                <span class="text-blue-600 font-bold">$230</span>
-                <div class="flex items-center mt-1 text-yellow-400 text-xs">
-                    <span>★★★★★</span>
-                    <span class="ml-2 text-gray-400">360 items sold</span>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-100 mt-16">
+        <div class="container mx-auto px-4 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Brand Section -->
+                <div class="col-span-1 md:col-span-2">
+                    <a href="../HomePage/index.html" class="text-primary font-['Pacifico'] text-2xl">Alandalus Design</a>
+                    <p class="mt-4 text-gray-600">Crafting personalized Arabic and Islamic designs that tell your unique story. Every piece is created with love and attention to detail.</p>
+                    <div class="mt-6 flex space-x-4">
+                        <a href="#" class="text-primary hover:text-secondary transition"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-primary hover:text-secondary transition"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-primary hover:text-secondary transition"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-primary hover:text-secondary transition"><i class="fab fa-pinterest"></i></a>
+                    </div>
                 </div>
-            </div>
-            <div class="bg-white rounded-lg shadow p-4 flex flex-col items-center">
-                <img src="https://i.imgur.com/2.png" alt="Product" class="h-32 w-32 object-cover rounded mb-2">
-                <h3 class="font-semibold text-sm">Product title</h3>
-                <span class="text-blue-600 font-bold">$230</span>
-                <div class="flex items-center mt-1 text-yellow-400 text-xs">
-                    <span>★★★★★</span>
-                    <span class="ml-2 text-gray-400">360 items sold</span>
-                </div>
-            </div>
-            <div class="bg-white rounded-lg shadow p-4 flex flex-col items-center">
-                <img src="https://i.imgur.com/3.png" alt="Product" class="h-32 w-32 object-cover rounded mb-2">
-                <h3 class="font-semibold text-sm">Product title</h3>
-                <span class="text-blue-600 font-bold">$230</span>
-                <div class="flex items-center mt-1 text-yellow-400 text-xs">
-                    <span>★★★★★</span>
-                    <span class="ml-2 text-gray-400">360 items sold</span>
-                </div>
-            </div>
-            <div class="bg-white rounded-lg shadow p-4 flex flex-col items-center">
-                <img src="https://i.imgur.com/4.png" alt="Product" class="h-32 w-32 object-cover rounded mb-2">
-                <h3 class="font-semibold text-sm">Product title</h3>
-                <span class="text-blue-600 font-bold">$230</span>
-                <div class="flex items-center mt-1 text-yellow-400 text-xs">
-                    <span>★★★★★</span>
-                    <span class="ml-2 text-gray-400">360 items sold</span>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Category 2 -->
-    <section class="container mx-auto px-4 py-8">
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-bold">Category 2</h2>
-            <a href="#" class="text-blue-600 text-sm">See more &rarr;</a>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div class="bg-white rounded-lg shadow p-4 flex flex-col items-center">
-                <img src="https://i.imgur.com/5.png" alt="Product" class="h-32 w-32 object-cover rounded mb-2">
-                <h3 class="font-semibold text-sm">Product title</h3>
-                <span class="text-blue-600 font-bold">$230</span>
-                <div class="flex items-center mt-1 text-yellow-400 text-xs">
-                    <span>★★★★★</span>
-                    <span class="ml-2 text-gray-400">360 items sold</span>
-                </div>
-            </div>
-            <div class="bg-white rounded-lg shadow p-4 flex flex-col items-center">
-                <img src="https://i.imgur.com/6.png" alt="Product" class="h-32 w-32 object-cover rounded mb-2">
-                <h3 class="font-semibold text-sm">Product title</h3>
-                <span class="text-blue-600 font-bold">$230</span>
-                <div class="flex items-center mt-1 text-yellow-400 text-xs">
-                    <span>★★★★★</span>
-                    <span class="ml-2 text-gray-400">360 items sold</span>
-                </div>
-            </div>
-            <div class="bg-white rounded-lg shadow p-4 flex flex-col items-center">
-                <img src="https://i.imgur.com/7.png" alt="Product" class="h-32 w-32 object-cover rounded mb-2">
-                <h3 class="font-semibold text-sm">Product title</h3>
-                <span class="text-blue-600 font-bold">$230</span>
-                <div class="flex items-center mt-1 text-yellow-400 text-xs">
-                    <span>★★★★★</span>
-                    <span class="ml-2 text-gray-400">360 items sold</span>
-                </div>
-            </div>
-            <div class="bg-white rounded-lg shadow p-4 flex flex-col items-center">
-                <img src="https://i.imgur.com/8.png" alt="Product" class="h-32 w-32 object-cover rounded mb-2">
-                <h3 class="font-semibold text-sm">Product title</h3>
-                <span class="text-blue-600 font-bold">$230</span>
-                <div class="flex items-center mt-1 text-yellow-400 text-xs">
-                    <span>★★★★★</span>
-                    <span class="ml-2 text-gray-400">360 items sold</span>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Call to Action -->
-    <section class="container mx-auto px-4 py-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center bg-blue-50 rounded-lg p-6">
-            <div>
-                <h2 class="text-2xl font-bold text-blue-700 mb-2">Call to Action <span>🎉</span></h2>
-                <p class="text-gray-600 mb-4">Do consectetur proident proident id eiusmod deserunt consequat pariatur ad ex velit do Lorem reprehenderit.</p>
-                <button class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Explore now</button>
-            </div>
-            <div>
-                <img src="https://i.imgur.com/9.png" alt="Call to Action" class="rounded-lg w-full h-48 object-cover">
-            </div>
-        </div>
-    </section>
-    <!-- What's New -->
-    <section class="container mx-auto px-4 py-8">
-        <h2 class="text-2xl font-bold text-center mb-2">What's new?</h2>
-        <p class="text-center text-gray-500 mb-8">Do consectetur proident proident id eiusmod deserunt consequat pariatur ad ex velit do Lorem reprehenderit.</p>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white rounded-lg shadow p-4 flex flex-col">
-                <img src="https://i.imgur.com/10.png" alt="News" class="h-40 w-full object-cover rounded mb-2">
-                <span class="text-xs text-blue-600 mb-1">Do consectetur</span>
-                <h3 class="font-semibold text-base mb-1">Aliqua irure tempor Lorem occaecat volup</h3>
-                <div class="flex items-center text-xs text-gray-400 mb-1">
-                    <span>Dec 22, 2022</span>
-                    <span class="mx-2">•</span>
-                    <span>5 mins read</span>
-                </div>
-            </div>
-            <div class="bg-white rounded-lg shadow p-4 flex flex-col">
-                <img src="https://i.imgur.com/11.png" alt="News" class="h-40 w-full object-cover rounded mb-2">
-                <span class="text-xs text-blue-600 mb-1">Consequat labore</span>
-                <h3 class="font-semibold text-base mb-1">Commodo deserunt ipsum occaecat qui</h3>
-                <div class="flex items-center text-xs text-gray-400 mb-1">
-                    <span>Dec 22, 2022</span>
-                    <span class="mx-2">•</span>
-                    <span>10 mins read</span>
-                </div>
-            </div>
-            <div class="bg-white rounded-lg shadow p-4 flex flex-col">
-                <img src="https://i.imgur.com/12.png" alt="News" class="h-40 w-full object-cover rounded mb-2">
-                <span class="text-xs text-blue-600 mb-1">Laboris nulla</span>
-                <h3 class="font-semibold text-base mb-1">Deserunt occaecat qui amet tempor dolore</h3>
-                <div class="flex items-center text-xs text-gray-400 mb-1">
-                    <span>Dec 22, 2022</span>
-                    <span class="mx-2">•</span>
-                    <span>3 mins read</span>
-                </div>
-            </div>
-        </div>
-        <div class="flex justify-center mt-6">
-            <button class="bg-gray-100 text-gray-700 px-6 py-2 rounded hover:bg-gray-200">See more articles</button>
-        </div>
-    </section>
-    <!-- Newsletter & Footer -->
-    <footer class="bg-white border-t mt-12">
-        <div class="container mx-auto px-4 py-8 flex flex-col items-center">
-            <img src="https://via.placeholder.com/100x50?text=Logo" alt="Logo" class="h-12 mb-2">
-            <h3 class="font-semibold mb-2">Subscribe to our newsletter</h3>
-            <form class="flex mb-6">
-                <input type="email" placeholder="Input your email" class="border rounded-l px-4 py-2 focus:outline-none">
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-r">Subscribe</button>
-            </form>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 w-full max-w-4xl mb-6">
+
+                <!-- Quick Links -->
                 <div>
-                    <h4 class="font-bold mb-2">Product</h4>
-                    <ul class="text-gray-600 text-sm space-y-1">
-                        <li>Features</li>
-                        <li>Pricing</li>
+                    <h3 class="font-bold text-lg mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../HomePage/index.html" class="text-gray-600 hover:text-primary transition">Home</a></li>
+                        <li><a href="product.html" class="text-gray-600 hover:text-primary transition">Products</a></li>
+                        <li><a href="../ContactPage/contact.html" class="text-gray-600 hover:text-primary transition">Contact</a></li>
+                        <li><a href="../CartPage/cart.html" class="text-gray-600 hover:text-primary transition">Cart</a></li>
                     </ul>
                 </div>
+
+                <!-- Contact Info -->
                 <div>
-                    <h4 class="font-bold mb-2">Resources</h4>
-                    <ul class="text-gray-600 text-sm space-y-1">
-                        <li>Blog</li>
-                        <li>User guides</li>
-                        <li>Webinars</li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold mb-2">Company</h4>
-                    <ul class="text-gray-600 text-sm space-y-1">
-                        <li>About us</li>
-                        <li>Contact us</li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold mb-2">Plans & Pricing</h4>
-                    <ul class="text-gray-600 text-sm space-y-1">
-                        <li>Personal</li>
-                        <li>Start up</li>
-                        <li>Organization</li>
+                    <h3 class="font-bold text-lg mb-4">Contact Us</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-envelope w-6"></i>
+                            <span>info@alandalusdesign.com</span>
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-phone w-6"></i>
+                            <span>+970 59-999-9999</span>
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-map-marker-alt w-6"></i>
+                            <span>Palestine, Gaza Strip</span>
+                        </li>
                     </ul>
                 </div>
             </div>
-            <div class="flex items-center space-x-4 mb-4">
-                <a href="#" class="text-gray-400 hover:text-blue-600"><svg fill="currentColor" viewBox="0 0 24 24" class="h-5 w-5"><path d="M22.46 6c-.77.35-1.6.59-2.47.7a4.3 4.3 0 0 0 1.88-2.37 8.59 8.59 0 0 1-2.72 1.04A4.28 4.28 0 0 0 16.11 4c-2.37 0-4.29 1.92-4.29 4.29 0 .34.04.67.11.99C7.69 9.13 4.07 7.38 1.64 4.9c-.37.64-.58 1.38-.58 2.17 0 1.5.76 2.82 1.92 3.6a4.28 4.28 0 0 1-1.94-.54v.05c0 2.1 1.5 3.85 3.5 4.25-.36.1-.74.16-1.13.16-.28 0-.54-.03-.8-.08.54 1.7 2.1 2.94 3.95 2.97A8.6 8.6 0 0 1 2 19.54c-.29 0-.57-.02-.85-.05A12.13 12.13 0 0 0 8.29 21.5c7.55 0 11.68-6.26 11.68-11.68 0-.18-.01-.36-.02-.54A8.18 8.18 0 0 0 24 4.59a8.36 8.36 0 0 1-2.54.7z"/></svg></a>
-                <a href="#" class="text-gray-400 hover:text-blue-600"><svg fill="currentColor" viewBox="0 0 24 24" class="h-5 w-5"><path d="M19.6 3.2H4.4A1.2 1.2 0 0 0 3.2 4.4v15.2a1.2 1.2 0 0 0 1.2 1.2h8.2v-6.6h-2.2v-2.6h2.2V9.5c0-2.2 1.3-3.4 3.3-3.4.9 0 1.7.1 1.9.1v2.2h-1.3c-1 0-1.2.5-1.2 1.2v1.6h2.4l-.3 2.6h-2.1V21h4.1a1.2 1.2 0 0 0 1.2-1.2V4.4a1.2 1.2 0 0 0-1.2-1.2z"/></svg></a>
-                <a href="#" class="text-gray-400 hover:text-blue-600"><svg fill="currentColor" viewBox="0 0 24 24" class="h-5 w-5"><path d="M22.23 0H1.77C.8 0 0 .77 0 1.72v20.56C0 23.23.8 24 1.77 24h20.46c.97 0 1.77-.77 1.77-1.72V1.72C24 .77 23.2 0 22.23 0zM7.12 20.45H3.56V9h3.56v11.45zM5.34 7.67a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zm15.11 12.78h-3.56v-5.6c0-1.33-.03-3.05-1.5-3.05-1.86 0-2.15 1.45-2.15 2.95v5.7h-3.56V9h3.42v1.56h.05c.4-.91 1.65-1.86 3.4-1.86 3.63 0 4.3 2.39 4.3 5.5v6.25z"/></svg></a>
-                <a href="#" class="text-gray-400 hover:text-blue-600"><svg fill="currentColor" viewBox="0 0 24 24" class="h-5 w-5"><path d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-8.5 19h-3v-9h3v9zm-1.5-10.28c-.97 0-1.75-.79-1.75-1.75s.78-1.75 1.75-1.75 1.75.79 1.75 1.75-.78 1.75-1.75 1.75zm13.5 10.28h-3v-4.5c0-1.08-.02-2.47-1.5-2.47-1.5 0-1.73 1.17-1.73 2.39v4.58h-3v-9h2.88v1.23h.04c.4-.75 1.38-1.54 2.84-1.54 3.04 0 3.6 2 3.6 4.59v5.72z"/></svg></a>
-            </div>
-            <div class="flex items-center space-x-2 text-gray-400 text-xs">
-                <select class="border rounded px-2 py-1 text-xs">
-                    <option>English</option>
-                </select>
-                <span>&copy; 2022 Brand, Inc. • <a href="#" class="hover:underline">Privacy</a> • <a href="#" class="hover:underline">Terms</a> • <a href="#" class="hover:underline">Sitemap</a></span>
-            </div>
-            <div class="mt-4 text-xs text-gray-400 flex items-center">
-                <span>Made with</span>
-                <img src="https://visily.ai/favicon.ico" class="h-4 w-4 mx-1" alt="Visily">
-                <span>Visily</span>
+
+            <!-- Copyright -->
+            <div class="border-t border-gray-200 mt-8 pt-8 text-center text-gray-600">
+                <p>&copy; 2024 Alandalus Design. All rights reserved.</p>
             </div>
         </div>
     </footer>
-    <script src="script.js"></script>
+
+    <!-- Success Toast Notification -->
+    <div id="success-toast" class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-full opacity-0 transition-all duration-300 flex items-center">
+        <i class="fas fa-check-circle mr-2"></i>
+        <span>Item added to cart successfully!</span>
+    </div>
+
+    <script>
+        // Cart functionality
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const cartCount = document.querySelector('.cart-count');
+        const productModal = document.getElementById('product-modal');
+        const closeModal = document.getElementById('close-modal');
+        const modalMainImage = document.getElementById('modal-main-image');
+        const modalThumbnails = document.getElementById('modal-thumbnails');
+        const modalProductName = document.getElementById('modal-product-name');
+        const modalProductPrice = document.getElementById('modal-product-price');
+        const modalProductDescription = document.getElementById('modal-product-description');
+        const modalQuantity = document.getElementById('modal-quantity');
+        const modalAddToCart = document.getElementById('modal-add-to-cart');
+        
+        function updateCartCount() {
+            cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+
+        // Initialize cart count
+        updateCartCount();
+
+        // Show modal when clicking product card or view details button
+        document.querySelectorAll('.product-card').forEach(card => {
+            const viewDetailsBtn = card.querySelector('.view-details');
+            
+            // Handle click on the view details button
+            viewDetailsBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent card click event
+                openProductModal(card);
+            });
+
+            // Handle click on the entire card
+            card.addEventListener('click', () => {
+                openProductModal(card);
+            });
+        });
+
+        // Function to open product modal
+        function openProductModal(card) {
+            const name = card.dataset.name;
+            const price = card.dataset.price;
+            const description = card.dataset.description;
+            const images = JSON.parse(card.dataset.images);
+
+            modalProductName.textContent = name;
+            modalProductPrice.textContent = `₪ ${price}`;
+            modalProductDescription.textContent = description;
+            modalMainImage.src = images[0];
+            modalMainImage.alt = name;
+
+            // Reset quantity
+            modalQuantity.value = 1;
+
+            // Reset design selection
+            document.querySelectorAll('.design-option').forEach(opt => opt.classList.remove('border-primary'));
+            document.querySelector('.design-option[data-design="arabic"]').classList.add('border-primary');
+
+            // Generate thumbnails
+            if (images.length > 1) {
+                modalThumbnails.innerHTML = images.map(img => `
+                    <img src="${img}" alt="${name}" class="w-full h-auto rounded cursor-pointer hover:opacity-75 transition border border-gray-200 modal-thumbnail">
+                `).join('');
+
+                // Add thumbnail click handlers
+                document.querySelectorAll('.modal-thumbnail').forEach(thumb => {
+                    thumb.addEventListener('click', () => {
+                        modalMainImage.src = thumb.src;
+                        modalMainImage.alt = thumb.alt;
+                    });
+                });
+                modalThumbnails.classList.remove('hidden');
+            } else {
+                modalThumbnails.innerHTML = '';
+                modalThumbnails.classList.add('hidden');
+            }
+
+            // Show modal with animation
+            productModal.classList.remove('hidden');
+            productModal.classList.add('flex');
+            setTimeout(() => {
+                productModal.querySelector('.bg-white').classList.add('scale-100');
+                productModal.querySelector('.bg-white').classList.remove('scale-95');
+            }, 10);
+        }
+
+        // Close modal
+        closeModal.addEventListener('click', () => {
+            closeProductModal();
+        });
+
+        // Close modal when clicking outside
+        productModal.addEventListener('click', (e) => {
+            if (e.target === productModal) {
+                closeProductModal();
+            }
+        });
+
+        // Function to close product modal
+        function closeProductModal() {
+            const modalContent = productModal.querySelector('.bg-white');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => {
+                productModal.classList.remove('flex');
+                productModal.classList.add('hidden');
+            }, 150);
+        }
+
+        // Modal quantity controls
+        document.getElementById('modal-decrease-quantity').addEventListener('click', () => {
+            if (modalQuantity.value > 1) modalQuantity.value--;
+        });
+
+        document.getElementById('modal-increase-quantity').addEventListener('click', () => {
+            modalQuantity.value++;
+        });
+
+        // Design option selection
+        document.querySelectorAll('.design-option').forEach(option => {
+            option.addEventListener('click', () => {
+                document.querySelectorAll('.design-option').forEach(opt => opt.classList.remove('border-primary'));
+                option.classList.add('border-primary');
+            });
+        });
+
+        // Modal add to cart
+        modalAddToCart.addEventListener('click', () => {
+            const product = {
+                id: Date.now(),
+                name: modalProductName.textContent,
+                price: parseFloat(modalProductPrice.textContent.replace('₪ ', '')),
+                quantity: parseInt(modalQuantity.value),
+                image: modalMainImage.src,
+                design: document.querySelector('.design-option.border-primary')?.dataset.design || 'arabic'
+            };
+
+            const existingProduct = cart.find(item => 
+                item.name === product.name && 
+                item.design === product.design
+            );
+
+            if (existingProduct) {
+                existingProduct.quantity += product.quantity;
+            } else {
+                cart.push(product);
+            }
+
+            updateCartCount();
+            showToast();
+            
+            // Close modal with animation
+            closeProductModal();
+        });
+
+        // Toast notification
+        function showToast() {
+            const toast = document.getElementById('success-toast');
+            toast.classList.remove('translate-y-full', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-full', 'opacity-0');
+            }, 3000);
+        }
+
+        // Initialize functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCartCount();
+        });
+    </script>
 </body>
-</html>
+</html> 
