@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alandalus Design | Wishlist</title>
+    <link rel="stylesheet" href="../HomePage/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 
+                        primary: "#122c6f", 
+                        secondary: "#f13b1c",
+                        beige: "#F5F5DC",
+                        gold: "#FFD700"
+                    }
+                },
+            },
+        };
+    </script>
+</head>
+<body class="font-poppins bg-beige/10">
+    <header>
+        <a href="../HomePage/index.html" class="logo text-primary font-['Pacifico'] text-2xl">Alandalus Design</a>
+        <!-- Navigation Bar -->
+        <nav class="main-nav">
+            <ul>
+                <li><a href="../HomePage/index.html">Home</a></li>
+                <li><a href="product.html">Products</a></li>
+                <li><a href="../ContactPage/contact.html">Connect</a></li>
+                <li>
+                    <a href="../CartPage/cart.html" class="relative">
+                        <i class="fa-solid fa-cart-shopping text-primary"></i>
+                        <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center cart-count">0</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../ProfilePage/profile.html">
+                        <i class="fa-solid fa-user text-primary"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="wishlist.html" class="relative text-primary font-bold">
+                        <i class="fa-solid fa-heart text-primary"></i>
+                        <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center wishlist-count">0</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <!-- Breadcrumb -->
+        <nav class="flex mb-8" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                <li class="inline-flex items-center">
+                    <a href="../HomePage/index.html" class="text-gray-700 hover:text-primary">
+                        <i class="fas fa-home mr-2"></i>
+                        Home
+                    </a>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+                        <span class="text-primary font-medium">Wishlist</span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+
+        <!-- Wishlist Content -->
+        <div class="max-w-6xl mx-auto">
+            <h1 class="text-3xl font-bold text-center mb-8">My Wishlist</h1>
+            
+            <!-- Empty Wishlist Message -->
+            <div id="empty-wishlist" class="text-center py-12 hidden">
+                <i class="far fa-heart text-6xl text-gray-300 mb-4"></i>
+                <p class="text-gray-500 mb-4">Your wishlist is empty</p>
+                <a href="product.html" class="inline-block bg-primary text-white px-6 py-2 rounded-full hover:bg-opacity-90 transition">
+                    Browse Products
+                </a>
+            </div>
+
+            <!-- Wishlist Items Grid -->
+            <div id="wishlist-items" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Items will be dynamically added here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-100 mt-16">
+        <div class="container mx-auto px-4 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Brand Section -->
+                <div class="col-span-1 md:col-span-2">
+                    <a href="../HomePage/index.html" class="text-primary font-['Pacifico'] text-2xl">Alandalus Design</a>
+                    <p class="mt-4 text-gray-600">Crafting personalized Arabic and Islamic designs that tell your unique story. Every piece is created with love and attention to detail.</p>
+                    <div class="mt-6 flex space-x-4">
+                        <a href="https://www.facebook.com/Al.Andalus.Design" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-secondary transition" title="Follow us on Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://www.instagram.com/andalus_design" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-secondary transition" title="Follow us on Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://t.me/andalusdesign" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-secondary transition" title="Join our Telegram Channel">
+                            <i class="fab fa-telegram"></i>
+                        </a>
+                        <a href="https://wa.me/message/7YZUEAMKO53SM1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-secondary transition" title="Contact us on WhatsApp">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="font-bold text-lg mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../HomePage/index.html" class="text-gray-600 hover:text-primary transition">Home</a></li>
+                        <li><a href="product.html" class="text-gray-600 hover:text-primary transition">Products</a></li>
+                        <li><a href="../ContactPage/contact.html" class="text-gray-600 hover:text-primary transition">Contact</a></li>
+                        <li><a href="../CartPage/cart.html" class="text-gray-600 hover:text-primary transition">Cart</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div>
+                    <h3 class="font-bold text-lg mb-4">Contact Us</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-envelope w-6"></i>
+                            <span>infoalandalusdesign@gmail.com</span>
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-phone w-6"></i>
+                            <span>+972 59-464-6503</span>
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-map-marker-alt w-6"></i>
+                            <span>Sufyan Street - Raddad Building, Nablus 009709</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Copyright -->
+            <div class="border-t border-gray-200 mt-8 pt-8 text-center text-gray-600">
+                <p>&copy; 2024 Alandalus Design. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize cart and wishlist
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+        const cartCount = document.querySelector('.cart-count');
+        const wishlistCount = document.querySelector('.wishlist-count');
+        const wishlistItems = document.getElementById('wishlist-items');
+        const emptyWishlist = document.getElementById('empty-wishlist');
+
+        // Update counts
+        cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
+        wishlistCount.textContent = wishlist.length;
+
+        // Function to remove item from wishlist
+        function removeFromWishlist(index) {
+            wishlist.splice(index, 1);
+            localStorage.setItem('wishlist', JSON.stringify(wishlist));
+            renderWishlist();
+        }
+
+        // Function to add item to cart
+        function addToCart(item) {
+            const existingItem = cart.find(cartItem => cartItem.name === item.name);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    ...item,
+                    quantity: 1
+                });
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
+        }
+
+        // Render wishlist items
+        function renderWishlist() {
+            if (wishlist.length === 0) {
+                emptyWishlist.classList.remove('hidden');
+                wishlistItems.classList.add('hidden');
+                return;
+            }
+
+            emptyWishlist.classList.add('hidden');
+            wishlistItems.classList.remove('hidden');
+            wishlistItems.innerHTML = wishlist.map((item, index) => `
+                <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all">
+                    <div class="h-64 overflow-hidden relative">
+                        <img src="${item.image}" alt="${item.name}" class="w-full h-full object-contain">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-aboreto text-xl mb-2">${item.name}</h3>
+                        <p class="text-primary font-aboreto text-lg mb-4">₪ ${item.price}</p>
+                        <div class="flex justify-between items-center">
+                            <button onclick="addToCart(${JSON.stringify(item).replace(/"/g, '&quot;')})" 
+                                    class="bg-primary text-white px-4 py-2 rounded-full hover:bg-opacity-90 transition">
+                                Add to Cart
+                            </button>
+                            <button onclick="removeFromWishlist(${index})" 
+                                    class="text-red-500 hover:text-red-600 transition">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Initial render
+        renderWishlist();
+    </script>
+</body>
+</html> 
