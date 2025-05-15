@@ -54,12 +54,21 @@
 <!--        </figure>-->
 
         <a href="#" class="logo text-primary font-['Pacifico'] text-2xl">Alandalus Design</a>
+        <!-- Navigation Bar -->
         <nav class="main-nav">
             <ul>
-                <li><a href="">Home</a></li>
-                <li><a href="">Products</a></li>
-                <li><a href="">Connect</a></li>
-                <a href="../SignIn&Up/sign.php"><i class="fa-solid fa-user" style="color: #122c6f;"></i></a>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="../ProductsPage/product.html">Products</a></li>
+                <li><a href="../ContactPage/contact.html">Connect</a></li>
+                <li>
+                    <a href="../CartPage/cart.html" class="relative">
+                        <i class="fa-solid fa-cart-shopping text-primary"></i>
+                        <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center cart-count">0</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../SignIn&Up/sign.php"><i class="fa-solid fa-user" style="color: #122c6f;"></i></a>
+                </li>
             </ul>
         </nav>
 
@@ -1014,15 +1023,15 @@
                     <ul class="space-y-2">
                         <li class="flex items-center text-gray-600">
                             <i class="fas fa-envelope w-6"></i>
-                            <span>info@alandalusdesign.com</span>
+                            <span>infoalandalusdesign@gmail.com</span>
                         </li>
                         <li class="flex items-center text-gray-600">
                             <i class="fas fa-phone w-6"></i>
-                            <span>+970 59-999-9999</span>
+                            <span>+972 59-464-6503</span>
                         </li>
                         <li class="flex items-center text-gray-600">
                             <i class="fas fa-map-marker-alt w-6"></i>
-                            <span>Palestine, Gaza Strip</span>
+                            <span>Sufyan Street - Raddad Building, Nablus 009709</span>
                         </li>
                     </ul>
                 </div>
@@ -1039,6 +1048,30 @@
 
     <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <script>
+        // Initialize cart count
+        document.addEventListener('DOMContentLoaded', function() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            updateCartCount();
+
+            // Listen for cart updates
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'cart') {
+                    updateCartCount();
+                }
+            });
+        });
+
+        // Function to update cart count
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const cartCount = document.querySelector('.cart-count');
+            cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
+        }
+
+        // Rest of your existing script code...
+    </script>
 
 </body>
 </html>
