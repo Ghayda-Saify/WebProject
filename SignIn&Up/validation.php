@@ -12,19 +12,26 @@
 if (isset($_POST['txtEmailSignIn']) && isset($_POST['txtPasswordSignIn'])) {
     $userEmail = $_POST['txtEmailSignIn'];
     $userPassword = $_POST['txtPasswordSignIn'];
+    $sha1Password = sha1($userPassword);
 
     try {
         $db = new mysqli("localhost", "root", '', "alandalus");
-        $qrystr = "select * from accounts";
-        $res=$db->query($qrystr);
-        for($i=0;$i<$res->num_rows;$i++){
-            $row = $res->fetch_assoc();
-            echo "<br>".$row['Name'];
+        $qrystr = "SELECT * FROM accounts WHERE email = '$userEmail' AND password = '$sha1Password'";
+        $res = $db->query($qrystr);
+
+        if ($res && $res->num_rows > 0) {
+            header("Location: ../Home Page/index.php");
+
+        } else {
+            echo "Invalid email or password.";
         }
+
+        $db->close();
     } catch (Exception $e) {
         echo "An error occurred: " . $e->getMessage();
     }
 }
 ?>
+
 </body>
 </html>
