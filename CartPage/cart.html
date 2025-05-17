@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alandalus Design | Cart</title>
+    <link rel="stylesheet" href="../HomePage/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: "#122c6f", secondary: "#f13b1c" }
+                },
+            },
+        };
+    </script>
+</head>
+<body class="font-poppins">
+    <header>
+        <a href="../HomePage/index.html" class="logo text-primary font-['Pacifico'] text-2xl">Alandalus Design</a>
+        <!-- Navigation Bar -->
+        <nav class="main-nav">
+            <ul>
+                <li><a href="../HomePage/index.html">Home</a></li>
+                <li><a href="../ProductsPage/product.html">Products</a></li>
+                <li><a href="../ContactPage/contact.html">Connect</a></li>
+                <li>
+                    <a href="cart.html" class="relative">
+                        <i class="fa-solid fa-cart-shopping text-primary"></i>
+                        <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center cart-count">0</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../ProfilePage/profile.html">
+                        <i class="fa-solid fa-user text-primary"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Breadcrumb -->
+        <div class="text-sm text-gray-500 mb-8">
+            <a href="../HomePage/index.html" class="hover:text-blue-600">Home</a>
+            <span class="mx-2">/</span>
+            <a href="../ProductsPage/product.html" class="hover:text-blue-600">Products</a>
+            <span class="mx-2">/</span>
+            <span class="text-gray-800">Shopping Cart</span>
+        </div>
+
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Cart Items -->
+            <div class="lg:w-2/3">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-2xl font-semibold mb-6">Shopping Cart</h2>
+                    <div id="cart-items" class="space-y-4">
+                        <!-- Cart items will be dynamically inserted here -->
+                    </div>
+                    <div id="empty-cart-message" class="hidden text-center py-8 text-gray-500">
+                        Your cart is empty. <a href="../ProductsPage/product.html" class="text-blue-600 hover:underline">Continue shopping</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="lg:w-1/3">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-semibold mb-4">Order Summary</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span>Subtotal</span>
+                            <span id="subtotal">₪0.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Shipping</span>
+                            <span id="shipping">₪20.00</span>
+                        </div>
+                        <div class="border-t pt-3 mt-3">
+                            <div class="flex justify-between font-semibold">
+                                <span>Total</span>
+                                <span id="total">₪0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="checkout-button" class="w-full bg-blue-600 text-white py-3 rounded-lg mt-6 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Proceed to Checkout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-100 mt-16">
+        <div class="container mx-auto px-4 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Brand Section -->
+                <div class="col-span-1 md:col-span-2">
+                    <a href="../HomePage/index.html" class="text-primary font-['Pacifico'] text-2xl">Alandalus Design</a>
+                    <p class="mt-4 text-gray-600">Crafting personalized Arabic and Islamic designs that tell your unique story. Every piece is created with love and attention to detail.</p>
+                    <div class="mt-6 flex space-x-4">
+                        <a href="https://www.facebook.com/Al.Andalus.Design" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-secondary transition" title="Follow us on Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://www.instagram.com/andalus_design" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-secondary transition" title="Follow us on Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://t.me/andalusdesign" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-secondary transition" title="Join our Telegram Channel">
+                            <i class="fab fa-telegram"></i>
+                        </a>
+                        <a href="https://wa.me/message/7YZUEAMKO53SM1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-secondary transition" title="Contact us on WhatsApp">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="font-bold text-lg mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../HomePage/index.html" class="text-gray-600 hover:text-primary transition">Home</a></li>
+                        <li><a href="../ProductsPage/product.html" class="text-gray-600 hover:text-primary transition">Products</a></li>
+                        <li><a href="../ContactPage/contact.html" class="text-gray-600 hover:text-primary transition">Contact</a></li>
+                        <li><a href="cart.html" class="text-gray-600 hover:text-primary transition">Cart</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div>
+                    <h3 class="font-bold text-lg mb-4">Contact Us</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-envelope w-6"></i>
+                            <span>infoalandalusdesign@gmail.com</span>
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-phone w-6"></i>
+                            <span>+970 59-999-9999</span>
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-map-marker-alt w-6"></i>
+                            <span>Palestine, Gaza Strip</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Copyright -->
+            <div class="border-t border-gray-200 mt-8 pt-8 text-center text-gray-600">
+                <p>&copy; 2024 Alandalus Design. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="cart.js"></script>
+</body>
+</html> 
