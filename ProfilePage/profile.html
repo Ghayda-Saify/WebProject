@@ -373,8 +373,16 @@
 
             // Logout functionality
             document.getElementById('logout-button').addEventListener('click', function() {
-                // Add logout logic here
-                window.location.href = '../SignIn&Up/sign.html';
+                // Clear user session data
+                localStorage.removeItem('user');
+                localStorage.removeItem('isLoggedIn');
+                
+                // Clear cart and wishlist data (optional - remove if you want to keep these)
+                localStorage.removeItem('cart');
+                localStorage.removeItem('wishlist');
+                
+                // Redirect to sign in page
+                window.location.href = '../SignIn&Up/signUp.html';
             });
         });
     </script>

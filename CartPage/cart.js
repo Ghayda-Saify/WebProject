@@ -5,8 +5,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalElement = document.getElementById('total');
     const checkoutButton = document.getElementById('checkout-button');
     const cartCountBadge = document.querySelector('.cart-count');
+    const wishlistCountBadge = document.querySelector('.wishlist-count');
+    const confirmModal = document.getElementById('confirm-modal');
+    const cancelRemoveBtn = document.getElementById('cancel-remove');
+    const confirmRemoveBtn = document.getElementById('confirm-remove');
+    const successToast = document.getElementById('success-toast');
     
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+    let itemToRemove = null;
+
+    // Update wishlist count
+    wishlistCountBadge.textContent = wishlist.length;
+
+    // Function to show toast notification
+    function showToast() {
+        successToast.classList.remove('translate-y-full', 'opacity-0');
+        setTimeout(() => {
+            successToast.classList.add('translate-y-full', 'opacity-0');
+        }, 3000);
+    }
 
     function updateCartDisplay() {
         // Update cart count badge
@@ -38,11 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="flex items-center space-x-3 flex-1">
                     <div class="relative group">
                         <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-contain rounded-lg border border-gray-200">
-                        <div class="hidden group-hover:block absolute -right-2 -top-2 bg-white rounded-full shadow-md">
-                            <button class="text-red-500 hover:text-red-700 p-1 remove-item">
-                                <i class="fas fa-times-circle"></i>
-                            </button>
-                        </div>
                     </div>
                     <div class="flex-1">
                         <div class="flex items-center justify-between">
@@ -61,6 +74,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </button>
                             </div>
                             <p class="text-xs text-gray-500">Total: ₪${(item.price * item.quantity).toFixed(2)}</p>
+                            <button class="text-red-500 hover:text-red-700 transition remove-item flex items-center space-x-1">
+                                <i class="fas fa-trash-alt"></i>
+                                <span class="text-xs">Delete</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -89,20 +106,52 @@ document.addEventListener('DOMContentLoaded', () => {
         cartItemsContainer.querySelectorAll('.remove-item').forEach(button => {
             button.addEventListener('click', (e) => {
                 const cartItem = e.target.closest('[data-index]');
-                const index = parseInt(cartItem.dataset.index);
-                
-                // Add fade-out animation
-                cartItem.style.transition = 'all 0.3s ease';
-                cartItem.style.opacity = '0';
-                cartItem.style.transform = 'translateX(20px)';
-                
-                setTimeout(() => {
-                    cart.splice(index, 1);
-                    updateCart();
-                }, 300);
+                itemToRemove = {
+                    element: cartItem,
+                    index: parseInt(cartItem.dataset.index)
+                };
+                confirmModal.classList.remove('hidden');
+                confirmModal.classList.add('flex');
             });
         });
     }
+
+    // Cancel remove
+    cancelRemoveBtn.addEventListener('click', () => {
+        confirmModal.classList.remove('flex');
+        confirmModal.classList.add('hidden');
+        itemToRemove = null;
+    });
+
+    // Confirm remove
+    confirmRemoveBtn.addEventListener('click', () => {
+        if (itemToRemove) {
+            const { element, index } = itemToRemove;
+            
+            // Add fade-out animation
+            element.style.transition = 'all 0.3s ease';
+            element.style.opacity = '0';
+            element.style.transform = 'translateX(20px)';
+            
+            setTimeout(() => {
+                cart.splice(index, 1);
+                updateCart();
+                showToast();
+            }, 300);
+        }
+        confirmModal.classList.remove('flex');
+        confirmModal.classList.add('hidden');
+        itemToRemove = null;
+    });
+
+    // Close modal when clicking outside
+    confirmModal.addEventListener('click', (e) => {
+        if (e.target === confirmModal) {
+            confirmModal.classList.remove('flex');
+            confirmModal.classList.add('hidden');
+            itemToRemove = null;
+        }
+    });
 
     function updateCartWithAnimation(element, action) {
         const quantityElement = element.closest('[data-index]').querySelector('.quantity');
