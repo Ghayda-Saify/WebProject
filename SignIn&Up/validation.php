@@ -9,26 +9,33 @@
 </head>
 <body>
 <?php
+//phpinfo();
+
+
+
 if (isset($_POST['txtEmailSignIn']) && isset($_POST['txtPasswordSignIn'])) {
     $userEmail = $_POST['txtEmailSignIn'];
     $userPassword = $_POST['txtPasswordSignIn'];
     $sha1Password = sha1($userPassword);
 
     try {
-        $db = new mysqli("localhost", "root", '', "alandalus");
-        $qrystr = "SELECT * FROM accounts WHERE email = '$userEmail' AND password = '$sha1Password'";
-        $res = $db->query($qrystr);
+        $db = new mysqli("127.0.0.1", "root", '', "alandalus");
+//        $qrystr = "SELECT * FROM 'Users' WHERE 'Email' = '$userEmail' AND 'Password' = '$sha1Password'";
+        $stmt = $db->prepare("SELECT * FROM Users WHERE Email = ? AND Password = ?");
+        $stmt->bind_param("ss", $userEmail, $sha1Password);
+        $stmt->execute();
+        $res = $stmt->get_result();
 
         if ($res && $res->num_rows > 0) {
-            header("Location: ../Home Page/index.php");
-
+            header("Location: ../index.html");
         } else {
             echo "Invalid email or password.";
         }
 
+
         $db->close();
     } catch (Exception $e) {
-        echo "An error occurred: " . $e->getMessage();
+        echo "An error occurred: ",$e->getMessage(), "<br>";
     }
 }
 ?>
