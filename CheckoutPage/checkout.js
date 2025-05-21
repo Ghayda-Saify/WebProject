@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Here you would typically send the order to a backend service
         alert('Order placed successfully!');
         localStorage.removeItem('cartItems');
-        window.location.href = '../HomePage/index.html';
+        window.location.href = '../index.html';
     });
 
     // Initialize checkout display
