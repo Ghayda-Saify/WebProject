@@ -186,3 +186,112 @@ if (wishlistIcon) {
         showToast('Wishlist feature coming soon!');
     });
 }
+
+// Product data for search functionality
+const products = [
+    {
+        name: "Custom Notebook",
+        price: 20.00,
+        image: "imgs/notebook2-removebg-preview.png",
+        description: "PERSONALIZED CREATIONS, CRAFTED FOR YOU"
+    },
+    {
+        name: "Custom Cover",
+        price: 20.00,
+        image: "imgs/cover2-removebg-preview.png",
+        description: "Elegant and personalized covers for your books and devices"
+    },
+    {
+        name: "Custom Hoodie",
+        price: 60.00,
+        image: "imgs/hoodi-removebg-preview.png",
+        description: "Comfortable and stylish hoodies with Arabic calligraphy"
+    },
+    {
+        name: "Custom Mug",
+        price: 15.00,
+        image: "imgs/mug-removebg-preview.png",
+        description: "Personalized mugs with Arabic calligraphy"
+    },
+    {
+        name: "Custom Handbag",
+        price: 45.00,
+        image: "imgs/زرف-removebg-preview.png",
+        description: "Elegant handbags with unique Arabic designs"
+    },
+    {
+        name: "Custom Pins",
+        price: 10.00,
+        image: "imgs/دبابيس.png",
+        description: "Beautiful pins featuring Arabic calligraphy"
+    }
+];
+
+// Search functionality
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('search-input');
+    const searchButton = document.getElementById('search-button');
+    const searchResults = document.getElementById('search-results');
+
+    function performSearch(query) {
+        query = query.toLowerCase().trim();
+        if (query === '') {
+            searchResults.classList.add('hidden');
+            return;
+        }
+
+        const results = products.filter(product => 
+            product.name.toLowerCase().includes(query) ||
+            product.description.toLowerCase().includes(query)
+        );
+
+        displayResults(results);
+    }
+
+    function displayResults(results) {
+        if (results.length === 0) {
+            searchResults.innerHTML = `
+                <div class="p-4 text-center text-gray-500">
+                    No products found
+                </div>
+            `;
+        } else {
+            searchResults.innerHTML = results.map(product => `
+                <a href="../ProductsPage/product.html" class="block p-4 hover:bg-gray-50 border-b last:border-b-0">
+                    <div class="flex items-center">
+                        <img src="${product.image}" alt="${product.name}" class="w-12 h-12 object-contain">
+                        <div class="ml-3">
+                            <h4 class="text-sm font-medium">${product.name}</h4>
+                            <p class="text-xs text-gray-500">${product.description}</p>
+                            <span class="text-sm text-primary font-semibold">₪${product.price.toFixed(2)}</span>
+                        </div>
+                    </div>
+                </a>
+            `).join('');
+        }
+        searchResults.classList.remove('hidden');
+    }
+
+    // Search input event listeners
+    searchInput.addEventListener('input', (e) => {
+        performSearch(e.target.value);
+    });
+
+    searchButton.addEventListener('click', () => {
+        performSearch(searchInput.value);
+    });
+
+    // Close search results when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+            searchResults.classList.add('hidden');
+        }
+    });
+
+    // Handle Enter key
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            performSearch(searchInput.value);
+        }
+    });
+});

@@ -28,8 +28,9 @@
 <body class="font-poppins bg-beige/10">
     <header>
         <a href="../HomePage/index.html" class="logo text-primary font-['Pacifico'] text-2xl">Alandalus Design</a>
-        <nav class="main-nav">
-            <ul>
+        <nav class="main-nav flex items-center w-full">
+            <div class="flex-1 min-w-[150px]"></div> <!-- Increased minimum width spacer -->
+            <ul class="flex items-center justify-center gap-8">
                 <li><a href="../HomePage/index.html">Home</a></li>
                 <li><a href="product.html" class="text-primary font-bold">Products</a></li>
                 <li><a href="../ContactPage/contact.html">Connect</a></li>
@@ -51,6 +52,15 @@
                     </a>
                 </li>
             </ul>
+            <div class="flex-1 flex justify-end"> <!-- Spacer with search container -->
+                <div class="search-container flex items-center bg-white rounded-full border border-gray-200 px-3 py-1">
+                    <input type="text" id="search-input" placeholder="Search products..." class="w-40 focus:outline-none text-sm">
+                    <button id="search-button" class="ml-2">
+                        <i class="fas fa-search text-gray-400 hover:text-primary transition"></i>
+                    </button>
+                    <div id="search-results" class="absolute top-full mt-2 w-64 bg-white rounded-lg shadow-lg hidden z-50 max-h-96 overflow-y-auto"></div>
+                </div>
+            </div>
         </nav>
     </header>
 
@@ -694,6 +704,129 @@
         document.addEventListener('DOMContentLoaded', () => {
             updateCartCount();
             updateWishlistCount();
+        });
+
+        // Product data for search functionality
+        const products = [
+            {
+                name: "Custom Notebook",
+                price: 20.00,
+                image: "../HomePage/imgs/notebook2-removebg-preview.png",
+                description: "PERSONALIZED CREATIONS, CRAFTED FOR YOU"
+            },
+            {
+                name: "Custom Cover",
+                price: 20.00,
+                image: "../HomePage/imgs/cover2-removebg-preview.png",
+                description: "Elegant and personalized covers for your books and devices"
+            },
+            {
+                name: "Custom Hoodie",
+                price: 60.00,
+                image: "../HomePage/imgs/hoodi-removebg-preview.png",
+                description: "Comfortable and stylish hoodies with Arabic calligraphy"
+            },
+            {
+                name: "Custom Mug",
+                price: 15.00,
+                image: "../HomePage/imgs/mug-removebg-preview.png",
+                description: "Personalized mugs with Arabic calligraphy"
+            },
+            {
+                name: "Custom Handbag",
+                price: 45.00,
+                image: "../HomePage/imgs/زرف-removebg-preview.png",
+                description: "Elegant handbags with unique Arabic designs"
+            },
+            {
+                name: "Custom Pins",
+                price: 10.00,
+                image: "../HomePage/imgs/دبابيس.png",
+                description: "Beautiful pins featuring Arabic calligraphy"
+            }
+        ];
+
+        // Search functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('search-input');
+            const searchButton = document.getElementById('search-button');
+            const searchResults = document.getElementById('search-results');
+
+            function performSearch(query) {
+                query = query.toLowerCase().trim();
+                if (query === '') {
+                    searchResults.classList.add('hidden');
+                    return;
+                }
+
+                const results = products.filter(product => 
+                    product.name.toLowerCase().includes(query) ||
+                    product.description.toLowerCase().includes(query)
+                );
+
+                displayResults(results);
+            }
+
+            function displayResults(results) {
+                if (results.length === 0) {
+                    searchResults.innerHTML = `
+                        <div class="p-4 text-center text-gray-500">
+                            No products found
+                        </div>
+                    `;
+                } else {
+                    searchResults.innerHTML = results.map(product => `
+                        <div class="block p-4 hover:bg-gray-50 border-b last:border-b-0 cursor-pointer product-search-result" 
+                             data-name="${product.name}">
+                            <div class="flex items-center">
+                                <img src="${product.image}" alt="${product.name}" class="w-12 h-12 object-contain">
+                                <div class="ml-3">
+                                    <h4 class="text-sm font-medium">${product.name}</h4>
+                                    <p class="text-xs text-gray-500">${product.description}</p>
+                                    <span class="text-sm text-primary font-semibold">₪${product.price.toFixed(2)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    // Add click handlers for search results
+                    document.querySelectorAll('.product-search-result').forEach(result => {
+                        result.addEventListener('click', () => {
+                            const productName = result.dataset.name;
+                            const productCard = document.querySelector(`.product-card[data-name="${productName}"]`);
+                            if (productCard) {
+                                productCard.querySelector('.view-details').click();
+                                searchResults.classList.add('hidden');
+                                searchInput.value = '';
+                            }
+                        });
+                    });
+                }
+                searchResults.classList.remove('hidden');
+            }
+
+            // Search input event listeners
+            searchInput.addEventListener('input', (e) => {
+                performSearch(e.target.value);
+            });
+
+            searchButton.addEventListener('click', () => {
+                performSearch(searchInput.value);
+            });
+
+            // Close search results when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                    searchResults.classList.add('hidden');
+                }
+            });
+
+            // Handle Enter key
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    performSearch(searchInput.value);
+                }
+            });
         });
     </script>
 </body>
