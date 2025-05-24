@@ -10,6 +10,105 @@
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
+
+    <link
+            href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+            rel="stylesheet"
+    />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet"
+    />
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
+    />
+    <style>
+        .swiper {
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .swiper-slide {
+            background-color: #eee;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 18px;
+            padding: 40px 0;
+            width: auto;
+        }
+        .category__title {
+            transition: color 0.3s ease;
+        }
+        .category__img {
+            width: 100%;
+            height: 200px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            object-fit: contain;
+            background-color: #fff;
+            transition: transform 0.3s ease;
+        }
+        .category__item:hover .category__img {
+            transform: scale(1.05);
+        }
+        .category__item {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: none;
+            box-shadow: none;         /* Remove any shadow */
+            padding: 0;               /* Remove any extra space */
+            border-radius: 0;         /* Remove rounded corners */
+            overflow: hidden;
+        }
+        .category__item:hover .category__title {
+            color: #f9dd81; /* or your brand color */
+        }
+        .category__item:hover {
+            transform: scale(1.05); /* slightly zoom in */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* add a soft shadow */
+            z-index: 2;
+        }
+
+
+        .fancy-bubbles::before, .fancy-bubbles::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            animation: float 20s linear infinite;
+        }
+
+        .fancy-bubbles::before {
+            width: 300px;
+            height: 300px;
+            top: 10%;
+            left: 5%;
+        }
+
+        .fancy-bubbles::after {
+            width: 200px;
+            height: 200px;
+            bottom: 10%;
+            right: 10%;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-30px); }
+            100% { transform: translateY(0); }
+        }
+
+
+    </style>
     <script>
         tailwind.config = {
             theme: {
@@ -25,13 +124,13 @@
         };
     </script>
 </head>
-<body class="font-poppins bg-beige/10">
+<body class="font-poppins bg-beige/10 fancy-bubbles">
     <header>
-        <a href="../HomePage/index.html" class="logo text-primary font-['Pacifico'] text-2xl">Alandalus Design</a>
+        <a href="../HomePage/index.php" class="logo text-primary font-['Pacifico'] text-2xl">Alandalus Design</a>
         <nav class="main-nav flex items-center w-full">
             <div class="flex-1 min-w-[150px]"></div> <!-- Increased minimum width spacer -->
             <ul class="flex items-center justify-center gap-8">
-                <li><a href="../HomePage/index.html">Home</a></li>
+                <li><a href="../HomePage/index.php">Home</a></li>
                 <li><a href="product.html" class="text-primary font-bold">Products</a></li>
                 <li><a href="../ContactPage/contact.html">Connect</a></li>
                 <li>
@@ -69,7 +168,7 @@
         <nav class="flex mb-8" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1 md:space-x-3">
                 <li class="inline-flex items-center">
-                    <a href="../HomePage/index.html" class="text-gray-700 hover:text-primary">
+                    <a href="../HomePage/index.php" class="text-gray-700 hover:text-primary">
                         <i class="fas fa-home mr-2"></i>
                         Home
                     </a>
@@ -77,11 +176,49 @@
                 <li>
                     <div class="flex items-center">
                         <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
-                        <a href="product.html" class="text-primary font-medium">Products</a>
+                        <a href="product.php" class="text-primary font-medium">Products</a>
                     </div>
                 </li>
             </ol>
         </nav>
+        <!--      categories  -->
+        <!-- Featured Categories -->
+        <?php
+        include_once '../connection.php';
+        global $con;
+        if ($con->connect_error) {
+            die("Connection failed: " . $con->connect_error);
+        }
+        $sql = "SELECT id, name, image FROM categories";
+        $result = $con->query($sql);
+
+        ?>
+        <section class="">
+            <h3 class="section__title "><span>Popular</span> Categories</h3>
+            <p class="text-gray-600 text-center mb-12">
+                Discover our range of customizable products
+            </p>
+            <!-- Slider main container -->
+            <div class="swiper mySwiper">
+                <div class="swiper-wrapper">
+                    <div class="swiper mySwiper">
+                        <div class="swiper-wrapper">
+                            <?php while ($row = $result->fetch_assoc()) { ?>
+                                <a href="../ProductsPage/product.php?category_id=<?php echo $row['id']; ?>" class="swiper-slide category__item">
+                                    <img src="../HomePage/imgs/<?php echo htmlspecialchars($row['image']); ?>" class="category__img" alt="">
+                                    <h3 class="category__title"><?php echo htmlspecialchars($row['name']); ?></h3>
+                                </a>
+                            <?php } ?>
+                        </div>
+
+                        <div class="swiper-button-next"></div>
+                        <div class="swiper-button-prev"></div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
 
         <!-- Product Grid -->
         <section class="mb-16">
@@ -415,7 +552,7 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <!-- Brand Section -->
                 <div class="col-span-1 md:col-span-2">
-                    <a href="../HomePage/index.html" class="text-primary font-['Pacifico'] text-2xl">Alandalus Design</a>
+                    <a href="../HomePage/index.php" class="text-primary font-['Pacifico'] text-2xl">Alandalus Design</a>
                     <p class="mt-4 text-gray-600">Crafting personalized Arabic and Islamic designs that tell your unique story. Every piece is created with love and attention to detail.</p>
                     <div class="mt-6 flex space-x-4">
                         <a href="https://www.facebook.com/Al.Andalus.Design" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-secondary transition" title="Follow us on Facebook">
@@ -437,7 +574,7 @@
                 <div>
                     <h3 class="font-bold text-lg mb-4">Quick Links</h3>
                     <ul class="space-y-2">
-                        <li><a href="../HomePage/index.html" class="text-gray-600 hover:text-primary transition">Home</a></li>
+                        <li><a href="../HomePage/index.php" class="text-gray-600 hover:text-primary transition">Home</a></li>
                         <li><a href="product.html" class="text-gray-600 hover:text-primary transition">Products</a></li>
                         <li><a href="../ContactPage/contact.html" class="text-gray-600 hover:text-primary transition">Contact</a></li>
                         <li><a href="../CartPage/cart.html" class="text-gray-600 hover:text-primary transition">Cart</a></li>
@@ -476,7 +613,50 @@
         <i class="fas fa-check-circle mr-2"></i>
         <span>Item added to cart successfully!</span>
     </div>
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
+    <!--<script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>-->
+
+    <script>
+        const swiper = new Swiper('.mySwiper', {
+            slidesPerView: 3,
+            spaceBetween: 20,
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            loop: true,
+        });
+
+        // Initialize cart count from localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const cartCount = document.querySelector('.cart-count');
+            cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
+        });
+
+    </script>
+    <script>
+        const swiper = new Swiper('.categories__container', {
+            loop: true,
+            autoplay: {
+                delay: 2500, // Time between slides in ms
+                disableOnInteraction: false, // Keep autoplay after user interaction
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            slidesPerView: 3, // You can change this based on your layout
+            spaceBetween: 20,
+            breakpoints: {
+                768: { slidesPerView: 3 },
+                480: { slidesPerView: 2 },
+                0: { slidesPerView: 1 },
+            },
+        });
+    </script>
     <script>
         // TEMPORARY DATA: Replace with database integration
         let cart = JSON.parse(localStorage.getItem('cart')) || [];

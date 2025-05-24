@@ -8,8 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
         sessionStorage.setItem('searchTermLower', searchTerm.toLowerCase());
         
         // If we're not on the products page, redirect to it
-        if (!window.location.href.includes('ProductsPage/product.html')) {
-            window.location.href = '../ProductsPage/product.html';
+        if (!window.location.href.includes('ProductsPage/product.php')) {
+            window.location.href = '../ProductsPage/product.php';
             return;
         }
 
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Check for stored search term when loading the products page
-    if (window.location.href.includes('ProductsPage/product.html')) {
+    if (window.location.href.includes('ProductsPage/product.php')) {
         const storedSearchTerm = sessionStorage.getItem('searchTerm');
         if (storedSearchTerm) {
             searchInput.value = storedSearchTerm;

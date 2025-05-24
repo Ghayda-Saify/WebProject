@@ -257,7 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         } else {
             searchResults.innerHTML = results.map(product => `
-                <a href="../ProductsPage/product.html" class="block p-4 hover:bg-gray-50 border-b last:border-b-0">
+                <a href="../ProductsPage/product.php" class="block p-4 hover:bg-gray-50 border-b last:border-b-0">
                     <div class="flex items-center">
                         <img src="${product.image}" alt="${product.name}" class="w-12 h-12 object-contain">
                         <div class="ml-3">
