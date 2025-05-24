@@ -6,8 +6,7 @@
     <title>Alandalus</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link
-            rel="stylesheet"
+    <link rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com/3.4.16"></script>
@@ -49,17 +48,30 @@
 </head>
 <body>
 <header>
-    <!--        <figure class="logo">-->
-    <!--            <img src="imgs/logo-removebg-preview.png" alt="Alandalus">-->
-    <!--        </figure>-->
 
-    <a href="#" class="logo text-primary font-['Pacifico'] text-2xl">Alandalus Design</a>
+    <a href="index.html" class="logo text-primary font-['Pacifico'] text-2xl">Alandalus Design</a>
     <nav class="main-nav">
         <ul>
-            <li><a href="">Home</a></li>
-            <li><a href="">Products</a></li>
-            <li><a href="">Connect</a></li>
-            <a href="../SignIn&Up/sign.html"><i class="fa-solid fa-user" style="color: #122c6f;"></i></a>
+            <li><a href="index.html" class="text-primary font-bold">Home</a></li>
+            <li><a href="../ProductsPage/product.html">Products</a></li>
+            <li><a href="../ContactPage/contact.html">Connect</a></li>
+            <li>
+                <a href="../CartPage/cart.html" class="relative">
+                    <i class="fa-solid fa-cart-shopping text-primary"></i>
+                    <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center cart-count">0</span>
+                </a>
+            </li>
+            <li>
+                <a href="../SignIn&Up/signUp.html">
+                    <i class="fa-solid fa-user text-primary"></i>
+                </a>
+            </li>
+            <li>
+                <a href="../ProductsPage/wishlist.html" class="relative" id="wishlist-icon">
+                    <i class="fa-solid fa-heart text-primary"></i>
+                    <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center wishlist-count">0</span>
+                </a>
+            </li>
         </ul>
     </nav>
 

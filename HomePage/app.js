@@ -101,3 +101,63 @@ var swiperCategory = new Swiper(".categories__container", {
         },
     },
 });
+
+// Cart and Wishlist functionality
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
+let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+
+// Update cart and wishlist counts
+function updateCounts() {
+    // Update cart count
+    const cartCount = document.querySelector('.cart-count');
+    if (cartCount) {
+        cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
+    }
+
+    // Update wishlist count
+    const wishlistCount = document.querySelector('.wishlist-count');
+    if (wishlistCount) {
+        wishlistCount.textContent = wishlist.length;
+    }
+}
+
+// Initialize counts when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    updateCounts();
+    
+    // Add to cart functionality for carousel items
+    const addToCardButtons = document.querySelectorAll('.addToCard');
+    addToCardButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const item = button.closest('.item');
+            const product = {
+                name: item.querySelector('h2').textContent,
+                price: parseFloat(item.querySelector('.price').textContent.replace('₪ ', '')),
+                quantity: 1,
+                image: item.querySelector('.image img').src
+            };
+
+            const existingProduct = cart.find(p => p.name === product.name);
+            if (existingProduct) {
+                existingProduct.quantity++;
+            } else {
+                cart.push(product);
+            }
+
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCounts();
+            
+            // Show success message
+            alert('Product added to cart!');
+        });
+    });
+});
+
+// Handle wishlist icon click
+const wishlistIcon = document.getElementById('wishlist-icon');
+if (wishlistIcon) {
+    wishlistIcon.addEventListener('click', (e) => {
+        e.preventDefault();
+        alert('Wishlist feature coming soon!');
+    });
+}

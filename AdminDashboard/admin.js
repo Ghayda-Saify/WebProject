@@ -109,9 +109,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Add active state to navigation items
     const navItems = document.querySelectorAll('nav a');
+    const currentPath = window.location.pathname;
+    
+    // Set active state based on current page
     navItems.forEach(item => {
-        item.addEventListener('click', (e) => {
-            e.preventDefault();
+        const href = item.getAttribute('href');
+        if (currentPath.endsWith(href)) {
+            item.classList.add('active');
+        }
+    });
+
+    // Update active state on click (without preventing navigation)
+    navItems.forEach(item => {
+        item.addEventListener('click', () => {
             navItems.forEach(i => i.classList.remove('active'));
             item.classList.add('active');
         });
