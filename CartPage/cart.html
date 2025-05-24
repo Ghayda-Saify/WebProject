@@ -148,11 +148,11 @@
                         </li>
                         <li class="flex items-center text-gray-600">
                             <i class="fas fa-phone w-6"></i>
-                            <span>+970 59-999-9999</span>
+                            <span>+972 59-464-6503</span>
                         </li>
                         <li class="flex items-center text-gray-600">
                             <i class="fas fa-map-marker-alt w-6"></i>
-                            <span>Palestine, Gaza Strip</span>
+                            <span>Sufyan Street - Raddad Building, Nablus 009709</span>
                         </li>
                     </ul>
                 </div>
@@ -192,5 +192,15 @@
     </div>
 
     <script src="cart.js"></script>
+    <script>
+        // DATABASE TODO: Replace localStorage with database operations for wishlist management
+        document.addEventListener('DOMContentLoaded', function() {
+            const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+            const wishlistCount = document.querySelector('.wishlist-count');
+            if (wishlistCount) {
+                wishlistCount.textContent = wishlist.length;
+            }
+        });
+    </script>
 </body>
 </html> 

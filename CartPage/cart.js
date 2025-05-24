@@ -11,11 +11,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const confirmRemoveBtn = document.getElementById('confirm-remove');
     const successToast = document.getElementById('success-toast');
     
+    // TEMPORARY DATA: Replace with database integration
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
     let itemToRemove = null;
 
-    // Update wishlist count
+    // DATABASE TODO: Replace with actual wishlist count from database
     wishlistCountBadge.textContent = wishlist.length;
 
     // Function to show toast notification
@@ -27,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateCartDisplay() {
-        // Update cart count badge
+        // DATABASE TODO: Replace with database operations for cart management
         const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
         cartCountBadge.textContent = totalItems;
         

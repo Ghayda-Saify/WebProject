@@ -40,12 +40,12 @@
                     </a>
                 </li>
                 <li>
-                    <a href="../SignIn&Up/sign.html">
+                    <a href="../ProfilePage/profile.html">
                         <i class="fa-solid fa-user text-primary"></i>
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="relative" id="wishlist-icon">
+                    <a href="wishlist.html" class="relative" id="wishlist-icon">
                         <i class="fa-solid fa-heart text-primary"></i>
                         <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center wishlist-count">0</span>
                     </a>
@@ -444,11 +444,11 @@
                         </li>
                         <li class="flex items-center text-gray-600">
                             <i class="fas fa-phone w-6"></i>
-                            <span>+970 59-999-9999</span>
+                            <span>+972 59-464-6503</span>
                         </li>
                         <li class="flex items-center text-gray-600">
                             <i class="fas fa-map-marker-alt w-6"></i>
-                            <span>Palestine, Gaza Strip</span>
+                            <span>Sufyan Street - Raddad Building, Nablus 009709</span>
                         </li>
                     </ul>
                 </div>
@@ -468,9 +468,11 @@
     </div>
 
     <script>
-        // Cart functionality
+        // TEMPORARY DATA: Replace with database integration
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
         const cartCount = document.querySelector('.cart-count');
+        const wishlistCount = document.querySelector('.wishlist-count');
         const productModal = document.getElementById('product-modal');
         const closeModal = document.getElementById('close-modal');
         const modalMainImage = document.getElementById('modal-main-image');
@@ -480,14 +482,40 @@
         const modalProductDescription = document.getElementById('modal-product-description');
         const modalQuantity = document.getElementById('modal-quantity');
         const modalAddToCart = document.getElementById('modal-add-to-cart');
+        const wishlistIcon = document.getElementById('wishlist-icon');
         
         function updateCartCount() {
             cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
             localStorage.setItem('cart', JSON.stringify(cart));
         }
 
-        // Initialize cart count
+        function updateWishlistCount() {
+            wishlistCount.textContent = wishlist.length;
+            localStorage.setItem('wishlist', JSON.stringify(wishlist));
+        }
+
+        // Initialize counts
         updateCartCount();
+        updateWishlistCount();
+
+        // Set initial wishlist count to 2 if empty
+        if (wishlist.length === 0) {
+            wishlist = [
+                {
+                    id: 1,
+                    name: "Custom Notebook",
+                    price: 20.00,
+                    image: "../HomePage/imgs/notebook2-removebg-preview.png"
+                },
+                {
+                    id: 2,
+                    name: "Custom Hoodie",
+                    price: 60.00,
+                    image: "../HomePage/imgs/hoodi-removebg-preview.png"
+                }
+            ];
+            updateWishlistCount();
+        }
 
         // Show modal when clicking product card or view details button
         document.querySelectorAll('.product-card').forEach(card => {
@@ -623,17 +651,49 @@
         });
 
         // Toast notification
-        function showToast() {
+        function showToast(message = 'Item added to cart successfully!') {
             const toast = document.getElementById('success-toast');
+            toast.querySelector('span').textContent = message;
             toast.classList.remove('translate-y-full', 'opacity-0');
             setTimeout(() => {
                 toast.classList.add('translate-y-full', 'opacity-0');
             }, 3000);
         }
 
+        // Add wishlist functionality
+        wishlistIcon.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Get current product details from modal if open
+            if (productModal.classList.contains('flex')) {
+                const currentProduct = {
+                    id: Date.now(),
+                    name: modalProductName.textContent,
+                    price: parseFloat(modalProductPrice.textContent.replace('₪ ', '')),
+                    image: modalMainImage.src
+                };
+
+                const existingProduct = wishlist.find(item => item.name === currentProduct.name);
+                
+                if (!existingProduct) {
+                    wishlist.push(currentProduct);
+                    showToast('Item added to wishlist!');
+                } else {
+                    wishlist = wishlist.filter(item => item.name !== currentProduct.name);
+                    showToast('Item removed from wishlist!');
+                }
+
+                updateWishlistCount();
+            } else {
+                // If no product is selected, navigate to wishlist page
+                window.location.href = 'wishlist.html';
+            }
+        });
+
         // Initialize functionality
         document.addEventListener('DOMContentLoaded', () => {
             updateCartCount();
+            updateWishlistCount();
         });
     </script>
 </body>

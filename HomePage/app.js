@@ -121,6 +121,31 @@ function updateCounts() {
     }
 }
 
+// Show success toast message
+function showToast(message) {
+    // Create toast element if it doesn't exist
+    let toast = document.getElementById('success-toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'success-toast';
+        toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-full opacity-0 transition-all duration-300 flex items-center';
+        toast.innerHTML = `
+            <i class="fas fa-check-circle mr-2"></i>
+            <span></span>
+        `;
+        document.body.appendChild(toast);
+    }
+    
+    // Update message and show toast
+    toast.querySelector('span').textContent = message;
+    toast.classList.remove('translate-y-full', 'opacity-0');
+    
+    // Hide toast after 3 seconds
+    setTimeout(() => {
+        toast.classList.add('translate-y-full', 'opacity-0');
+    }, 3000);
+}
+
 // Initialize counts when page loads
 document.addEventListener('DOMContentLoaded', () => {
     updateCounts();
@@ -148,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateCounts();
             
             // Show success message
-            alert('Product added to cart!');
+            showToast('Product added to cart successfully!');
         });
     });
 });
@@ -158,6 +183,6 @@ const wishlistIcon = document.getElementById('wishlist-icon');
 if (wishlistIcon) {
     wishlistIcon.addEventListener('click', (e) => {
         e.preventDefault();
-        alert('Wishlist feature coming soon!');
+        showToast('Wishlist feature coming soon!');
     });
 }
