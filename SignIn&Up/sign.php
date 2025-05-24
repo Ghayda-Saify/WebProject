@@ -162,8 +162,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <span>or use your email to register</span>
             <label for="txtName"></label><input type="text" placeholder="Name" name="txtName" id="txtName">
             <label for="txtEmail"></label><input type="email" placeholder="Email" name="txtEmail" id="txtEmail">
-            <label for="txtPassword"></label><input type="password" placeholder="password" name="txtPassword" id="txtPassword">
-            <label for="txtConfirmPass"></label><input type="password" placeholder="Confirm your password" name="txtConfirmPass" id="txtConfirmPass">
+            <div class="password-wrapper">
+                <input type="password" placeholder="Password" name="txtPassword" id="txtPassword">
+                <span class="toggle-password" data-target="txtPassword"><i class="fa fa-eye"></i></span>
+            </div>
+            <div class="password-wrapper">
+                <input type="password" placeholder="Confirm your password" name="txtConfirmPass" id="txtConfirmPass">
+                <span class="toggle-password" data-target="txtConfirmPass"><i class="fa fa-eye"></i></span>
+            </div>
             <button>Sign Up</button>
         </form>
     </div>
@@ -187,7 +193,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <span>or use your email & password</span>
             <label for="txtEmailSignIn"></label><input type="email" placeholder="Email" name="txtEmailSignIn" id="txtEmailSignIn">
-            <label for="txtPasswordSignIn"></label><input type="password" placeholder="password" name="txtPasswordSignIn" id="txtPasswordSignIn">
+            <div class="password-wrapper">
+                <input type="password" placeholder="Password" name="txtPasswordSignIn" id="txtPasswordSignIn">
+                <span class="toggle-password" data-target="txtPasswordSignIn"><i class="fa fa-eye"></i></span>
+            </div>
             <a href="#">Forget Your Password?</a>
             <button>Sign In</button>
         </form>
@@ -233,8 +242,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         text-align: center;
         font-family: 'Cairo', sans-serif;
     }
+    .password-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+    .password-wrapper input[type="password"] {
+        width: 100%;
+        padding-right: 40px;
+    }
+    .toggle-password {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #888;
+        font-size: 1.2rem;
+        z-index: 2;
+        transition: color 0.2s;
+    }
+    .toggle-password:hover {
+        color: #122c6f;
+    }
 </style>
 <script src="script.js"></script>
+<script>
+document.querySelectorAll('.toggle-password').forEach(icon => {
+    icon.addEventListener('click', function() {
+        const targetId = this.getAttribute('data-target');
+        const input = document.getElementById(targetId);
+        if (input) {
+            if (input.type === 'password') {
+                input.type = 'text';
+                this.innerHTML = '<i class="fa fa-eye-slash"></i>';
+            } else {
+                input.type = 'password';
+                this.innerHTML = '<i class="fa fa-eye"></i>';
+            }
+        }
+    });
+});
+</script>
 <?php if (!empty($togglePanel)): ?>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
