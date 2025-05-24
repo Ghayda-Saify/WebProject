@@ -245,3 +245,7 @@ header nav{
 .container.active .toggle-right{
     transform: translateX(200%);
 }
+
+.field_error{
+
+}
