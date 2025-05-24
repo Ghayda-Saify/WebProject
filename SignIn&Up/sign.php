@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     if ($insertStmt->execute()) {
                         $_SESSION['user_email'] = $email;
                         $_SESSION['user_type'] = 'user';
-                        header("Location: ../HomePage/index.html");
+                        header("Location: ../HomePage/index.php");
                         exit();
                     } else {
                         $msg = "Registration failed. Please try again.";
@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($res->num_rows > 0) {
                     $_SESSION['user_email'] = $userEmail;
                     $_SESSION['user_type'] = $emailResult->fetch_assoc()['type'];
-                    header("Location: ../HomePage/index.html");
+                    header("Location: ../HomePage/index.php");
                     exit();
                 } else {
                     $msg = "Incorrect password.";

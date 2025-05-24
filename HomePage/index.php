@@ -12,6 +12,8 @@
     <script src="https://cdn.tailwindcss.com/3.4.16"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
+
     <link
             href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
             rel="stylesheet"
@@ -24,6 +26,94 @@
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
     />
+    <style>
+        .swiper {
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .swiper-slide {
+            background-color: #eee;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 18px;
+            padding: 40px 0;
+            width: auto;
+        }
+        .category__title {
+            transition: color 0.3s ease;
+        }
+        .category__img {
+            width: 100%;
+            height: 200px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            object-fit: contain;
+            background-color: #fff;
+            transition: transform 0.3s ease;
+        }
+        .category__item:hover .category__img {
+            transform: scale(1.05);
+        }
+        .category__item {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: none;
+            box-shadow: none;         /* Remove any shadow */
+            padding: 0;               /* Remove any extra space */
+            border-radius: 0;         /* Remove rounded corners */
+            overflow: hidden;
+        }
+        .category__item:hover .category__title {
+            color: #f9dd81; /* or your brand color */
+        }
+        .category__item:hover {
+            transform: scale(1.05); /* slightly zoom in */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* add a soft shadow */
+            z-index: 2;
+        }
+        .fancy-bubbles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .fancy-bubbles::before, .fancy-bubbles::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            animation: float 20s linear infinite;
+        }
+
+        .fancy-bubbles::before {
+            width: 300px;
+            height: 300px;
+            top: 10%;
+            left: 5%;
+        }
+
+        .fancy-bubbles::after {
+            width: 200px;
+            height: 200px;
+            bottom: 10%;
+            right: 10%;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-30px); }
+            100% { transform: translateY(0); }
+        }
+
+
+    </style>
+
     <script>
         tailwind.config = {
             theme: {
@@ -45,14 +135,18 @@
             },
         };
     </script>
+
+
 </head>
 <body>
+<div class="fancy-bubbles"></div>
+
 <header>
-    <a href="index.html" class="logo text-primary font-['Pacifico'] text-2xl">Alandalus Design</a>
+    <a href="index.php" class="logo text-primary font-['Pacifico'] text-2xl">Alandalus Design</a>
     <nav class="main-nav">
         <ul>
-            <li><a href="index.html" class="text-primary font-bold">Home</a></li>
-            <li><a href="../ProductsPage/product.html">Products</a></li>
+            <li><a href="index.php" class="text-primary font-bold">Home</a></li>
+            <li><a href="../ProductsPage/product.php">Products</a></li>
             <li><a href="../ContactPage/contact.html">Connect</a></li>
             <li>
                 <a href="../CartPage/cart.html" class="relative">
@@ -156,145 +250,40 @@
 
     <!--      categories  -->
     <!-- Featured Categories -->
-    <section class="py-16 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-2">
-                Our Product Categories
-            </h2>
-            <p class="text-gray-600 text-center mb-12">
-                Discover our range of customizable products
-            </p>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Category 1 -->
-                <div
-                        class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all"
-                >
-                    <div class="h-64 overflow-hidden">
-                        <img
-                                src="imgs/hoodi-removebg-preview.png"
-                                alt="Custom T-Shirts"
-                                class="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
-                        />
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2">Custom T-Shirts</h3>
-                        <p class="text-gray-600 mb-4">
-                            Design your perfect t-shirt with our easy-to-use customization
-                            tools.
-                        </p>
-                        <a
-                                href="#"
-                                class="text-primary font-medium hover:text-secondary flex items-center"
-                        >
-                            Customize Now <i class="ri-arrow-right-line ml-2"></i>
-                        </a>
-                    </div>
-                </div>
-                <!-- Category 2 -->
-                <div
-                        class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all"
-                >
-                    <div class="h-64 overflow-hidden">
-                        <img
-                                src="imgs/mugs.jpg"
-                                alt="Custom Mugs"
-                                class="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
-                        />
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2">Custom Mugs</h3>
-                        <p class="text-gray-600 mb-4">
-                            Create personalized mugs with your favorite photos or designs.
-                        </p>
-                        <a
-                                href="#"
-                                class="text-primary font-medium hover:text-secondary flex items-center"
-                        >
-                            Customize Now <i class="ri-arrow-right-line ml-2"></i>
-                        </a>
-                    </div>
-                </div>
-                <!-- Category 3 -->
-                <div
-                        class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all"
-                >
-                    <div class="h-64 overflow-hidden">
-                        <img
-                                src="imgs/bord.jpg"
-                                alt="Wall Art"
-                                class="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
-                        />
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2">Wall Art & Prints</h3>
-                        <p class="text-gray-600 mb-4">
-                            Turn your photos and artwork into stunning wall decorations.
-                        </p>
-                        <a
-                                href="#"
-                                class="text-primary font-medium hover:text-secondary flex items-center"
-                        >
-                            Customize Now <i class="ri-arrow-right-line ml-2"></i>
-                        </a>
-                    </div>
-                </div>
-                <!-- Category 4 -->
-                <div
-                        class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all"
-                >
-                    <div class="h-64 overflow-hidden">
-                        <img
-                                src="imgs/covers.jpg"
-                                alt="Phone Accessories"
-                                class="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
-                        />
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2">Phone Accessories</h3>
-                        <p class="text-gray-600 mb-4">
-                            Personalize your phone cases with unique designs and photos.
-                        </p>
-                        <a
-                                href="#"
-                                class="text-primary font-medium hover:text-secondary flex items-center"
-                        >
-                            Customize Now <i class="ri-arrow-right-line ml-2"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="categories container section ">
-        <h3 class="section__title "><span>Popular</span> Categories</h3>
+    <?php
+        include_once '../connection.php';
+        global $con;
+        if ($con->connect_error) {
+            die("Connection failed: " . $con->connect_error);
+        }
+        $sql = "SELECT id, name, image FROM categories";
+        $result = $con->query($sql);
 
-        <div class="categories__container swiper ">
+    ?>
+    <section class="">
+        <h3 class="section__title "><span style="color : #122c6f">Popular</span> Categories</h3>
+        <p class="text-gray-600 text-center mb-12">
+            Discover our range of customizable products
+        </p>
+        <!-- Slider main container -->
+        <div class="swiper mySwiper">
             <div class="swiper-wrapper">
-                <a href="#shop.html" class="categore__item swiper-slide">
-                    <img src="imgs/fasil.jpg" class="category__img" alt="">
-                    <h3 class="category__title">فواصل</h3>
-                </a>
-                <a href="#shop.html" class="categore__item swiper-slide">
-                    <img src="imgs/dababees.jpg" class="category__img" alt="">
-                    <h3 class="category__title">دبابيس</h3>
-                </a>
-                <a href="#shop.html" class="categore__item swiper-slide">
-                    <img src="imgs/covers.jpg" class="category__img" alt="">
-                    <h3 class="category__title">كفرات</h3>
-                </a>
-                <a href="#shop.html" class="categore__item swiper-slide">
-                    <img src="imgs/bord.jpg" class="category__img" alt="">
-                    <h3 class="category__title">لوحات</h3>
-                </a>
-                <a href="#shop.html" class="categore__item swiper-slide">
-                    <img src="imgs/hoodies.jpg" class="category__img" alt="">
-                    <h3 class="category__title">ملابس</h3>
-                </a>
+                <div class="swiper mySwiper">
+                    <div class="swiper-wrapper">
+                        <?php while ($row = $result->fetch_assoc()) { ?>
+                            <a href="../ProductsPage/product.php?category_id=<?php echo $row['id']; ?>" class="swiper-slide category__item">
+                                <img src="imgs/<?php echo htmlspecialchars($row['image']); ?>" class="category__img" alt="">
+                                <h3 class="category__title"><?php echo htmlspecialchars($row['name']); ?></h3>
+                            </a>
+                        <?php } ?>
+                    </div>
 
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                </div>
             </div>
-            <div class="swiper-button-next"></div>
-            <div class="swiper-button-prev"></div>
         </div>
+
     </section>
 
     <!--        Products-->
@@ -520,7 +509,7 @@
             </div>
             <div class="text-center mt-10">
                 <a
-                        href="#"
+                        href="../ProductsPage/product.php"
                         class="inline-block border-2 border-primary text-primary px-6 py-3 rounded-button font-medium hover:bg-primary hover:text-white transition-colors whitespace-nowrap"
                 >View All Products</a
                 >
@@ -726,78 +715,6 @@
             </div>
         </section>
     </section>
-    <!--        &lt;!&ndash;        contact us&ndash;&gt;-->
-    <!--        <section class="">-->
-    <!--            <div class="container mx-auto ">-->
-    <!--                <h2 class="text-3xl font-bold text-center ">Contact Us</h2>-->
-    <!--                <p class="text-gray-600 text-center ">-->
-    <!--                    Have questions? We're here to help-->
-    <!--                </p>-->
-    <!--                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">-->
-    <!--                    &lt;!&ndash; Contact Form &ndash;&gt;-->
-    <!--                    <div class="bg-white p-8 rounded-lg shadow-sm">-->
-    <!--                        <form>-->
-    <!--                            <div class="mb-6">-->
-    <!--                                <label for="name" class="block text-gray-700 mb-2"-->
-    <!--                                >Full Name</label-->
-    <!--                                >-->
-    <!--                                <input-->
-    <!--                                        type="text"-->
-    <!--                                        id="name"-->
-    <!--                                        class="w-full px-4 py-3 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-sm"-->
-    <!--                                        placeholder="Enter your full name"-->
-    <!--                                />-->
-    <!--                            </div>-->
-    <!--                            <div class="mb-6">-->
-    <!--                                <label for="email" class="block text-gray-700 mb-2"-->
-    <!--                                >Email Address</label-->
-    <!--                                >-->
-    <!--                                <input-->
-    <!--                                        type="email"-->
-    <!--                                        id="email"-->
-    <!--                                        class="w-full px-4 py-3 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-sm"-->
-    <!--                                        placeholder="Enter your email address"-->
-    <!--                                />-->
-    <!--                            </div>-->
-    <!--                            <div class="mb-6">-->
-    <!--                                <label for="subject" class="block text-gray-700 mb-2"-->
-    <!--                                >Subject</label-->
-    <!--                                >-->
-    <!--                                <input-->
-    <!--                                        type="text"-->
-    <!--                                        id="subject"-->
-    <!--                                        class="w-full px-4 py-3 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-sm"-->
-    <!--                                        placeholder="Enter subject"-->
-    <!--                                />-->
-    <!--                            </div>-->
-    <!--                            <div class="mb-6">-->
-    <!--                                <label for="message" class="block text-gray-700 mb-2"-->
-    <!--                                >Message</label-->
-    <!--                                >-->
-    <!--                                <textarea-->
-    <!--                                        id="message"-->
-    <!--                                        rows="5"-->
-    <!--                                        class="w-full px-4 py-3 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-sm"-->
-    <!--                                        placeholder="Enter your message"-->
-    <!--                                ></textarea>-->
-    <!--                            </div>-->
-    <!--                            <div class="mb-6 flex items-center">-->
-    <!--                                <div class="custom-checkbox" id="privacy-checkbox"></div>-->
-    <!--                                <label-->
-    <!--                                        for="privacy-checkbox"-->
-    <!--                                        class="ml-2 text-sm text-gray-700 cursor-pointer"-->
-    <!--                                >I agree to the Privacy Policy and Terms of Service</label-->
-    <!--                                >-->
-    <!--                            </div>-->
-    <!--                            <button-->
-    <!--                                    type="submit"-->
-    <!--                                    class="w-full bg-primary text-white py-3 px-6 rounded-button font-medium hover:bg-opacity-90 transition-colors whitespace-nowrap"-->
-    <!--                            >-->
-    <!--                                Send Message-->
-    <!--                            </button>-->
-    <!--                        </form>-->
-    <!--                    </div>-->
-
 
     <!-- Map + Footer -->
     <footer class="bg-gray-100 mt-16">
@@ -805,7 +722,7 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <!-- Brand Section -->
                 <div class="col-span-1 md:col-span-2">
-                    <a href="index.html" class="text-primary font-['Pacifico'] text-2xl">Alandalus Design</a>
+                    <a href="index.php" class="text-primary font-['Pacifico'] text-2xl">Alandalus Design</a>
                     <p class="mt-4 text-gray-600">Crafting personalized Arabic and Islamic designs that tell your unique story. Every piece is created with love and attention to detail.</p>
                     <div class="mt-6 flex space-x-4">
                         <a href="https://www.facebook.com/Al.Andalus.Design" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-secondary transition" title="Follow us on Facebook">
@@ -827,8 +744,8 @@
                 <div>
                     <h3 class="font-bold text-lg mb-4">Quick Links</h3>
                     <ul class="space-y-2">
-                        <li><a href="index.html" class="text-gray-600 hover:text-primary transition">Home</a></li>
-                        <li><a href="../ProductsPage/product.html" class="text-gray-600 hover:text-primary transition">Products</a></li>
+                        <li><a href="index.php" class="text-gray-600 hover:text-primary transition">Home</a></li>
+                        <li><a href="../ProductsPage/product.php" class="text-gray-600 hover:text-primary transition">Products</a></li>
                         <li><a href="../ContactPage/contact.html" class="text-gray-600 hover:text-primary transition">Contact</a></li>
                         <li><a href="../CartPage/cart.html" class="text-gray-600 hover:text-primary transition">Cart</a></li>
                     </ul>
@@ -876,12 +793,45 @@
 <!-- Swiper JS -->
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
+<!--<script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>-->
+
 <script>
+    const swiper = new Swiper('.mySwiper', {
+        slidesPerView: 3,
+        spaceBetween: 20,
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+        loop: true,
+    });
+
     // Initialize cart count from localStorage
     document.addEventListener('DOMContentLoaded', function() {
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
         const cartCount = document.querySelector('.cart-count');
         cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
+    });
+
+</script>
+<script>
+    const swiper = new Swiper('.categories__container', {
+        loop: true,
+        autoplay: {
+            delay: 2500, // Time between slides in ms
+            disableOnInteraction: false, // Keep autoplay after user interaction
+        },
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+        slidesPerView: 3, // You can change this based on your layout
+        spaceBetween: 20,
+        breakpoints: {
+            768: { slidesPerView: 3 },
+            480: { slidesPerView: 2 },
+            0: { slidesPerView: 1 },
+        },
     });
 </script>
 
