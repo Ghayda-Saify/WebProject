@@ -265,6 +265,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     .toggle-password:hover {
         color: #122c6f;
     }
+    /* Add hover effect for Forget Password link */
+    .form-container a {
+        transition: color 0.3s ease;
+    }
+    .form-container a:hover {
+        color:rgb(67, 115, 238);
+    }
 </style>
 <script src="script.js"></script>
 <script>
