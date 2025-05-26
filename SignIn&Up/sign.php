@@ -1,6 +1,6 @@
 <?php
-global $con;
 session_start();
+global $con;
 require ('../connection.php');
 require ('../functions.php');
 
@@ -217,62 +217,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 </div>
 
-<style>
-    .error-message, .success-message {
-        display: none; /* Hide messages by default */
-    }
-    .error-message.show, .success-message.show {
-        display: block; /* Show only when has content */
-    }
-    .error-message {
-        color: #f13b1c;
-        background-color: #ffe5e5;
-        padding: 10px;
-        border-radius: 8px;
-        margin: 10px 0;
-        text-align: center;
-        font-family: 'Cairo', sans-serif;
-    }
-    .success-message {
-        color: #28a745;
-        background-color: #e8f5e9;
-        padding: 10px;
-        border-radius: 8px;
-        margin: 10px 0;
-        text-align: center;
-        font-family: 'Cairo', sans-serif;
-    }
-    .password-wrapper {
-        position: relative;
-        display: flex;
-        align-items: center;
-    }
-    .password-wrapper input[type="password"] {
-        width: 100%;
-        padding-right: 40px;
-    }
-    .toggle-password {
-        position: absolute;
-        right: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        cursor: pointer;
-        color: #888;
-        font-size: 1.2rem;
-        z-index: 2;
-        transition: color 0.2s;
-    }
-    .toggle-password:hover {
-        color: #122c6f;
-    }
-    /* Add hover effect for Forget Password link */
-    .form-container a {
-        transition: color 0.3s ease;
-    }
-    .form-container a:hover {
-        color:rgb(67, 115, 238);
-    }
-</style>
+
 <script src="script.js"></script>
 <script>
 document.querySelectorAll('.toggle-password').forEach(icon => {

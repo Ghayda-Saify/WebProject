@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,7 +42,8 @@
                     </a>
                 </li>
                 <li>
-                    <a href="../ProfilePage/profile.html">
+                    <?php $profileLink = isset($_SESSION['user_email']) ? '../ProfilePage/profile.html' : '../SignIn&Up/sign.php'; ?>
+                    <a href="<?php echo $profileLink; ?>">
                         <i class="fa-solid fa-user text-primary"></i>
                     </a>
                 </li>

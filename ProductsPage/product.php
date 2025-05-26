@@ -17,6 +17,7 @@ while ($row = $cat_res->fetch_assoc()) {
     $slider_categories[] = $row;
 }
 ?>
+<?php session_start(); ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -193,7 +194,8 @@ while ($row = $cat_res->fetch_assoc()) {
                     </a>
                 </li>
                 <li>
-                    <a href="../ProfilePage/profile.html">
+                    <?php $profileLink = isset($_SESSION['user_email']) ? '../ProfilePage/profile.html' : '../SignIn&Up/sign.php'; ?>
+                    <a href="<?php echo $profileLink; ?>">
                         <i class="fa-solid fa-user text-primary"></i>
                     </a>
                 </li>
