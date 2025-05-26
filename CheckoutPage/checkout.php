@@ -1,3 +1,16 @@
+<?php
+session_start();
+include '../session.php';
+
+
+if (!isset($_SESSION['user'])) {
+    header('Location: ../SignIn&Up/sign.php');
+    exit;
+}
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,9 +45,9 @@
             <ul>
                 <li><a href="../HomePage/index.php">Home</a></li>
                 <li><a href="../ProductsPage/product.php">Products</a></li>
-                <li><a href="../ContactPage/contact.html">Connect</a></li>
+                <li><a href="../ContactPage/contact.php">Connect</a></li>
                 <li>
-                    <a href="../CartPage/cart.html" class="relative">
+                    <a href="../CartPage/cart.php" class="relative">
                         <i class="fa-solid fa-cart-shopping text-primary"></i>
                         <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center cart-count">0</span>
                     </a>
@@ -54,7 +67,7 @@
         <div class="text-sm text-gray-500 mb-8">
             <a href="../HomePage/index.php" class="hover:text-blue-600">Home</a>
             <span class="mx-2">/</span>
-            <a href="../CartPage/cart.html" class="hover:text-blue-600">Cart</a>
+            <a href="../CartPage/cart.php" class="hover:text-blue-600">Cart</a>
             <span class="mx-2">/</span>
             <span class="text-gray-800">Checkout</span>
         </div>

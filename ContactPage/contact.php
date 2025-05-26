@@ -1,3 +1,17 @@
+<?php
+//session_start();
+//if (!isset($_SESSION['user'])) {
+//    header('Location: ../SignIn&Up/sign.php');
+//    exit;
+//}
+//else {
+//    header('Location: contact.php');
+//
+//}
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,13 +49,13 @@
                 <li><a href="../ProductsPage/product.php">Products</a></li>
                 <li><a href="contact.html" class="text-primary font-bold">Connect</a></li>
                 <li>
-                    <a href="../CartPage/cart.html" class="relative">
+                    <a href="../CartPage/cart.php" class="relative">
                         <i class="fa-solid fa-cart-shopping text-primary"></i>
                         <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center cart-count">0</span>
                     </a>
                 </li>
                 <li>
-                    <a href="../ProfilePage/profile.html">
+                    <a href="../ProfilePage/profile.php">
                         <i class="fa-solid fa-user text-primary"></i>
                     </a>
                 </li>
@@ -221,7 +235,7 @@
                         <li><a href="../HomePage/index.php" class="text-gray-600 hover:text-primary transition">Home</a></li>
                         <li><a href="../ProductsPage/product.php" class="text-gray-600 hover:text-primary transition">Products</a></li>
                         <li><a href="contact.html" class="text-gray-600 hover:text-primary transition">Contact</a></li>
-                        <li><a href="../CartPage/cart.html" class="text-gray-600 hover:text-primary transition">Cart</a></li>
+                        <li><a href="../CartPage/cart.php" class="text-gray-600 hover:text-primary transition">Cart</a></li>
                     </ul>
                 </div>
 

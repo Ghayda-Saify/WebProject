@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
     checkoutButton.addEventListener('click', () => {
         checkoutButton.classList.add('animate-pulse');
         setTimeout(() => {
-            window.location.href = '../CheckoutPage/checkout.html';
+            window.location.href = '../CheckoutPage/checkout.php';
         }, 300);
     });
 

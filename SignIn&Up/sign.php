@@ -1,6 +1,6 @@
 <?php
-global $con;
 session_start();
+global $con;
 require ('../connection.php');
 require ('../functions.php');
 
@@ -38,14 +38,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 } else {
                     $sha1Password = sha1($password);
                     $insertStmt = $db->prepare("INSERT INTO users (name, email, password, type) VALUES (?, ?, ?, 'user')");
-                    $insertStmt->bind_param("sss", $name, $email, $sha1Password);
+                    $insertStmt->bind_param("sss", $id,$name, $email, $sha1Password);
                     if ($insertStmt->execute()) {
+                        echo json_encode(["success" => true]);
+                        $_SESSION['user_id'] = $id;
                         $_SESSION['user_email'] = $email;
                         $_SESSION['user_type'] = 'user';
                         header("Location: ../HomePage/index.php");
+
                         exit();
                     } else {
                         $msg = "Registration failed. Please try again.";
+                        echo json_encode(["success" => false, "error" => $con->error]);
                     }
                     $insertStmt->close();
                 }
@@ -53,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $db->close();
             } catch (Exception $e) {
                 $msg = "An error occurred: " . $e->getMessage();
+                echo json_encode(["success" => false, "error" => $conn->error]);
             }
         }
     }
@@ -62,34 +67,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $userEmail = $_POST['txtEmailSignIn'];
         $userPassword = $_POST['txtPasswordSignIn'];
         $sha1Password = sha1($userPassword);
+
         try {
             $db = $con;
-            $checkStmt = $db->prepare("SELECT * FROM users WHERE email = ?");
-            $checkStmt->bind_param("s", $userEmail);
-            $checkStmt->execute();
-            $emailResult = $checkStmt->get_result();
-            if ($emailResult->num_rows === 0) {
-                $msg = "Account not found.";
-                $togglePanel = 'signup';
+            $stmt = $db->prepare("SELECT * FROM users WHERE email = ? AND password = ?");
+            $stmt->bind_param("ss", $userEmail, $sha1Password);
+            $stmt->execute();
+            $res = $stmt->get_result();
+
+            if ($res->num_rows > 0) {
+                $userData = $res->fetch_assoc();
+                $_SESSION['user'] = $userData;
+
+                // Optional: JSON success response
+                echo json_encode(["success" => true]);
+
+                // Redirect to home page
+                header("Location: ../HomePage/index.php");
+                exit();
             } else {
-                $stmt = $db->prepare("SELECT * FROM users WHERE email = ? AND password = ?");
-                $stmt->bind_param("ss", $userEmail, $sha1Password);
-                $stmt->execute();
-                $res = $stmt->get_result();
-                if ($res->num_rows > 0) {
-                    $_SESSION['user_email'] = $userEmail;
-                    $_SESSION['user_type'] = $emailResult->fetch_assoc()['type'];
-                    header("Location: ../HomePage/index.php");
-                    exit();
-                } else {
-                    $msg = "Incorrect password.";
-                }
-                $stmt->close();
+                $msg = "Incorrect email or password.";
+                echo json_encode(["success" => false, "error" => $msg]);
             }
-            $checkStmt->close();
+
+            $stmt->close();
             $db->close();
         } catch (Exception $e) {
             $msg = "An error occurred: " . $e->getMessage();
+            echo json_encode(["success" => false, "error" => $msg]);
         }
     }
 

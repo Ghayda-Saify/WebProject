@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,6 +30,21 @@
             href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
     />
     <style>
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        body {
+            padding-top: 0px;
+        }
+        @media (max-width: 900px) {
+            body {
+                padding-top: 60px;
+            }
+        }
         .swiper {
             width: 100%;
             padding: 20px;
@@ -142,22 +160,30 @@
 <div class="fancy-bubbles"></div>
 
 <header>
-    <a href="index.php" class="logo text-primary font-['Pacifico'] text-2xl">Alandalus Design</a>
+    <a href="index.php" class="logo text-primary font-['Pacifico'] text-3xl">Alandalus Design</a>
     <nav class="main-nav">
         <ul>
             <li><a href="index.php" class="text-primary font-bold">Home</a></li>
             <li><a href="../ProductsPage/product.php">Products</a></li>
-            <li><a href="../ContactPage/contact.html">Connect</a></li>
+            <li><a href="../ContactPage/contact.php">Connect</a></li>
             <li>
-                <a href="../CartPage/cart.html" class="relative">
+                <a href="../CartPage/cart.php" class="relative">
                     <i class="fa-solid fa-cart-shopping text-primary"></i>
                     <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center cart-count">0</span>
                 </a>
             </li>
             <li>
-                <a href="../ProfilePage/profile.html">
-                    <i class="fa-solid fa-user text-primary"></i>
-                </a>
+                <?php
+
+
+                    if (isset($_SESSION['user'])) {
+                        echo '<i class="fa-solid fa-user text-primary"></i>'; // Show person icon
+                        echo '<span>',"  Welcome, " . $_SESSION['user']['name'],'</span>';
+                    } else {
+                        echo '<a href="../SignIn&Up/sign.php" class="btn btn-primary">Sign In</a>';
+                    }
+                    ?>
+
             </li>
         </ul>
     </nav>
