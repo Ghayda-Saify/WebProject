@@ -1,3 +1,13 @@
+<?php
+include '../connection.php';
+global $con;
+if ($con->connect_error) {
+    die("Connection failed: " . $con->connect_error);
+}
+$sql = "SELECT * FROM product WHERE status = 1 LIMIT 36";
+$result = $con->query($sql);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -107,6 +117,39 @@
             100% { transform: translateY(0); }
         }
 
+        body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', 'Tajawal', Arial, sans-serif;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%);
+            position: relative;
+            overflow-x: hidden;
+        }
+        /* Decorative bubbles using pseudo-elements */
+        body::before, body::after {
+            content: '';
+            position: fixed;
+            z-index: 0;
+            border-radius: 50%;
+            opacity: 0.18;
+            pointer-events: none;
+            filter: blur(2px);
+        }
+        body::before {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle at 30% 30%, #a5b4fc 60%, transparent 100%);
+            top: -120px;
+            left: -120px;
+        }
+        body::after {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle at 70% 80%, #fbbf24 60%, transparent 100%);
+            bottom: -100px;
+            right: -100px;
+        }
 
     </style>
     <script>
@@ -221,204 +264,31 @@
 
 
         <!-- Product Grid -->
+
+
         <section class="mb-16">
             <h2 class="text-3xl font-bold text-center mb-2 font-aboreto">Our Products</h2>
             <p class="text-gray-600 text-center mb-12">Discover our collection of personalized creations</p>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Product Card 1 -->
-                <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer product-card group"
-                     data-name="Custom Notebook" 
-                     data-price="20.00"
-                     data-description="PERSONALIZED CREATIONS, CRAFTED FOR YOU"
-                     data-images='["../HomePage/imgs/notebook2-removebg-preview.png", "../HomePage/imgs/notebook2.jpg", "../HomePage/imgs/notebook.jpg"]'>
-                    <div class="h-64 overflow-hidden relative">
-                        <img src="../HomePage/imgs/notebook2-removebg-preview.png" alt="Custom Notebook" 
-                             class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
-                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center">
-                            <button class="view-details bg-primary text-white px-6 py-2 rounded-full opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-                                View Details
-                            </button>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="font-aboreto text-xl mb-2">Custom Notebook</h3>
-                        <p class="text-primary font-aboreto text-lg">₪ 20.00</p>
-                    </div>
-                </div>
 
-                <!-- Product Card 2 -->
-                <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer product-card group"
-                     data-name="Custom Cover" 
-                     data-price="20.00"
-                     data-description="Elegant and personalized covers for your books and devices"
-                     data-images='["../HomePage/imgs/cover2-removebg-preview.png", "../HomePage/imgs/cover.jpg", "../HomePage/imgs/covers.jpg"]'>
-                    <div class="h-64 overflow-hidden relative">
-                        <img src="../HomePage/imgs/cover2-removebg-preview.png" alt="Custom Cover" 
-                             class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
-                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center">
-                            <button class="view-details bg-primary text-white px-6 py-2 rounded-full opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-                                View Details
-                            </button>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="font-aboreto text-xl mb-2">Custom Cover</h3>
-                        <p class="text-primary font-aboreto text-lg">₪ 20.00</p>
-                    </div>
-                </div>
+            <!-- Product Container for AJAX loading -->
+            <div id="productContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Products will be loaded here via AJAX -->
+            </div>
 
-                <!-- Product Card 3 -->
-                <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer product-card group"
-                     data-name="Custom Hoodie" 
-                     data-price="60.00"
-                     data-description="Comfortable and stylish hoodies with Arabic calligraphy"
-                     data-images='["../HomePage/imgs/hoodi-removebg-preview.png", "../HomePage/imgs/hoodies.jpg"]'>
-                    <div class="h-64 overflow-hidden relative">
-                        <img src="../HomePage/imgs/hoodi-removebg-preview.png" alt="Custom Hoodie" 
-                             class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
-                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center">
-                            <button class="view-details bg-primary text-white px-6 py-2 rounded-full opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-                                View Details
-                            </button>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="font-aboreto text-xl mb-2">Custom Hoodie</h3>
-                        <p class="text-primary font-aboreto text-lg">₪ 60.00</p>
-                    </div>
-                </div>
-
-                <!-- Product Card 4 -->
-                <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer product-card group"
-                     data-name="Custom Mug" 
-                     data-price="15.00"
-                     data-description="Personalized mugs with Arabic calligraphy and Islamic designs"
-                     data-images='["../HomePage/imgs/mug-removebg-preview.png", "../HomePage/imgs/mugs.jpg"]'>
-                    <div class="h-64 overflow-hidden relative">
-                        <img src="../HomePage/imgs/mug-removebg-preview.png" alt="Custom Mug" 
-                             class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
-                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center">
-                            <button class="view-details bg-primary text-white px-6 py-2 rounded-full opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-                                View Details
-                            </button>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="font-aboreto text-xl mb-2">Custom Mug</h3>
-                        <p class="text-primary font-aboreto text-lg">₪ 15.00</p>
-                    </div>
-                </div>
-
-                <!-- Product Card 5 -->
-                <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer product-card group"
-                     data-name="Custom Handbag" 
-                     data-price="45.00"
-                     data-description="Elegant handbags with unique Arabic and Islamic designs"
-                     data-images='["../HomePage/imgs/زرف-removebg-preview.png", "../HomePage/imgs/زرف.jpg"]'>
-                    <div class="h-64 overflow-hidden relative">
-                        <img src="../HomePage/imgs/زرف-removebg-preview.png" alt="Custom Handbag" 
-                             class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
-                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center">
-                            <button class="view-details bg-primary text-white px-6 py-2 rounded-full opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-                                View Details
-                            </button>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="font-aboreto text-xl mb-2">Custom Handbag</h3>
-                        <p class="text-primary font-aboreto text-lg">₪ 45.00</p>
-                    </div>
-                </div>
-
-                <!-- Product Card 6 -->
-                <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer product-card group"
-                     data-name="Custom Pins" 
-                     data-price="10.00"
-                     data-description="Beautiful pins featuring Arabic calligraphy and Islamic patterns"
-                     data-images='["../HomePage/imgs/دبابيس.png", "../HomePage/imgs/مجموعة دبابيس.jpg", "../HomePage/imgs/dababees.jpg"]'>
-                    <div class="h-64 overflow-hidden relative">
-                        <img src="../HomePage/imgs/دبابيس.png" alt="Custom Pins" 
-                             class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
-                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center">
-                            <button class="view-details bg-primary text-white px-6 py-2 rounded-full opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-                                View Details
-                            </button>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="font-aboreto text-xl mb-2">Custom Pins</h3>
-                        <p class="text-primary font-aboreto text-lg">₪ 10.00</p>
-                    </div>
-                </div>
-
-                <!-- Product Card 7 -->
-                <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer product-card group"
-                     data-name="Custom Book" 
-                     data-price="25.00"
-                     data-description="Personalized books with beautiful Arabic and Islamic designs"
-                     data-images='["../HomePage/imgs/book.jpg"]'>
-                    <div class="h-64 overflow-hidden relative">
-                        <img src="../HomePage/imgs/book.jpg" alt="Custom Book" 
-                             class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
-                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center">
-                            <button class="view-details bg-primary text-white px-6 py-2 rounded-full opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-                                View Details
-                            </button>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="font-aboreto text-xl mb-2">Custom Book</h3>
-                        <p class="text-primary font-aboreto text-lg">₪ 25.00</p>
-                    </div>
-                </div>
-
-                <!-- Product Card 8 -->
-                <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer product-card group"
-                     data-name="Custom Package" 
-                     data-price="35.00"
-                     data-description="Beautiful gift packages with Islamic designs"
-                     data-images='["../HomePage/imgs/backage.jpg"]'>
-                    <div class="h-64 overflow-hidden relative">
-                        <img src="../HomePage/imgs/backage.jpg" alt="Custom Package" 
-                             class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
-                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center">
-                            <button class="view-details bg-primary text-white px-6 py-2 rounded-full opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-                                View Details
-                            </button>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="font-aboreto text-xl mb-2">Custom Package</h3>
-                        <p class="text-primary font-aboreto text-lg">₪ 35.00</p>
-                    </div>
-                </div>
-
-                <!-- Product Card 9 -->
-                <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer product-card group"
-                     data-name="Wall Board" 
-                     data-price="40.00"
-                     data-description="Decorative wall boards with Arabic calligraphy"
-                     data-images='["../HomePage/imgs/bord.jpg"]'>
-                    <div class="h-64 overflow-hidden relative">
-                        <img src="../HomePage/imgs/bord.jpg" alt="Wall Board" 
-                             class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
-                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center">
-                            <button class="view-details bg-primary text-white px-6 py-2 rounded-full opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-                                View Details
-                            </button>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="font-aboreto text-xl mb-2">Wall Board</h3>
-                        <p class="text-primary font-aboreto text-lg">₪ 40.00</p>
-                    </div>
-                </div>
+            <!-- Load More Button -->
+            <div class="text-center mt-8">
+                <button id="loadMoreBtn" class="bg-primary text-white px-8 py-3 rounded-full hover:bg-opacity-90 transition">
+                    Load More Products
+                </button>
             </div>
         </section>
 
+
+
+
         <!-- Product Reviews Section -->
-        <section class="mt-16">
-            <h2 class="text-3xl font-bold mb-8">Customer Reviews</h2>
+        <section class="mt-16 container" style="background-color: #ffffff;  padding: 1.2rem; margin: auto; ">
+            <h2 class="text-3xl font-bold mb-8" style="color: #122c6f">Customer Reviews</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <!-- Review Form -->
                 <div class="bg-white p-6 rounded-lg shadow-sm">
@@ -617,7 +487,81 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
     <!--<script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>-->
+    <script>
+        let offset = 0;
+        const limit = 36;
+        let isLoading = false;
 
+        function loadProducts() {
+            if (isLoading) return;
+
+            isLoading = true;
+            const loadBtn = document.getElementById("loadMoreBtn");
+            loadBtn.textContent = "Loading...";
+            // loadBtn.disabled = true;
+
+            fetch(`load_products.php?offset=${offset}&limit=${limit}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    if (data.trim() === '' || data.includes('No more products')) {
+                        loadBtn.textContent = "No More Products";
+                        loadBtn.disabled = true;
+                    } else {
+                        document.getElementById("productContainer").innerHTML += data;
+                        offset += limit;
+                        loadBtn.textContent = "Load More Products";
+                        loadBtn.disabled = false;
+
+                        // Re-initialize event listeners for new products
+                        initializeProductCards();
+                    }
+                    isLoading = false;
+                })
+                .catch(error => {
+                    console.error('Error loading products:', error);
+                    loadBtn.textContent = "Error Loading Products";
+                    loadBtn.disabled = false;
+                    isLoading = false;
+                });
+        }
+
+        function initializeProductCards() {
+            // Remove existing event listeners and add new ones
+            document.querySelectorAll('.product-card').forEach(card => {
+                const viewDetailsBtn = card.querySelector('.view-details');
+
+                if (viewDetailsBtn && !viewDetailsBtn.hasAttribute('data-initialized')) {
+                    viewDetailsBtn.setAttribute('data-initialized', 'true');
+
+                    // Handle click on the view details button
+                    viewDetailsBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        openProductModal(card);
+                    });
+
+                    // Handle click on the entire card
+                    card.addEventListener('click', () => {
+                        openProductModal(card);
+                    });
+                }
+            });
+        }
+
+        // Load first batch when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProducts();
+        });
+
+        // Load more button event listener
+        document.getElementById("loadMoreBtn").addEventListener("click", loadProducts);
+
+        // Rest of your existing JavaScript code for modal functionality...
+    </script>
     <script>
         const swiper = new Swiper('.mySwiper', {
             slidesPerView: 3,
