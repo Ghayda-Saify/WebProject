@@ -83,7 +83,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['txtEmail'])) {
                     $msg = "Failed to send email. Error: " . $mail->ErrorInfo;
                 }
             } else {
-                $msg = "If this email exists in our system, a password reset link will be sent.";
+                $msg = "Sorry, this email is not signed up with us.";
+                $msgType = 'error';
             }
             $checkStmt->close();
         } catch (Exception $e) {
@@ -99,6 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['txtEmail'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot Password</title>
     <link rel="stylesheet" href="loginSignUp.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body {
             display: flex;
@@ -164,28 +166,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['txtEmail'])) {
         .back-link:hover {
             text-decoration: underline;
         }
-        .homepage-navbar {
-            background: #6695ed; /* or your homepage color */
-            color: #fff;
-            /* Add any other styles you want for the homepage navbar */
-        }
     </style>
 </head>
 <body>
     <div class="form-container">
         <h1>Forgot Your Password?</h1>
         <p>Enter your email address and we will send you a link to reset your password.</p>
-        <?php if (!empty($msg)): ?>
-            <div class="message <?php echo $msgType === 'success' ? 'success-message' : 'error-message'; ?>">
-                <?php echo htmlspecialchars($msg); ?>
-            </div>
-        <?php endif; ?>
-        <form method="POST" action="forgot_password.php">
+        <form method="POST" action="forgot_password.php" id="forgot-form">
             <label for="txtEmail" style="display:none;">Email</label>
             <input type="email" placeholder="Enter your email address" name="txtEmail" id="txtEmail" required>
             <button type="submit">Send Reset Link</button>
         </form>
         <a href="sign.php" class="back-link">Back to Sign In</a>
     </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // If PHP set a message, show it with SweetAlert
+        <?php if (!empty($msg)): ?>
+            Swal.fire({
+                icon: '<?php echo $msgType === 'success' ? 'success' : 'error'; ?>',
+                title: '<?php echo $msgType === 'success' ? 'Email Sent!' : 'Error'; ?>',
+                html: '<?php echo addslashes($msg); ?>',
+                confirmButtonText: 'OK'
+            });
+        <?php endif; ?>
+    });
+    </script>
 </body>
 </html>

@@ -1,4 +1,19 @@
-<?php session_start(); ?>
+<?php 
+session_start();
+require_once '../connection.php';
+global $con;
+
+$user = null;
+if (isset($_SESSION['user_email'])) {
+    $email = $_SESSION['user_email'];
+    $stmt = $con->prepare("SELECT * FROM users WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+    $stmt->close();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -80,8 +95,8 @@
                             <div class="w-24 h-24 rounded-full bg-primary/10 mx-auto mb-4 flex items-center justify-center">
                                 <i class="fas fa-user text-4xl text-primary"></i>
                             </div>
-                            <h2 class="text-xl font-semibold" id="user-name">John Doe</h2>
-                            <p class="text-gray-600 text-sm" id="user-email">john@example.com</p>
+                            <h2 class="text-xl font-semibold" id="user-name"><?php echo htmlspecialchars($user['name'] ?? ''); ?></h2>
+                            <p class="text-gray-600 text-sm" id="user-email"><?php echo htmlspecialchars($user['email'] ?? ''); ?></p>
                         </div>
                         <nav class="space-y-2">
                             <button class="w-full text-left px-4 py-2 rounded-lg hover:bg-primary/5 transition tab-button active" data-tab="profile">
@@ -106,33 +121,25 @@
                     <div class="tab-content active" id="profile-tab">
                         <div class="bg-white rounded-lg shadow-sm p-6">
                             <h3 class="text-xl font-semibold mb-6">Personal Information</h3>
-                            <!-- DATABASE TODO: Replace with actual user data from database -->
                             <form id="profile-form" class="space-y-4">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-sm font-medium mb-1">First Name</label>
-                                        <input type="text" class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-primary/30 focus:border-primary" value="John">
+                                        <label class="block text-sm font-medium mb-1">Name</label>
+                                        <input type="text" class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-primary/30 focus:border-primary" value="<?php echo htmlspecialchars($user['name'] ?? ''); ?>" readonly>
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium mb-1">Last Name</label>
-                                        <input type="text" class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-primary/30 focus:border-primary" value="Doe">
+                                        <label class="block text-sm font-medium mb-1">Type</label>
+                                        <input type="text" class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-primary/30 focus:border-primary" value="<?php echo htmlspecialchars($user['type'] ?? ''); ?>" readonly>
                                     </div>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium mb-1">Email</label>
-                                    <input type="email" class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-primary/30 focus:border-primary" value="john@example.com">
+                                    <input type="email" class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-primary/30 focus:border-primary" value="<?php echo htmlspecialchars($user['email'] ?? ''); ?>" readonly>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium mb-1">Phone</label>
-                                    <input type="tel" class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-primary/30 focus:border-primary" value="+1 234 567 890">
+                                    <input type="tel" class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-primary/30 focus:border-primary" value="<?php echo htmlspecialchars($user['phone_number'] ?? ''); ?>" readonly>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-medium mb-1">Address</label>
-                                    <textarea class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-primary/30 focus:border-primary" rows="3">123 Street Name, City, Country</textarea>
-                                </div>
-                                <button type="submit" class="bg-primary text-white px-6 py-2 rounded-full hover:bg-opacity-90 transition">
-                                    Save Changes
-                                </button>
                             </form>
                         </div>
                     </div>
@@ -239,10 +246,6 @@
                                         <label class="flex items-center">
                                             <input type="checkbox" class="form-checkbox text-primary rounded" checked>
                                             <span class="ml-2">Email notifications for promotions</span>
-                                        </label>
-                                        <label class="flex items-center">
-                                            <input type="checkbox" class="form-checkbox text-primary rounded">
-                                            <span class="ml-2">SMS notifications</span>
                                         </label>
                                     </div>
                                 </div>

@@ -194,7 +194,7 @@ while ($row = $cat_res->fetch_assoc()) {
                     </a>
                 </li>
                 <li>
-                    <?php $profileLink = isset($_SESSION['user_email']) ? '../ProfilePage/profile.html' : '../SignIn&Up/sign.php'; ?>
+                    <?php $profileLink = isset($_SESSION['user_email']) ? '../ProfilePage/profile.php' : '../SignIn&Up/sign.php'; ?>
                     <a href="<?php echo $profileLink; ?>">
                         <i class="fa-solid fa-user text-primary"></i>
                     </a>
