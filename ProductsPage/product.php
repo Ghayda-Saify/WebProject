@@ -117,6 +117,39 @@ $result = $con->query($sql);
             100% { transform: translateY(0); }
         }
 
+        body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', 'Tajawal', Arial, sans-serif;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%);
+            position: relative;
+            overflow-x: hidden;
+        }
+        /* Decorative bubbles using pseudo-elements */
+        body::before, body::after {
+            content: '';
+            position: fixed;
+            z-index: 0;
+            border-radius: 50%;
+            opacity: 0.18;
+            pointer-events: none;
+            filter: blur(2px);
+        }
+        body::before {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle at 30% 30%, #a5b4fc 60%, transparent 100%);
+            top: -120px;
+            left: -120px;
+        }
+        body::after {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle at 70% 80%, #fbbf24 60%, transparent 100%);
+            bottom: -100px;
+            right: -100px;
+        }
 
     </style>
     <script>
