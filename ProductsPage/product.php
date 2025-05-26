@@ -6,6 +6,16 @@ if ($con->connect_error) {
 }
 $sql = "SELECT * FROM product WHERE status = 1 LIMIT 36";
 $result = $con->query($sql);
+
+// Fetch categories for sidebar and slider
+$sidebar_categories = [];
+$slider_categories = [];
+$cat_sql = "SELECT * FROM categories WHERE status = 1";
+$cat_res = $con->query($cat_sql);
+while ($row = $cat_res->fetch_assoc()) {
+    $sidebar_categories[] = $row;
+    $slider_categories[] = $row;
+}
 ?>
 
 <!DOCTYPE html>
@@ -174,7 +184,7 @@ $result = $con->query($sql);
             <div class="flex-1 min-w-[150px]"></div> <!-- Increased minimum width spacer -->
             <ul class="flex items-center justify-center gap-8">
                 <li><a href="../HomePage/index.php">Home</a></li>
-                <li><a href="product.html" class="text-primary font-bold">Products</a></li>
+                <li><a href="product.php" class="text-primary font-bold">Products</a></li>
                 <li><a href="../ContactPage/contact.html">Connect</a></li>
                 <li>
                     <a href="../CartPage/cart.html" class="relative">
@@ -206,214 +216,81 @@ $result = $con->query($sql);
         </nav>
     </header>
 
-    <main class="container mx-auto px-4 py-8">
-        <!-- Breadcrumb -->
-        <nav class="flex mb-8" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1 md:space-x-3">
-                <li class="inline-flex items-center">
-                    <a href="../HomePage/index.php" class="text-gray-700 hover:text-primary">
-                        <i class="fas fa-home mr-2"></i>
-                        Home
-                    </a>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
-                        <a href="product.php" class="text-primary font-medium">Products</a>
-                    </div>
-                </li>
-            </ol>
-        </nav>
-        <!--      categories  -->
-        <!-- Featured Categories -->
-        <?php
-        include_once '../connection.php';
-        global $con;
-        if ($con->connect_error) {
-            die("Connection failed: " . $con->connect_error);
-        }
-        $sql = "SELECT id, name, image FROM categories";
-        $result = $con->query($sql);
+    <!-- Categories Slider at the top -->
+    <!--      categories  -->
+    <!-- Featured Categories -->
+    <?php
+    include_once '../connection.php';
+    global $con;
+    if ($con->connect_error) {
+        die("Connection failed: " . $con->connect_error);
+    }
+    $sql = "SELECT id, name, image FROM categories";
+    $result = $con->query($sql);
 
-        ?>
-        <section class="">
-            <h3 class="section__title "><span>Popular</span> Categories</h3>
-            <p class="text-gray-600 text-center mb-12">
-                Discover our range of customizable products
-            </p>
-            <!-- Slider main container -->
-            <div class="swiper mySwiper">
-                <div class="swiper-wrapper">
-                    <div class="swiper mySwiper">
-                        <div class="swiper-wrapper">
-                            <?php while ($row = $result->fetch_assoc()) { ?>
-                                <a href="../ProductsPage/product.php?category_id=<?php echo $row['id']; ?>" class="swiper-slide category__item">
-                                    <img src="../HomePage/imgs/<?php echo htmlspecialchars($row['image']); ?>" class="category__img" alt="">
-                                    <h3 class="category__title"><?php echo htmlspecialchars($row['name']); ?></h3>
-                                </a>
-                            <?php } ?>
-                        </div>
-
-                        <div class="swiper-button-next"></div>
-                        <div class="swiper-button-prev"></div>
-                    </div>
-                </div>
-            </div>
-
-        </section>
-
-
-        <!-- Product Grid -->
-
-
-        <section class="mb-16">
-            <h2 class="text-3xl font-bold text-center mb-2 font-aboreto">Our Products</h2>
-            <p class="text-gray-600 text-center mb-12">Discover our collection of personalized creations</p>
-
-            <!-- Product Container for AJAX loading -->
-            <div id="productContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Products will be loaded here via AJAX -->
-            </div>
-
-            <!-- Load More Button -->
-            <div class="text-center mt-8">
-                <button id="loadMoreBtn" class="bg-primary text-white px-8 py-3 rounded-full hover:bg-opacity-90 transition">
-                    Load More Products
-                </button>
-            </div>
-        </section>
-
-
-
-
-        <!-- Product Reviews Section -->
-        <section class="mt-16 container" style="background-color: #ffffff;  padding: 1.2rem; margin: auto; ">
-            <h2 class="text-3xl font-bold mb-8" style="color: #122c6f">Customer Reviews</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Review Form -->
-                <div class="bg-white p-6 rounded-lg shadow-sm">
-                    <h3 class="text-xl font-semibold mb-4">Write a Review</h3>
-                    <form id="review-form" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Rating</label>
-                            <div class="flex space-x-2">
-                                <i class="far fa-star text-2xl cursor-pointer rating-star"></i>
-                                <i class="far fa-star text-2xl cursor-pointer rating-star"></i>
-                                <i class="far fa-star text-2xl cursor-pointer rating-star"></i>
-                                <i class="far fa-star text-2xl cursor-pointer rating-star"></i>
-                                <i class="far fa-star text-2xl cursor-pointer rating-star"></i>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Your Review</label>
-                            <textarea class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-primary focus:border-transparent" rows="4" placeholder="Share your thoughts about the product..."></textarea>
-                        </div>
-                        <button type="submit" class="bg-primary text-white px-6 py-2 rounded-full hover:bg-opacity-90 transition">
-                            Submit Review
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Review List -->
-                <div class="space-y-6">
-                    <!-- Sample Review 1 -->
-                    <div class="bg-white p-6 rounded-lg shadow-sm">
-                        <div class="flex items-center mb-2">
-                            <div class="flex text-yellow-400">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                            </div>
-                            <span class="ml-2 text-sm text-gray-500">1 week ago</span>
-                        </div>
-                        <p class="text-gray-700">Beautiful design and excellent quality! The customization options are amazing.</p>
-                        <p class="text-sm text-gray-500 mt-2">- Sarah M.</p>
+    ?>
+    <section class="">
+        <h3 class="section__title "><span style="color : #122c6f">Popular</span> Categories</h3>
+        <p class="text-gray-600 text-center mb-12">
+            Discover our range of customizable products
+        </p>
+        <!-- Slider main container -->
+        <div class="swiper mySwiper">
+            <div class="swiper-wrapper">
+                <div class="swiper mySwiper">
+                    <div class="swiper-wrapper">
+                        <?php while ($row = $result->fetch_assoc()) { ?>
+                            <a href="../ProductsPage/product.php?category_id=<?php echo $row['id']; ?>" class="swiper-slide category__item">
+                                <img src="../HomePAge/imgs/<?php echo htmlspecialchars($row['image']); ?>" class="category__img" alt="">
+                                <h3 class="category__title"><?php echo htmlspecialchars($row['name']); ?></h3>
+                            </a>
+                        <?php } ?>
                     </div>
 
-                    <!-- Sample Review 2 -->
-                    <div class="bg-white p-6 rounded-lg shadow-sm">
-                        <div class="flex items-center mb-2">
-                            <div class="flex text-yellow-400">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="far fa-star"></i>
-                            </div>
-                            <span class="ml-2 text-sm text-gray-500">2 weeks ago</span>
-                        </div>
-                        <p class="text-gray-700">Great product! The Arabic calligraphy design exceeded my expectations.</p>
-                        <p class="text-sm text-gray-500 mt-2">- Ahmed K.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Product Detail Modal -->
-        <div id="product-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-            <div class="bg-white rounded-lg p-8 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-                <div class="flex justify-end mb-4">
-                    <button class="text-gray-400 hover:text-gray-600" id="close-modal">
-                        <i class="fas fa-times text-xl"></i>
-                    </button>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <!-- Left: Product Images -->
-                    <div>
-                        <div class="mb-4 relative">
-                            <img src="" alt="" id="modal-main-image" class="w-full h-auto rounded-lg shadow-lg">
-                        </div>
-                        <div class="grid grid-cols-4 gap-4" id="modal-thumbnails">
-                            <!-- Thumbnails will be dynamically added here -->
-                        </div>
-                    </div>
-                    <!-- Right: Product Info -->
-                    <div>
-                        <h2 id="modal-product-name" class="text-3xl font-bold mb-4"></h2>
-                        <p id="modal-product-price" class="text-2xl text-primary font-bold mb-4"></p>
-                        <p id="modal-product-description" class="text-gray-600 mb-6"></p>
-                        
-                        <!-- Design Options -->
-                        <div class="mb-6">
-                            <h3 class="text-lg font-semibold mb-4">Select Design Style:</h3>
-                            <div class="grid grid-cols-2 gap-4">
-                                <button class="design-option border rounded-lg p-4 hover:border-primary transition" data-design="arabic">
-                                    Arabic Calligraphy
-                                </button>
-                                <button class="design-option border rounded-lg p-4 hover:border-primary transition" data-design="geometric">
-                                    Geometric Pattern
-                                </button>
-                                <button class="design-option border rounded-lg p-4 hover:border-primary transition" data-design="modern">
-                                    Modern Arabic
-                                </button>
-                                <button class="design-option border rounded-lg p-4 hover:border-primary transition" data-design="custom">
-                                    Custom Design
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Quantity -->
-                        <div class="mb-6">
-                            <h3 class="text-lg font-semibold mb-4">Quantity:</h3>
-                            <div class="flex items-center space-x-4">
-                                <button class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:border-primary transition" id="modal-decrease-quantity">-</button>
-                                <input type="number" value="1" min="1" class="w-20 text-center border-gray-300 rounded" id="modal-quantity">
-                                <button class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:border-primary transition" id="modal-increase-quantity">+</button>
-                            </div>
-                        </div>
-
-                        <!-- Add to Cart Button -->
-                        <button id="modal-add-to-cart" class="w-full bg-primary text-white px-8 py-3 rounded-full text-lg font-medium hover:bg-opacity-90 transition flex items-center justify-center">
-                            <i class="fas fa-shopping-cart mr-2"></i>
-                            Add To Cart | أضف إلى السلة
-                        </button>
-                    </div>
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
                 </div>
             </div>
         </div>
 
+    </section>
+    <main class="container mx-auto px-4 py-8 flex gap-8">
+        <!-- Sidebar -->
+        <aside class="w-64 p-4 bg-white rounded-lg shadow-md h-fit sticky top-0 self-start mt-0">
+            <h3 class="font-bold mb-4 text-lg text-primary">Categories</h3>
+            <ul class="mb-8 max-h-64 overflow-y-auto">
+                <?php foreach ($sidebar_categories as $cat): ?>
+                    <li>
+                        <a href="#" class="block py-2 px-3 hover:bg-primary hover:text-white rounded category-link" data-category-id="<?= $cat['id'] ?>">
+                            <?= htmlspecialchars($cat['name']) ?>
+                        </a>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+            <h4 class="font-bold mb-2 text-primary">Filter by Price</h4>
+            <select id="priceFilter" class="w-full border rounded p-2 mb-2">
+                <option value="">All Prices</option>
+                <option value="5-20">5-20 ₪</option>
+                <option value="20-50">20-50 ₪</option>
+                <option value="50-80">50-80 ₪</option>
+                <option value="80+">More than 80 ₪</option>
+            </select>
+        </aside>
+        <!-- Products grid -->
+        <div class="flex-1">
+            <section class="mb-16">
+                <h2 class="text-3xl font-bold text-center mb-2 font-aboreto">Our Products</h2>
+                <p class="text-gray-600 text-center mb-12">Discover our collection of personalized creations</p>
+                <div id="productContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Products will be loaded here via AJAX -->
+                </div>
+                <div class="text-center mt-8">
+                    <button id="loadMoreBtn" class="bg-primary text-white px-8 py-3 rounded-full hover:bg-opacity-90 transition">
+                        Load More Products
+                    </button>
+                </div>
+            </section>
+        </div>
     </main>
 
     <!-- Footer -->
@@ -445,7 +322,7 @@ $result = $con->query($sql);
                     <h3 class="font-bold text-lg mb-4">Quick Links</h3>
                     <ul class="space-y-2">
                         <li><a href="../HomePage/index.php" class="text-gray-600 hover:text-primary transition">Home</a></li>
-                        <li><a href="product.html" class="text-gray-600 hover:text-primary transition">Products</a></li>
+                        <li><a href="product.php" class="text-gray-600 hover:text-primary transition">Products</a></li>
                         <li><a href="../ContactPage/contact.html" class="text-gray-600 hover:text-primary transition">Contact</a></li>
                         <li><a href="../CartPage/cart.html" class="text-gray-600 hover:text-primary transition">Cart</a></li>
                     </ul>
@@ -487,84 +364,10 @@ $result = $con->query($sql);
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
     <!--<script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>-->
+
     <script>
-        let offset = 0;
-        const limit = 36;
-        let isLoading = false;
-
-        function loadProducts() {
-            if (isLoading) return;
-
-            isLoading = true;
-            const loadBtn = document.getElementById("loadMoreBtn");
-            loadBtn.textContent = "Loading...";
-            // loadBtn.disabled = true;
-
-            fetch(`load_products.php?offset=${offset}&limit=${limit}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.text();
-                })
-                .then(data => {
-                    if (data.trim() === '' || data.includes('No more products')) {
-                        loadBtn.textContent = "No More Products";
-                        loadBtn.disabled = true;
-                    } else {
-                        document.getElementById("productContainer").innerHTML += data;
-                        offset += limit;
-                        loadBtn.textContent = "Load More Products";
-                        loadBtn.disabled = false;
-
-                        // Re-initialize event listeners for new products
-                        initializeProductCards();
-                    }
-                    isLoading = false;
-                })
-                .catch(error => {
-                    console.error('Error loading products:', error);
-                    loadBtn.textContent = "Error Loading Products";
-                    loadBtn.disabled = false;
-                    isLoading = false;
-                });
-        }
-
-        function initializeProductCards() {
-            // Remove existing event listeners and add new ones
-            document.querySelectorAll('.product-card').forEach(card => {
-                const viewDetailsBtn = card.querySelector('.view-details');
-
-                if (viewDetailsBtn && !viewDetailsBtn.hasAttribute('data-initialized')) {
-                    viewDetailsBtn.setAttribute('data-initialized', 'true');
-
-                    // Handle click on the view details button
-                    viewDetailsBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        openProductModal(card);
-                    });
-
-                    // Handle click on the entire card
-                    card.addEventListener('click', () => {
-                        openProductModal(card);
-                    });
-                }
-            });
-        }
-
-        // Load first batch when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            loadProducts();
-        });
-
-        // Load more button event listener
-        document.getElementById("loadMoreBtn").addEventListener("click", loadProducts);
-
-        // Rest of your existing JavaScript code for modal functionality...
-    </script>
-    <script>
-        const swiper = new Swiper('.mySwiper', {
-            slidesPerView: 3,
+        const cswiper = new Swiper('.mySwiper', {
+            slidesPerView: 4,
             spaceBetween: 20,
             navigation: {
                 nextEl: '.swiper-button-next',
@@ -581,26 +384,116 @@ $result = $con->query($sql);
         });
 
     </script>
+
     <script>
-        const swiper = new Swiper('.categories__container', {
-            loop: true,
-            autoplay: {
-                delay: 2500, // Time between slides in ms
-                disableOnInteraction: false, // Keep autoplay after user interaction
-            },
-            navigation: {
-                nextEl: '.swiper-button-next',
-                prevEl: '.swiper-button-prev',
-            },
-            slidesPerView: 3, // You can change this based on your layout
-            spaceBetween: 20,
-            breakpoints: {
-                768: { slidesPerView: 3 },
-                480: { slidesPerView: 2 },
-                0: { slidesPerView: 1 },
-            },
+        // Swiper init
+        const swiper = new Swiper('.swiper', {
+            slidesPerView: 'auto',
+            spaceBetween: 16,
+        });
+
+        let selectedCategory = '';
+        let selectedPrice = '';
+        let offset = 0;
+        const limit = 36;
+        let isLoading = false;
+
+        function loadProducts(reset = false) {
+            if (isLoading) return;
+            isLoading = true;
+            const loadBtn = document.getElementById("loadMoreBtn");
+            if (reset) {
+                offset = 0;
+                document.getElementById("productContainer").innerHTML = '';
+                loadBtn.textContent = "Loading...";
+                loadBtn.disabled = true;
+            } else {
+                loadBtn.textContent = "Loading...";
+                loadBtn.disabled = true;
+            }
+            fetch(`load_products.php?offset=${offset}&limit=${limit}&category_id=${selectedCategory}&price=${selectedPrice}`)
+                .then(response => response.text())
+                .then(data => {
+                    if (data.trim() === '' || data.includes('No more products')) {
+                        loadBtn.textContent = "No More Products";
+                        loadBtn.disabled = true;
+                    } else {
+                        document.getElementById("productContainer").innerHTML += data;
+                        offset += limit;
+                        loadBtn.textContent = "Load More Products";
+                        loadBtn.disabled = false;
+                    }
+                    isLoading = false;
+                })
+                .catch(error => {
+                    console.error('Error loading products:', error);
+                    loadBtn.textContent = "Error Loading Products";
+                    loadBtn.disabled = false;
+                    isLoading = false;
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProducts(true);
+            // Sidebar category click
+            document.querySelectorAll('.category-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.querySelectorAll('.category-link').forEach(l => l.classList.remove('bg-primary', 'text-white'));
+                    this.classList.add('bg-primary', 'text-white');
+                    selectedCategory = this.getAttribute('data-category-id');
+                    // Sync slider
+                    document.querySelectorAll('.swiper-slide').forEach(slide => {
+                        slide.classList.toggle('active', slide.getAttribute('data-id') === selectedCategory);
+                    });
+                    loadProducts(true);
+                });
+            });
+            // Price filter
+            document.getElementById('priceFilter').addEventListener('change', function() {
+                selectedPrice = this.value;
+                loadProducts(true);
+            });
+            // Slider category click
+            document.querySelectorAll('.swiper-slide').forEach(slide => {
+                slide.addEventListener('click', function() {
+                    document.querySelectorAll('.swiper-slide').forEach(s => s.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedCategory = this.getAttribute('data-id');
+                    // Sync sidebar
+                    document.querySelectorAll('.category-link').forEach(link => {
+                        link.classList.toggle('bg-primary', link.getAttribute('data-category-id') === selectedCategory);
+                        link.classList.toggle('text-white', link.getAttribute('data-category-id') === selectedCategory);
+                    });
+                    loadProducts(true);
+                });
+            });
+            document.getElementById("loadMoreBtn").addEventListener("click", function() {
+                loadProducts();
+            });
         });
     </script>
+
+<!--    <script>-->
+<!--        const swiper = new Swiper('.categories__container', {-->
+<!--            loop: true,-->
+<!--            autoplay: {-->
+<!--                delay: 2500, // Time between slides in ms-->
+<!--                disableOnInteraction: false, // Keep autoplay after user interaction-->
+<!--            },-->
+<!--            navigation: {-->
+<!--                nextEl: '.swiper-button-next',-->
+<!--                prevEl: '.swiper-button-prev',-->
+<!--            },-->
+<!--            slidesPerView: 3, // You can change this based on your layout-->
+<!--            spaceBetween: 20,-->
+<!--            breakpoints: {-->
+<!--                768: { slidesPerView: 3 },-->
+<!--                480: { slidesPerView: 2 },-->
+<!--                0: { slidesPerView: 1 },-->
+<!--            },-->
+<!--        });-->
+<!--    </script>-->
     <script>
         // TEMPORARY DATA: Replace with database integration
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
