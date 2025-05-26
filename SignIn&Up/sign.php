@@ -197,7 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="password" placeholder="Password" name="txtPasswordSignIn" id="txtPasswordSignIn">
                 <span class="toggle-password" data-target="txtPasswordSignIn"><i class="fa fa-eye"></i></span>
             </div>
-            <a href="#">Forget Your Password?</a>
+            <a href="forgot_password.php">Forget Your Password?</a>
             <button>Sign In</button>
         </form>
     </div>
