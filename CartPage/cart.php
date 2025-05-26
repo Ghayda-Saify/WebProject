@@ -1,3 +1,47 @@
+<?php
+global $con;
+session_start();
+include '../connection.php'; // Ensure this file establishes the $con variable
+
+if (!isset($_SESSION['user'])) {
+    header('Location: ../SignIn&Up/sign.php');
+    exit;
+}
+
+$user_id = $_SESSION['user']['id'];
+
+// Fetch cart items for the logged-in user
+$sql = "
+  SELECT 
+    cart.id AS cart_id,
+    product.id AS product_id,
+    product.name,
+    product.price,
+    product.image,
+    cart.quantity
+  FROM cart
+  JOIN product ON cart.product_id = product.id
+  WHERE cart.user_id = $user_id
+";
+
+$result = $con->query($sql);
+$cart_items = [];
+
+while ($row = $result->fetch_assoc()) {
+    $cart_items[] = $row;
+}
+
+// Calculate subtotal
+$subtotal = 0;
+foreach ($cart_items as $item) {
+    $subtotal += $item['price'] * $item['quantity'];
+}
+$shipping = 20.00; // Fixed shipping cost
+$total = $subtotal + $shipping;
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,15 +66,15 @@
 </head>
 <body class="font-poppins">
     <header>
-        <a href="../HomePage/index.php" class="logo text-primary font-['Pacifico'] text-2xl">Alandalus Design</a>
+        <a href="../HomePage/index.php" class="logo text-primary font-['Pacifico'] text-3xl">Alandalus Design</a>
         <!-- Navigation Bar -->
         <nav class="main-nav">
             <ul>
                 <li><a href="../HomePage/index.php">Home</a></li>
                 <li><a href="../ProductsPage/product.php">Products</a></li>
-                <li><a href="../ContactPage/contact.html">Connect</a></li>
+                <li><a href="../ContactPage/contact.php">Connect</a></li>
                 <li>
-                    <a href="cart.html" class="relative">
+                    <a href="cart.php" class="relative">
                         <i class="fa-solid fa-cart-shopping text-primary"></i>
                         <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center cart-count">0</span>
                     </a>
@@ -41,7 +85,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="../ProductsPage/wishlist.html" class="relative">
+                    <a href="../ProductsPage/wishlist.php" class="relative">
                         <i class="fa-solid fa-heart text-primary"></i>
                         <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center wishlist-count">0</span>
                     </a>
@@ -56,48 +100,70 @@
         <div class="text-sm text-gray-500 mb-8">
             <a href="../HomePage/index.php" class="hover:text-blue-600">Home</a>
             <span class="mx-2">/</span>
-            <a href="../ProductsPage/product.php class="hover:text-blue-600">Products</a>
+            <a href="../ProductsPage/product.php" class="hover:text-blue-600">Products</a>
             <span class="mx-2">/</span>
             <span class="text-gray-800">Shopping Cart</span>
         </div>
 
-        <div class="flex flex-col lg:flex-row gap-8">
-            <!-- Cart Items -->
-            <div class="lg:w-2/3">
-                <div class="bg-white rounded-lg shadow p-6">
-                    <h2 class="text-2xl font-semibold mb-6">Shopping Cart</h2>
-                    <div id="cart-items" class="space-y-4">
-                        <!-- Cart items will be dynamically inserted here -->
-                    </div>
-                    <div id="empty-cart-message" class="hidden text-center py-8 text-gray-500">
-                        Your cart is empty. <a href="../ProductsPage/product.php" class="text-blue-600 hover:underline">Continue shopping</a>
+        <!-- Main Content -->
+        <main class="container mx-auto px-4 py-8">
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Cart Items -->
+                <div class="lg:w-2/3">
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h2 class="text-2xl font-semibold mb-6">Shopping Cart</h2>
+                        <?php if (count($cart_items) > 0): ?>
+                            <?php foreach ($cart_items as $item): ?>
+                                <div class="flex items-center justify-between border-b pb-4 mb-4">
+                                    <div class="flex items-center">
+                                        <img src="../HomePage/imgs/<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>" class="w-20 h-20 object-cover rounded">
+                                        <div class="ml-4">
+                                            <h4 class="text-lg font-semibold"><?php echo htmlspecialchars($item['name']); ?></h4>
+                                            <p class="text-gray-500">Price: ₪<?php echo number_format($item['price'], 2); ?></p>
+                                            <p class="text-gray-500">Quantity: <?php echo $item['quantity']; ?></p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-gray-700 font-semibold">₪<?php echo number_format($item['price'] * $item['quantity'], 2); ?></p>
+                                        <form method="post" action="delete_cart_item.php">
+                                            <input type="hidden" name="cart_id" value="<?php echo $item['cart_id']; ?>">
+                                            <button type="submit" class="text-red-500 hover:text-red-700 mt-2">Remove</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <p class="text-center text-gray-500">Your cart is empty. <a href="../ProductsPage/product.php" class="text-blue-600 hover:underline">Continue shopping</a></p>
+                        <?php endif; ?>
                     </div>
                 </div>
-            </div>
 
-            <!-- Order Summary -->
+
+                <!-- Order Summary -->
             <div class="lg:w-1/3">
                 <div class="bg-white rounded-lg shadow p-6">
                     <h3 class="text-lg font-semibold mb-4">Order Summary</h3>
                     <div class="space-y-3">
                         <div class="flex justify-between">
                             <span>Subtotal</span>
-                            <span id="subtotal">₪0.00</span>
+                            <span>₪<?php echo number_format($subtotal, 2); ?></span>
                         </div>
                         <div class="flex justify-between">
                             <span>Shipping</span>
-                            <span id="shipping">₪20.00</span>
+                            <span>₪<?php echo number_format($shipping, 2); ?></span>
                         </div>
                         <div class="border-t pt-3 mt-3">
                             <div class="flex justify-between font-semibold">
                                 <span>Total</span>
-                                <span id="total">₪0.00</span>
+                                <span>₪<?php echo number_format($total, 2); ?></span>
                             </div>
                         </div>
                     </div>
-                    <button id="checkout-button" class="w-full bg-blue-600 text-white py-3 rounded-lg mt-6 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
-                        Proceed to Checkout
-                    </button>
+                    <form method="post" action="checkout.php">
+                        <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg mt-6 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                            Proceed to Checkout
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -133,7 +199,7 @@
                     <ul class="space-y-2">
                         <li><a href="../HomePage/index.php" class="text-gray-600 hover:text-primary transition">Home</a></li>
                         <li><a href="../ProductsPage/product.php" class="text-gray-600 hover:text-primary transition">Products</a></li>
-                        <li><a href="../ContactPage/contact.html" class="text-gray-600 hover:text-primary transition">Contact</a></li>
+                        <li><a href="../ContactPage/contact.php" class="text-gray-600 hover:text-primary transition">Contact</a></li>
                         <li><a href="cart.html" class="text-gray-600 hover:text-primary transition">Cart</a></li>
                     </ul>
                 </div>
@@ -194,13 +260,13 @@
     <script src="cart.js"></script>
     <script>
         // DATABASE TODO: Replace localStorage with database operations for wishlist management
-        document.addEventListener('DOMContentLoaded', function() {
-            const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-            const wishlistCount = document.querySelector('.wishlist-count');
-            if (wishlistCount) {
-                wishlistCount.textContent = wishlist.length;
-            }
-        });
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+        //     const wishlistCount = document.querySelector('.wishlist-count');
+        //     if (wishlistCount) {
+        //         wishlistCount.textContent = wishlist.length;
+        //     }
+        // });
     </script>
 </body>
-</html> 
+</html>

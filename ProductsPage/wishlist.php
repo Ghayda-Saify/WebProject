@@ -1,4 +1,37 @@
-<?php session_start(); ?>
+<?php
+global $con;
+session_start();
+require '../connection.php'; // Adjust path if needed
+
+if (!isset($_SESSION['user'])) {
+    echo json_encode(["status" => "error", "message" => "Not logged in"]);
+    exit;
+}
+
+$user_id = $_SESSION['user']['id'];
+$product_id = intval($_POST['product_id']);
+
+if ($product_id <= 0) {
+    echo json_encode(["status" => "error", "message" => "Invalid product"]);
+    exit;
+}
+
+// Check if already in wishlist
+$stmt = $con->prepare("SELECT id FROM wishlist WHERE user_id = ? AND product_id = ?");
+$stmt->bind_param("ii", $user_id, $product_id);
+$stmt->execute();
+$stmt->store_result();
+
+if ($stmt->num_rows > 0) {
+    echo json_encode(["status" => "info", "message" => "Already in wishlist"]);
+} else {
+    $insert = $con->prepare("INSERT INTO wishlist (user_id, product_id) VALUES (?, ?)");
+    $insert->bind_param("ii", $user_id, $product_id);
+    $insert->execute();
+    echo json_encode(["status" => "success", "message" => "Added to wishlist"]);
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,21 +67,20 @@
             <ul>
                 <li><a href="../HomePage/index.php">Home</a></li>
                 <li><a href="product.php">Products</a></li>
-                <li><a href="../ContactPage/contact.html">Connect</a></li>
+                <li><a href="../ContactPage/contact.php">Connect</a></li>
                 <li>
-                    <a href="../CartPage/cart.html" class="relative">
+                    <a href="../CartPage/cart.php" class="relative">
                         <i class="fa-solid fa-cart-shopping text-primary"></i>
                         <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center cart-count">0</span>
                     </a>
                 </li>
                 <li>
-                    <?php $profileLink = isset($_SESSION['user_email']) ? '../ProfilePage/profile.html' : '../SignIn&Up/sign.php'; ?>
-                    <a href="<?php echo $profileLink; ?>">
+                    <a href="../ProfilePage/profile.php">
                         <i class="fa-solid fa-user text-primary"></i>
                     </a>
                 </li>
                 <li>
-                    <a href="wishlist.html" class="relative text-primary font-bold">
+                    <a href="wishlist.php" class="relative text-primary font-bold">
                         <i class="fa-solid fa-heart text-primary"></i>
                         <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center wishlist-count">0</span>
                     </a>
@@ -126,8 +158,8 @@
                     <ul class="space-y-2">
                         <li><a href="../HomePage/index.php" class="text-gray-600 hover:text-primary transition">Home</a></li>
                         <li><a href="product.php" class="text-gray-600 hover:text-primary transition">Products</a></li>
-                        <li><a href="../ContactPage/contact.html" class="text-gray-600 hover:text-primary transition">Contact</a></li>
-                        <li><a href="../CartPage/cart.html" class="text-gray-600 hover:text-primary transition">Cart</a></li>
+                        <li><a href="../ContactPage/contact.php" class="text-gray-600 hover:text-primary transition">Contact</a></li>
+                        <li><a href="../CartPage/cart.php" class="text-gray-600 hover:text-primary transition">Cart</a></li>
                     </ul>
                 </div>
 

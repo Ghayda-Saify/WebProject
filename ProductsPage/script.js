@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cart link functionality
     document.querySelector('.cart-trigger').addEventListener('click', (e) => {
         e.preventDefault();
-        window.location.href = '../CartPage/cart.html';
+        window.location.href = '../CartPage/cart.php';
     });
 
     // Pagination functionality

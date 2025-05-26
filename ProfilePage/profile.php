@@ -1,19 +1,15 @@
-<?php 
-session_start();
-require_once '../connection.php';
-global $con;
+<?php
 
-$user = null;
-if (isset($_SESSION['user_email'])) {
-    $email = $_SESSION['user_email'];
-    $stmt = $con->prepare("SELECT * FROM users WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $user = $result->fetch_assoc();
-    $stmt->close();
+
+session_start();
+if (!isset($_SESSION['user'])) {
+    header('Location: ../SignIn&Up/sign.php');
+    exit;
 }
+
+
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -49,16 +45,15 @@ if (isset($_SESSION['user_email'])) {
             <ul>
                 <li><a href="../HomePage/index.php">Home</a></li>
                 <li><a href="../ProductsPage/product.php">Products</a></li>
-                <li><a href="../ContactPage/contact.html">Connect</a></li>
+                <li><a href="../ContactPage/contact.php">Connect</a></li>
                 <li>
-                    <a href="../CartPage/cart.html" class="relative">
+                    <a href="../CartPage/cart.php" class="relative">
                         <i class="fa-solid fa-cart-shopping text-primary"></i>
                         <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center cart-count">0</span>
                     </a>
                 </li>
                 <li>
-                    <?php $profileLink = isset($_SESSION['user_email']) ? 'profile.html' : '../SignIn&Up/sign.php'; ?>
-                    <a href="<?php echo $profileLink; ?>" class="text-primary font-bold">
+                    <a href="profile.html" class="text-primary font-bold">
                         <i class="fa-solid fa-user text-primary"></i>
                     </a>
                 </li>
@@ -95,8 +90,8 @@ if (isset($_SESSION['user_email'])) {
                             <div class="w-24 h-24 rounded-full bg-primary/10 mx-auto mb-4 flex items-center justify-center">
                                 <i class="fas fa-user text-4xl text-primary"></i>
                             </div>
-                            <h2 class="text-xl font-semibold" id="user-name"><?php echo htmlspecialchars($user['name'] ?? ''); ?></h2>
-                            <p class="text-gray-600 text-sm" id="user-email"><?php echo htmlspecialchars($user['email'] ?? ''); ?></p>
+                            <h2 class="text-xl font-semibold" id="user-name">John Doe</h2>
+                            <p class="text-gray-600 text-sm" id="user-email">john@example.com</p>
                         </div>
                         <nav class="space-y-2">
                             <button class="w-full text-left px-4 py-2 rounded-lg hover:bg-primary/5 transition tab-button active" data-tab="profile">
@@ -121,25 +116,33 @@ if (isset($_SESSION['user_email'])) {
                     <div class="tab-content active" id="profile-tab">
                         <div class="bg-white rounded-lg shadow-sm p-6">
                             <h3 class="text-xl font-semibold mb-6">Personal Information</h3>
+                            <!-- DATABASE TODO: Replace with actual user data from database -->
                             <form id="profile-form" class="space-y-4">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-sm font-medium mb-1">Name</label>
-                                        <input type="text" class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-primary/30 focus:border-primary" value="<?php echo htmlspecialchars($user['name'] ?? ''); ?>" readonly>
+                                        <label class="block text-sm font-medium mb-1">First Name</label>
+                                        <input type="text" class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-primary/30 focus:border-primary" value="John">
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium mb-1">Type</label>
-                                        <input type="text" class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-primary/30 focus:border-primary" value="<?php echo htmlspecialchars($user['type'] ?? ''); ?>" readonly>
+                                        <label class="block text-sm font-medium mb-1">Last Name</label>
+                                        <input type="text" class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-primary/30 focus:border-primary" value="Doe">
                                     </div>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium mb-1">Email</label>
-                                    <input type="email" class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-primary/30 focus:border-primary" value="<?php echo htmlspecialchars($user['email'] ?? ''); ?>" readonly>
+                                    <input type="email" class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-primary/30 focus:border-primary" value="john@example.com">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium mb-1">Phone</label>
-                                    <input type="tel" class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-primary/30 focus:border-primary" value="<?php echo htmlspecialchars($user['phone_number'] ?? ''); ?>" readonly>
+                                    <input type="tel" class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-primary/30 focus:border-primary" value="+1 234 567 890">
                                 </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Address</label>
+                                    <textarea class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-primary/30 focus:border-primary" rows="3">123 Street Name, City, Country</textarea>
+                                </div>
+                                <button type="submit" class="bg-primary text-white px-6 py-2 rounded-full hover:bg-opacity-90 transition">
+                                    Save Changes
+                                </button>
                             </form>
                         </div>
                     </div>
@@ -247,6 +250,10 @@ if (isset($_SESSION['user_email'])) {
                                             <input type="checkbox" class="form-checkbox text-primary rounded" checked>
                                             <span class="ml-2">Email notifications for promotions</span>
                                         </label>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="form-checkbox text-primary rounded">
+                                            <span class="ml-2">SMS notifications</span>
+                                        </label>
                                     </div>
                                 </div>
 
@@ -298,8 +305,8 @@ if (isset($_SESSION['user_email'])) {
                     <ul class="space-y-2">
                         <li><a href="../HomePage/index.php" class="text-gray-600 hover:text-primary transition">Home</a></li>
                         <li><a href="../ProductsPage/product.php" class="text-gray-600 hover:text-primary transition">Products</a></li>
-                        <li><a href="../ContactPage/contact.html" class="text-gray-600 hover:text-primary transition">Contact</a></li>
-                        <li><a href="../CartPage/cart.html" class="text-gray-600 hover:text-primary transition">Cart</a></li>
+                        <li><a href="../ContactPage/contact.php" class="text-gray-600 hover:text-primary transition">Contact</a></li>
+                        <li><a href="../CartPage/cart.php" class="text-gray-600 hover:text-primary transition">Cart</a></li>
                     </ul>
                 </div>
 
