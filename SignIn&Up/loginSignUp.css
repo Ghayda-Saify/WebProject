@@ -314,4 +314,45 @@ header nav{
     color:rgb(67, 115, 238);
 }
 
+input.highlight {
+    /*border-color: #d9534f; !* Red border *!*/
+    border-color: #f0ad4e;
+    box-shadow: 0 0 5px rgba(255, 94, 45, 0.5); /* Soft red glow */
+    transition: all 0.3s ease;
+}
+.swal2-container {
+    padding-top: 60px; /* Adjust based on your header height */
+}
+.message-box {
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+}
 
+.message-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.message-error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+#toast {
+    display: none;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #f13b1c;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    font-family: 'Cairo', sans-serif;
+    font-weight: 500;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    z-index: 1000;
+}

@@ -20,11 +20,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (empty($name) || empty($email) || empty($password) || empty($confirmPass) || empty($phone)) {
             $msg = "All fields are required";
-        } elseif ($password !== $confirmPass) {
-            $msg = "Passwords do not match";
+            $togglePanel = 'signup';
         } elseif (strlen($password) < 6) {
             $msg = "Password must be at least 6 characters long";
-        } else {
+            $togglePanel = 'signup';
+        } elseif ($password !== $confirmPass) {
+        $msg = "Passwords do not match";
+        $togglePanel = 'signup';
+        }else {
             try {
                 $db = $con;
                 // Check if email already exists in users table
@@ -34,22 +37,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $result = $checkStmt->get_result();
 
                 if ($result->num_rows > 0) {
-                    $msg = "You already have an account. Please sign in.";
-                    $togglePanel = 'signin';
+                    $_SESSION['error_msg'] = "You already have an account. Please sign in.";
+                    $_SESSION['toggle_panel'] = 'signin';
+                    header("Location: sign.php");
+                    exit();
                 } else {
                     $sha1Password = sha1($password);
                     $insertStmt = $db->prepare("INSERT INTO users (name, email, password, phone_number, type) VALUES (?, ?, ?, ?, 'user')");
-                    $insertStmt->bind_param("ssss", $id,$name, $email, $sha1Password, $phone);
+                    $insertStmt->bind_param("ssss", $name, $email, $sha1Password, $phone);
                     if ($insertStmt->execute()) {
-                        echo json_encode(["success" => true]);
-                        $_SESSION['user_id'] = $id;
                         $_SESSION['user_email'] = $email;
                         $_SESSION['user_type'] = 'user';
                         header("Location: ../HomePage/index.php");
                         exit();
                     } else {
                         $msg = "Registration failed. Please try again.";
-                        echo json_encode(["success" => false, "error" => $con->error]);
                     }
                     $insertStmt->close();
                 }
@@ -57,58 +59,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $db->close();
             } catch (Exception $e) {
                 $msg = "An error occurred: " . $e->getMessage();
-                echo json_encode(["success" => false, "error" => $conn->error]);
             }
         }
     }
-
     // Handle Sign In
     if (isset($_POST['txtEmailSignIn']) && isset($_POST['txtPasswordSignIn'])) {
         $userEmail = $_POST['txtEmailSignIn'];
         $userPassword = $_POST['txtPasswordSignIn'];
+
+        if (empty($userEmail) || empty($userPassword)) {
+            $msg = "Please fill in all fields";
+        }
+        else{
         $sha1Password = sha1($userPassword);
         try {
             $db = $con;
-            $stmt = $db->prepare("SELECT * FROM users WHERE email = ? AND password = ?");
-            $stmt->bind_param("ss", $userEmail, $sha1Password);
-            $stmt->execute();
-            $res = $stmt->get_result();
-
-            if ($res->num_rows > 0) {
-                $userData = $res->fetch_assoc();
-                $_SESSION['user'] = $userData;
-
-                // Optional: JSON success response
-                echo json_encode(["success" => true]);
-
-                // Redirect to home page
-                header("Location: ../HomePage/index.php");
-                exit();
+            $checkStmt = $db->prepare("SELECT * FROM users WHERE email = ?");
+            $checkStmt->bind_param("s", $userEmail);
+            $checkStmt->execute();
+            $emailResult = $checkStmt->get_result();
+            if ($emailResult->num_rows === 0) {
+                $msg = "Account not found.";
+                $togglePanel = 'signup';
+            } else {
+                $stmt = $db->prepare("SELECT * FROM users WHERE email = ? AND password = ?");
+                $stmt->bind_param("ss", $userEmail, $sha1Password);
+                $stmt->execute();
+                $res = $stmt->get_result();
+                if ($res->num_rows > 0) {
+                    $_SESSION['user_email'] = $userEmail;
+                    $_SESSION['user_type'] = $emailResult->fetch_assoc()['type'];
+                    header("Location: ../HomePage/index.php");
+                    exit();
+                } else {
+                    $msg = "Incorrect password.";
+                }
+                $stmt->close();
             }
-            else {
-                $msg = "Incorrect email or password.";
-//                echo json_encode(["success" => false, "error" => $msg]);
-
-            }
-            $stmt->close();
+            $checkStmt->close();
             $db->close();
         } catch (Exception $e) {
             $msg = "An error occurred: " . $e->getMessage();
-            echo json_encode(["success" => false, "error" => $msg]);
+        }
         }
     }
-}
 
-// Get messages from session only after form submission
-if (isset($_SESSION['error_msg'])) {
-    $msg = $_SESSION['error_msg'];
-    unset($_SESSION['error_msg']);
-}
-if (isset($_SESSION['success_msg'])) {
-    $success_msg = $_SESSION['success_msg'];
-    unset($_SESSION['success_msg']);
+    // Get messages from session only after form submission
+    if (isset($_SESSION['error_msg'])) {
+        $msg = $_SESSION['error_msg'];
+        $togglePanel = $_SESSION['toggle_panel'] ?? '';
+        unset($_SESSION['error_msg'], $_SESSION['toggle_panel']);
+    }
+
+    if (isset($_SESSION['success_msg'])) {
+        $success_msg = $_SESSION['success_msg'];
+        unset($_SESSION['success_msg']);
+    }
 }
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -120,63 +130,8 @@ if (isset($_SESSION['success_msg'])) {
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
-    <audio id="panel-sound" src="/sounds/Fast_Whoosh.mp3" preload="auto"></audio>
-    <style>
-        .error-message, .success-message {
-            display: none; /* Hide messages by default */
-        }
-        .error-message.show, .success-message.show {
-            display: block; /* Show only when has content */
-        }
-        .error-message {
-            color: #f13b1c;
-            background-color: #ffe5e5;
-            padding: 10px;
-            border-radius: 8px;
-            margin: 10px 0;
-            text-align: center;
-            font-family: 'Cairo', sans-serif;
-        }
-        .success-message {
-            color: #28a745;
-            background-color: #e8f5e9;
-            padding: 10px;
-            border-radius: 8px;
-            margin: 10px 0;
-            text-align: center;
-            font-family: 'Cairo', sans-serif;
-        }
-        .password-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-        .password-wrapper input[type="password"] {
-            width: 100%;
-            padding-right: 40px;
-        }
-        .toggle-password {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: #888;
-            font-size: 1.2rem;
-            z-index: 2;
-            transition: color 0.2s;
-        }
-        .toggle-password:hover {
-            color: #122c6f;
-        }
-        /* Add hover effect for Forget Password link */
-        .form-container a {
-            transition: color 0.3s ease;
-        }
-        .form-container a:hover {
-            color:rgb(67, 115, 238);
-        }
-    </style>
+    <script src="https://unpkg.com/sweetalert2@11"></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -202,21 +157,18 @@ if (isset($_SESSION['success_msg'])) {
 </head>
 <body>
 
+
 <div class="container"  id="container">
     <div class="form-container sign-up">
         <form method="POST" action="sign.php">
             <h1>Create Account</h1>
-            <?php if (!empty($msg) && (isset($_POST['txtName']) || $togglePanel === 'signin')): ?>
-                <div class="error-message show"><?php echo htmlspecialchars($msg); ?></div>
-            <?php endif; ?>
-            <?php if (!empty($success_msg) && isset($_POST['txtName'])): ?>
-                <div class="success-message show"><?php echo htmlspecialchars($success_msg); ?></div>
-            <?php endif; ?>
-
-            <span>or use your email to register</span>
-            <label for="txtName"></label><input type="text" placeholder="Name" name="txtName" id="txtName">
+            <div class="social-icons">
+                <!-- Social sign in/up buttons removed -->
+            </div>
+            <span class="brief2" >Your Journey Starts Here</span>
+            <label for="txtName"></label><input type="text" placeholder="Name" name="txtName" id="txtName" >
             <label for="txtEmail"></label><input type="email" placeholder="Email" name="txtEmail" id="txtEmail">
-            <label for="txtPhone"></label><input type="tel" placeholder="Phone Number" name="txtPhone" id="txtPhone" required>
+            <label for="txtPhone"></label><input type="tel" placeholder="Phone Number" name="txtPhone" id="txtPhone">
             <div class="password-wrapper">
                 <input type="password" placeholder="Password" name="txtPassword" id="txtPassword">
                 <span class="toggle-password" data-target="txtPassword"><i class="fa fa-eye"></i></span>
@@ -232,16 +184,10 @@ if (isset($_SESSION['success_msg'])) {
     <div class="form-container sign-in">
         <form method="POST" action="sign.php">
             <h1>Sign in</h1>
-            <?php if (!empty($msg) && (isset($_POST['txtEmailSignIn']) || $togglePanel === 'signup')): ?>
-                <div class="error-message show"><?php echo htmlspecialchars($msg); ?></div>
-            <?php endif; ?>
-            <?php if (!empty($success_msg) && isset($_POST['txtEmailSignIn'])): ?>
-                <div class="success-message show"><?php echo htmlspecialchars($success_msg); ?></div>
-            <?php endif; ?>
             <div class="social-icons">
                 <!-- Social sign in/up buttons removed -->
             </div>
-            <span>or use your email & password</span>
+            <span class="brief">Welcome Back with Ease</span>
             <label for="txtEmailSignIn"></label><input type="email" placeholder="Email" name="txtEmailSignIn" id="txtEmailSignIn">
             <div class="password-wrapper">
                 <input type="password" placeholder="Password" name="txtPasswordSignIn" id="txtPasswordSignIn">
@@ -251,73 +197,127 @@ if (isset($_SESSION['success_msg'])) {
             <button>Sign In</button>
         </form>
     </div>
+
     <div class="toggle-container">
         <div class="toggle">
             <div class="toggle-panel toggle-left">
                 <h1>Welcome Back!</h1>
                 <p>Enter your personal details to use all site features</p>
-                <button class="hidden" id="login">Sign In</button>
+                <button class="hidden sound" id="login">Sign In</button>
             </div>
             <div class="toggle-panel toggle-right">
                 <h1>Hello, New Friend!</h1>
                 <p>Register with your personal details to use all site features</p>
-                <button class="hidden" id="register">Sign Up</button>
+                <button class="hidden sound" id="register">Sign Up</button>
             </div>
         </div>
     </div>
 </div>
 
+<audio id="panel-sound" src="../sounds/fastwhoosh.mp3" preload="auto"></audio>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const container = document.getElementById('container');
+        const signupForm = document.querySelector('.sign-up form');
+        const signinForm = document.querySelector('.sign-in form');
+        const toast = document.getElementById("toast");
+
+        // Handle togglePanel alerts and animation
+        <?php if (!empty($togglePanel)): ?>
+        <?php if ($togglePanel === 'signup'): ?>
+        container.classList.add('right-panel-active');
+        Swal.fire({
+            icon: 'error',
+            title: 'Signup Failed',
+            text: <?php echo json_encode($msg); ?>,
+            confirmButtonText: 'OK'
+        });
+        <?php elseif ($togglePanel === 'signin'): ?>
+        Swal.fire({
+            icon: 'info',
+            title: 'Account Exists',
+            text: <?php echo json_encode($msg); ?>,
+            confirmButtonText: 'OK'
+        }).then(() => {
+            container.classList.remove('right-panel-active');
+        });
+        <?php endif; ?>
+
+    <?php endif; ?>
+
+        // Form validation function
+        function setupValidation(form, actionText) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault(); // Stop form from submitting
+
+                let isEmpty = false;
+                let firstEmptyInput = null;
+
+                const inputs = form.querySelectorAll('input');
+
+                // Remove previous highlights
+                inputs.forEach(input => input.classList.remove('highlight'));
+
+                inputs.forEach(input => {
+                    if (!input.value.trim()) {
+                        isEmpty = true;
+                        input.classList.add('highlight'); // Highlight empty fields
+                        if (!firstEmptyInput) firstEmptyInput = input;
+                    }
+                });
+
+                if (isEmpty) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Oops!',
+                        text: `Please fill in all fields to ${actionText}.`,
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        if (firstEmptyInput) {
+                            firstEmptyInput.focus();
+                        }
+                    });
+                } else {
+                    this.submit(); // Submit form if valid
+                }
+            });
+        }
+
+        if (signupForm) {
+            setupValidation(signupForm, 'sign up');
+        }
+
+        if (signinForm) {
+            setupValidation(signinForm, 'sign in');
+        }
+
+    });
+</script>
+
 
 <script src="script.js"></script>
+
+
 <script>
-    document.querySelectorAll('.toggle-password').forEach(icon => {
-        icon.addEventListener('click', function() {
-            const targetId = this.getAttribute('data-target');
-            const input = document.getElementById(targetId);
-            if (input) {
-                if (input.type === 'password') {
-                    input.type = 'text';
-                    this.innerHTML = '<i class="fa fa-eye-slash"></i>';
-                } else {
-                    input.type = 'password';
-                    this.innerHTML = '<i class="fa fa-eye"></i>';
-                }
+    document.addEventListener('DOMContentLoaded', function() {
+        <?php if (!empty($msg)): ?>
+        Swal.fire({
+            icon: 'info',
+            title: 'Info',
+            text: <?= json_encode($msg) ?>,
+            confirmButtonText: 'OK',
+            width: 400,        // تعيين العرض حسب طلبك
+            heightAuto: false, // منع تغير الارتفاع تلقائياً
+            padding: '1.5em',
+            customClass: {
+                popup: 'custom-swal-popup'
             }
         });
+        <?php endif; ?>
     });
-
-    function playPanelSound() {
-        const audio = document.getElementById('panel-sound');
-        if (audio) {
-            audio.currentTime = 0;
-            audio.play();
-        }
-    }
-
-    // Add sound to panel switch buttons
-    const loginBtn = document.getElementById('login');
-    const registerBtn = document.getElementById('register');
-    if (loginBtn) loginBtn.addEventListener('click', playPanelSound);
-    if (registerBtn) registerBtn.addEventListener('click', playPanelSound);
-
-    // Optionally, play sound on successful sign in/up
-    // document.querySelectorAll('form').forEach(form => {
-    //     form.addEventListener('submit', playPanelSound);
-    // });
 </script>
-<?php if (!empty($togglePanel)): ?>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            <?php if ($togglePanel === 'signup'): ?>
-            document.getElementById('container').classList.add('right-panel-active');
-            alert('Account not found. Please sign up.');
-            <?php elseif ($togglePanel === 'signin'): ?>
-            document.getElementById('container').classList.remove('right-panel-active');
-            alert('You already have an account. Please sign in.');
-            <?php endif; ?>
-        });
-    </script>
-<?php endif; ?>
 
 </body>
 </html>

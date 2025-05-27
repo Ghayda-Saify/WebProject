@@ -103,6 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['txtEmail'])) {
     <link rel="stylesheet" href="loginSignUp.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+
 </head>
 <body>
 <div class="form-container">
