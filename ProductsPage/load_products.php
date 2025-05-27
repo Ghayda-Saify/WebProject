@@ -34,7 +34,7 @@ if ($result->num_rows > 0) {
         echo '<div class="p-6">';
         echo '<h3 class="font-aboreto text-xl mb-2">' . htmlspecialchars($row["name"]) . '</h3>';
         echo '<p class="text-gray-600 mb-2">' . htmlspecialchars($row["short_desc"]) . '</p>';
-        echo '<p class="text-primary font-aboreto text-lg">' . htmlspecialchars($row["price"]) . ' SR</p>';
+        echo '<p class="text-primary font-aboreto text-lg">' . htmlspecialchars($row["price"]) . ' ₪</p>';
         echo '</div>';
         echo '</div>';
     }

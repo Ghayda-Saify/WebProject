@@ -1,16 +1,52 @@
 <?php
+global $con;
 session_start();
-include '../session.php';
-
-
+include '../connection.php';
 if (!isset($_SESSION['user'])) {
     header('Location: ../SignIn&Up/sign.php');
     exit;
 }
 
+$user_id = $_SESSION['user']['id'];
 
+// Fetch cart items for the logged-in user
+$sql = "
+  SELECT 
+    cart.id AS cart_id,
+    product.id AS product_id,
+    product.name,
+    product.price,
+    product.image,
+    cart.quantity
+  FROM cart
+  JOIN product ON cart.product_id = product.id
+  WHERE cart.user_id = $user_id
+";
+
+$result = $con->query($sql);
+$cart_items = [];
+
+while ($row = $result->fetch_assoc()) {
+    $cart_items[] = $row;
+}
+
+// Calculate subtotal
+$subtotal = 0;
+foreach ($cart_items as $item) {
+    $subtotal += $item['price'] * $item['quantity'];
+}
+$shipping = 20.00; // Fixed shipping cost
+$total = $subtotal + $shipping;
+
+$cart_count = 0;
+if (isset($_SESSION['user'])) {
+    $user_id = $_SESSION['user']['id'];
+    $cart_count_result = $con->query("SELECT SUM(quantity) as total FROM cart WHERE user_id = $user_id");
+    if ($cart_count_result && $row = $cart_count_result->fetch_assoc()) {
+        $cart_count = $row['total'] ?? 0;
+    }
+}
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -49,11 +85,11 @@ if (!isset($_SESSION['user'])) {
                 <li>
                     <a href="../CartPage/cart.php" class="relative">
                         <i class="fa-solid fa-cart-shopping text-primary"></i>
-                        <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center cart-count">0</span>
+                        <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center cart-count"><?php echo $cart_count; ?></span>
                     </a>
                 </li>
                 <li>
-                    <a href="../SignIn&Up/sign.php">
+                    <a href="../ProfilePage/profile.php">
                         <i class="fa-solid fa-user text-primary"></i>
                     </a>
                 </li>
@@ -81,40 +117,41 @@ if (!isset($_SESSION['user'])) {
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium mb-1">First Name</label>
-                                <input type="text" required class="w-full border rounded px-3 py-2">
+                                <input type="text" name="first_name" required class="w-full border rounded px-3 py-2">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium mb-1">Last Name</label>
-                                <input type="text" required class="w-full border rounded px-3 py-2">
+                                <input type="text" name="last_name" required class="w-full border rounded px-3 py-2">
                             </div>
                         </div>
                         <div>
                             <label class="block text-sm font-medium mb-1">Email</label>
-                            <input type="email" required class="w-full border rounded px-3 py-2">
+                            <input type="email" name="email" required class="w-full border rounded px-3 py-2">
                         </div>
                         <div>
                             <label class="block text-sm font-medium mb-1">Phone</label>
-                            <input type="tel" required class="w-full border rounded px-3 py-2">
+                            <input type="tel" name="phone" required class="w-full border rounded px-3 py-2">
                         </div>
                         <div>
                             <label class="block text-sm font-medium mb-1">Address</label>
-                            <input type="text" required class="w-full border rounded px-3 py-2">
+                            <input type="text" name="address" required class="w-full border rounded px-3 py-2">
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
                                 <label class="block text-sm font-medium mb-1">City</label>
-                                <input type="text" required class="w-full border rounded px-3 py-2">
+                                <input type="text" name="city" required class="w-full border rounded px-3 py-2">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium mb-1">State</label>
-                                <input type="text" required class="w-full border rounded px-3 py-2">
+                                <input type="text" name="state" required class="w-full border rounded px-3 py-2">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium mb-1">ZIP Code</label>
-                                <input type="text" required class="w-full border rounded px-3 py-2">
+                                <input type="text" name="zip" required class="w-full border rounded px-3 py-2">
                             </div>
                         </div>
                     </form>
+
                 </div>
 
                 <!-- Payment Information Section (Commented) -->
@@ -148,16 +185,16 @@ if (!isset($_SESSION['user'])) {
                     <div class="space-y-3">
                         <div class="flex justify-between">
                             <span>Subtotal</span>
-                            <span id="subtotal">₪0.00</span>
+                            <span>₪<?php echo number_format($subtotal, 2); ?></span>
                         </div>
                         <div class="flex justify-between">
                             <span>Shipping</span>
-                            <span id="shipping">₪20.00</span>
+                            <span>₪ <?php echo number_format($shipping, 2); ?></span>
                         </div>
                         <div class="border-t pt-3 mt-3">
                             <div class="flex justify-between font-semibold">
                                 <span>Total</span>
-                                <span id="total">₪0.00</span>
+                                <span>₪<?php echo number_format($total, 2); ?></span>
                             </div>
                         </div>
                     </div>
@@ -181,22 +218,34 @@ if (!isset($_SESSION['user'])) {
     <script src="../js/search.js"></script>
     <script src="checkout.js"></script>
     <script>
-        // Update cart count
-        document.addEventListener('DOMContentLoaded', function() {
-            const cart = JSON.parse(localStorage.getItem('cart')) || [];
-            const cartCount = document.querySelector('.cart-count');
-            cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
+        document.getElementById('place-order-button').addEventListener('click', function (e) {
+            e.preventDefault();
 
-            // Update order summary
-            const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
-            document.getElementById('subtotal').textContent = `₪${subtotal.toFixed(2)}`;
-            
-            const shipping = 20.00;
-            document.getElementById('shipping').textContent = `₪${shipping.toFixed(2)}`;
-            
-            const total = subtotal + shipping;
-            document.getElementById('total').textContent = `₪${total.toFixed(2)}`;
+            const form = document.getElementById('shipping-form');
+            const formData = new FormData(form);
+
+            fetch('place_order.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        alert('Order placed successfully!');
+                        window.location.href = 'thank_you.php?cart_id=4';
+                    } else {
+                        alert('Error placing order: ' + result.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while placing the order.');
+                });
         });
     </script>
+
+
+
+
 </body>
 </html> 
