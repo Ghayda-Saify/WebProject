@@ -160,7 +160,7 @@ session_start();
 <div class="fancy-bubbles"></div>
 
 <header>
-    <a href="index.php" class="logo text-primary font-['Pacifico'] text-3xl">Alandalus Design</a>
+    <a href="index.php" class="logo text-primary font-['Pacifico'] text-2xl">Alandalus Design</a>
     <nav class="main-nav">
         <ul>
             <li><a href="index.php" class="text-primary font-bold">Home</a></li>
@@ -177,7 +177,7 @@ session_start();
 
 
                     if (isset($_SESSION['user'])) {
-                        echo '<i class="fa-solid fa-user text-primary"></i>'; // Show person icon
+                        echo '<a href="../ProfilePage/profile.php"><i class="fa-solid fa-user text-primary"></i></a>'; // Show person icon
                         echo '<span>',"  Welcome, " . $_SESSION['user']['name'],'</span>';
                     } else {
                         echo '<a href="../SignIn&Up/sign.php" class="btn btn-primary">Sign In</a>';

@@ -1,5 +1,5 @@
 <?php
-//session_start();
+session_start();
 //if (!isset($_SESSION['user'])) {
 //    header('Location: ../SignIn&Up/sign.php');
 //    exit;
@@ -55,9 +55,8 @@
                     </a>
                 </li>
                 <li>
-                    <a href="../ProfilePage/profile.php">
-                        <i class="fa-solid fa-user text-primary"></i>
-                    </a>
+                    <?php $profileLink = isset($_SESSION['user_email']) ? '../ProfilePage/profile.html' : '../SignIn&Up/sign.php'; ?>
+                    <a href="<?php echo $profileLink; ?>">
                 </li>
             </ul>
         </nav>
