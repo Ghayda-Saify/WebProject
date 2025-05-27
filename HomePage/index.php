@@ -220,7 +220,7 @@ global $con;
                             <div class="content">
                                 <h2><?php echo htmlspecialchars($product['name']); ?></h2>
                                 <p class="price">₪<?php echo number_format($product['price'], 2); ?></p>
-                                <p class="description">
+                                <p class="description" style="text-align: left">
                                     <?php echo htmlspecialchars($product['description'] ?? 'PERSONALIZED CREATIONS, CRAFTED FOR YOU'); // Assuming description column or using default ?>
                                 </p>
                                 <button class="addToCard" style="background-color: #122c6f;">

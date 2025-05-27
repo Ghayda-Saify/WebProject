@@ -523,6 +523,10 @@ $wishlist_stmt->close();
                     isLoading = false;
                 // Add event listeners to new product cards
                 addProductCardListeners();
+                // Add text-center class to product info divs
+                document.querySelectorAll('#productContainer .p-6').forEach(infoDiv => {
+                    infoDiv.classList.add('text-center');
+                });
                 })
                 .catch(error => {
                     console.error('Error loading products:', error);
