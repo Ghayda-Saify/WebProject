@@ -75,9 +75,8 @@ if ($stmt->num_rows > 0) {
                     </a>
                 </li>
                 <li>
-                    <a href="../ProfilePage/profile.php">
-                        <i class="fa-solid fa-user text-primary"></i>
-                    </a>
+                    <?php $profileLink = isset($_SESSION['user_email']) ? '../ProfilePage/profile.html' : '../SignIn&Up/sign.php'; ?>
+                    <a href="<?php echo $profileLink; ?>">
                 </li>
                 <li>
                     <a href="wishlist.php" class="relative text-primary font-bold">
