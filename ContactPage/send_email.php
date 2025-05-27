@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $mail->isHTML(false);
         $mail->Subject = !empty($subject) ? $subject : 'New Contact Message';
-        $mail->Body = "Name: $name\nEmail: $email\nMessage:\n$message";
+        $mail->Body = "Name: $name \nEmail:$email \nMessage:\n $message";
 
         $mail->send();
 
@@ -48,25 +48,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $reply->CharSet = 'UTF-8';
 
         $reply->setFrom('talaalhendiuni4@gmail.com', 'Send Message Alandalus Design');
-        $reply->addAddress($email, $name); // المستخدم
+        $reply->addAddress($email, $name); // user
         $reply->isHTML(true);
-        $reply->Subject = "تم استلام رسالتك من Alandalus Design";
-        $reply->Body = "مرحبًا $name,\n\nشكرًا لتواصلك معنا. لقد استلمنا رسالتك وسنقوم بالرد عليك في أقرب وقت ممكن.\n\n" .
-            "معلومات رسالتك:\n\n" .
-            "الاسم: $name\n" .
-            "البريد الإلكتروني: $email\n" .
-            "الموضوع: $subject\n" .
-            "الرسالة:\n$message\n\n" .
-            "تحياتنا،\nفريق Alandalus Design";
+        $reply->Subject = "Your message has been received by Alandalus Design";
+        $reply->Body = "Hello $name,\n\nThank you for contacting us. We have received your message and will get back to you as soon as possible.\n\n" .
+            "Your message details:\n\n" .
+            "Name: $name\n" .
+            "Email: $email\n" .
+            "Subject: $subject\n" .
+            "Message:\n$message\n\n" .
+            "Best regards,\nThe Alandalus Design Team";
 
         $reply->send();
 
-        echo "<script>alert('تم إرسال الرسالة بنجاح وسيتم الرد عليك قريباً!'); window.location.href='contact.php';</script>";
+        echo "<script>alert('Your message has been sent successfully and we will respond soon!'); window.location.href='contact.php';</script>";
 
     } catch (Exception $e) {
-    echo "خطأ في الإرسال: " . $mail->ErrorInfo;
-    exit;
-}
+        echo "Error sending email: " . $mail->ErrorInfo;
+        exit;
+    }
 
 
 } else {
