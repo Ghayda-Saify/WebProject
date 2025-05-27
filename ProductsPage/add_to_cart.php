@@ -67,7 +67,7 @@ try {
         $cart_item = $result->fetch_assoc();
         $new_quantity = $cart_item['quantity'] + $quantity;
         
-        if ($new_quantity > $product['stock']) {
+        if ($new_quantity > $product['qty']) {
             echo json_encode(['success' => false, 'message' => 'Not enough stock available']);
             exit;
         }

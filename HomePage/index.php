@@ -1,4 +1,5 @@
 <?php
+global $cart_count;
 session_start();
 include '../connection.php';
 global $con;
@@ -174,7 +175,7 @@ global $con;
             <li>
                 <a href="../CartPage/cart.php" class="relative">
                     <i class="fa-solid fa-cart-shopping text-primary"></i>
-                    <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center cart-count">5</span>
+                    <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center cart-count"><?php echo $cart_count; ?></span>
                 </a>
             </li>
             <li>
@@ -618,12 +619,12 @@ global $con;
         loop: true,
     });
 
-    // Initialize cart count from localStorage
-    document.addEventListener('DOMContentLoaded', function() {
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        const cartCount = document.querySelector('.cart-count');
-        cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
-    });
+    // // Initialize cart count from localStorage
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    //     const cartCount = document.querySelector('.cart-count');
+    //     cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
+    // });
 
 </script>
 <script>
