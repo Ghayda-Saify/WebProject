@@ -116,7 +116,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
-    <audio id="panel-sound" src="/sounds/Fast_Whoosh.mp3" preload="auto"></audio>
 
     <script>
         tailwind.config = {
@@ -150,8 +149,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="social-icons">
                 <!-- Social sign in/up buttons removed -->
             </div>
-            <span>or use your email to register</span>
-            <label for="txtName"></label><input type="text" placeholder="Name" name="txtName" id="txtName">
+            <span class="brief2" >Your Journey Starts Here</span>
+            <label for="txtName"></label><input type="text" placeholder="Name" name="txtName" id="txtName" >
             <label for="txtEmail"></label><input type="email" placeholder="Email" name="txtEmail" id="txtEmail">
             <label for="txtPhone"></label><input type="tel" placeholder="Phone Number" name="txtPhone" id="txtPhone" required>
             <div class="password-wrapper">
@@ -172,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="social-icons">
                 <!-- Social sign in/up buttons removed -->
             </div>
-            <span>or use your email & password</span>
+            <span class="brief">Welcome Back with Ease</span>
             <label for="txtEmailSignIn"></label><input type="email" placeholder="Email" name="txtEmailSignIn" id="txtEmailSignIn">
             <div class="password-wrapper">
                 <input type="password" placeholder="Password" name="txtPasswordSignIn" id="txtPasswordSignIn">
@@ -187,55 +186,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="toggle-panel toggle-left">
                 <h1>Welcome Back!</h1>
                 <p>Enter your personal details to use all site features</p>
-                <button class="hidden" id="login">Sign In</button>
+                <button class="hidden sound" id="login">Sign In</button>
             </div>
             <div class="toggle-panel toggle-right">
                 <h1>Hello, New Friend!</h1>
                 <p>Register with your personal details to use all site features</p>
-                <button class="hidden" id="register">Sign Up</button>
+                <button class="hidden sound" id="register">Sign Up</button>
             </div>
         </div>
     </div>
 </div>
+<audio id="panel-sound" src="../sounds/fastwhoosh.mp3" preload="auto" autoplay></audio>
 
-
-<script src="script.js"></script>
-<script>
-    document.querySelectorAll('.toggle-password').forEach(icon => {
-        icon.addEventListener('click', function() {
-            const targetId = this.getAttribute('data-target');
-            const input = document.getElementById(targetId);
-            if (input) {
-                if (input.type === 'password') {
-                    input.type = 'text';
-                    this.innerHTML = '<i class="fa fa-eye-slash"></i>';
-                } else {
-                    input.type = 'password';
-                    this.innerHTML = '<i class="fa fa-eye"></i>';
-                }
-            }
-        });
-    });
-
-    function playPanelSound() {
-        const audio = document.getElementById('panel-sound');
-        if (audio) {
-            audio.currentTime = 0;
-            audio.play();
-        }
-    }
-
-    // Add sound to panel switch buttons
-    const loginBtn = document.getElementById('login');
-    const registerBtn = document.getElementById('register');
-    if (loginBtn) loginBtn.addEventListener('click', playPanelSound);
-    if (registerBtn) registerBtn.addEventListener('click', playPanelSound);
-
-    // Optionally, play sound on successful sign in/up
-    // document.querySelectorAll('form').forEach(form => {
-    //     form.addEventListener('submit', playPanelSound);
-    // });
-</script>
 <?php if (!empty($togglePanel)): ?>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -249,6 +211,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         });
     </script>
 <?php endif; ?>
-
+<script src="script.js"></script>
 </body>
 </html>
