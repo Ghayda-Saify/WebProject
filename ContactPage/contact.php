@@ -19,8 +19,8 @@ session_start();
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: { 
-                        primary: "#122c6f", 
+                    colors: {
+                        primary: "#122c6f",
                         secondary: "#f13b1c",
                         beige: "#F5F5DC",
                         gold: "#FFD700"
@@ -38,7 +38,7 @@ session_start();
             <ul>
                 <li><a href="../HomePage/index.php">Home</a></li>
                 <li><a href="../ProductsPage/product.php">Products</a></li>
-                <li><a href="contact.html" class="text-primary font-bold">Connect</a></li>
+                <li><a href="contact.php" class="text-primary font-bold">Connect</a></li>
                 <li>
                     <a href="../CartPage/cart.php" class="relative">
                         <i class="fa-solid fa-cart-shopping text-primary"></i>
@@ -46,8 +46,13 @@ session_start();
                     </a>
                 </li>
                 <li>
-                    <?php $profileLink = isset($_SESSION['user_email']) ? '../ProfilePage/profile.html' : '../SignIn&Up/sign.php'; ?>
+                <li>
+                    <?php $profileLink = isset($_SESSION['user_email']) ? '../ProfilePage/profile.php' : '../SignIn&Up/sign.php'; ?>
                     <a href="<?php echo $profileLink; ?>">
+                        <i class="fa-solid fa-user text-primary"></i>
+                    </a>
+                </li>
+
                 </li>
             </ul>
         </nav>
@@ -77,7 +82,7 @@ session_start();
             <div class="text-center mb-12">
                 <h1 class="text-4xl font-bold text-primary mb-4">Let's Connect</h1>
                 <p class="text-gray-600 max-w-2xl mx-auto">
-                    Have a question about our products or interested in a custom design? We'd love to hear from you! 
+                    Have a question about our products or interested in a custom design? We'd love to hear from you!
                     Reach out to us and we'll get back to you as soon as possible.
                 </p>
             </div>
@@ -85,14 +90,14 @@ session_start();
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
                 <!-- Contact Form -->
                 <div class="bg-white p-8 rounded-lg shadow-lg">
-                    <form id="contact-form" class="space-y-6">
+                    <form id="contact-form" class="space-y-6" method="POST" action="send_email.php">
                         <div>
                             <label for="name" class="block text-gray-700 font-medium mb-2">Full Name *</label>
                             <input type="text" id="name" name="name" required
                                 class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
                                 placeholder="Enter your full name">
                         </div>
-                        
+
                         <div>
                             <label for="email" class="block text-gray-700 font-medium mb-2">Email Address *</label>
                             <input type="email" id="email" name="email" required
@@ -224,7 +229,7 @@ session_start();
                     <ul class="space-y-2">
                         <li><a href="../HomePage/index.php" class="text-gray-600 hover:text-primary transition">Home</a></li>
                         <li><a href="../ProductsPage/product.php" class="text-gray-600 hover:text-primary transition">Products</a></li>
-                        <li><a href="contact.html" class="text-gray-600 hover:text-primary transition">Contact</a></li>
+                        <li><a href="contact.php" class="text-gray-600 hover:text-primary transition">Contact</a></li>
                         <li><a href="../CartPage/cart.php" class="text-gray-600 hover:text-primary transition">Cart</a></li>
                     </ul>
                 </div>
@@ -260,23 +265,23 @@ session_start();
         // Form validation and submission
         const form = document.getElementById('contact-form');
         form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
+
+
             // Basic form validation
             const name = document.getElementById('name').value.trim();
             const email = document.getElementById('email').value.trim();
             const message = document.getElementById('message').value.trim();
-            
+
             if (!name || !email || !message) {
                 alert('Please fill in all required fields.');
                 return;
             }
-            
+
             if (!isValidEmail(email)) {
                 alert('Please enter a valid email address.');
                 return;
             }
-            
+
             // Here you would typically send the form data to your server
             alert('Thank you for your message! We will get back to you soon.');
             form.reset();
@@ -295,4 +300,4 @@ session_start();
         });
     </script>
 </body>
-</html> 
+</html>
