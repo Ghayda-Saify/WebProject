@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once('../connection.php');
-
+global $con;
 header('Content-Type: application/json');
 
 if (!isset($_SESSION['user']['id'])) {
@@ -40,7 +40,7 @@ if ($con->connect_error) {
 
 try {
     // Check if product exists and is in stock
-    $stmt = $con->prepare("SELECT stock FROM product WHERE id = ?");
+    $stmt = $con->prepare("SELECT qty FROM product WHERE id = ?");
     $stmt->bind_param("i", $product_id);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -51,7 +51,7 @@ try {
     }
     
     $product = $result->fetch_assoc();
-    if ($product['stock'] < $quantity) {
+    if ($product['qty'] < $quantity) {
         echo json_encode(['success' => false, 'message' => 'Not enough stock available']);
         exit;
     }

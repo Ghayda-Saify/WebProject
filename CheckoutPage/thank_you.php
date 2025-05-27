@@ -75,7 +75,7 @@ $items_result = $con->query($items_sql);
 <body>
 
 <div class="container">
-    <h2>Thank you for your order, <?php echo htmlspecialchars($order['full_name']); ?>!</h2>
+    <h2>Thank you for your order, <?php echo htmlspecialchars($order['first_name']),' ',htmlspecialchars($order['last_name']); ?>!</h2>
     <p>Your order ID is <strong>#<?php echo $order_id; ?></strong>.</p>
     <p>We have sent the confirmation to <strong><?php echo htmlspecialchars($order['email']); ?></strong>.</p>
     <p>Shipping to: <br>
