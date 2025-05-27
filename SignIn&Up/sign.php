@@ -44,14 +44,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 } else {
                     $sha1Password = sha1($password);
                     $insertStmt = $db->prepare("INSERT INTO users (name, email, password, phone_number, type) VALUES (?, ?, ?, ?, 'user')");
-                    $insertStmt->bind_param("ssss", $name, $email, $sha1Password, $phone);
-                    if ($insertStmt->execute()) {
+                    $insertStmt->bind_param("ssss", $id,$name, $email, $sha1Password, $phone);                    if ($insertStmt->execute()) {
                         $_SESSION['user_email'] = $email;
                         $_SESSION['user_type'] = 'user';
                         header("Location: ../HomePage/index.php");
                         exit();
                     } else {
                         $msg = "Registration failed. Please try again.";
+                        echo json_encode(["success" => false, "error" => $con->error]);
                     }
                     $insertStmt->close();
                 }
@@ -59,6 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $db->close();
             } catch (Exception $e) {
                 $msg = "An error occurred: " . $e->getMessage();
+                echo json_encode(["success" => false, "error" => $conn->error]);
             }
         }
     }
@@ -74,32 +75,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $sha1Password = sha1($userPassword);
         try {
             $db = $con;
-            $checkStmt = $db->prepare("SELECT * FROM users WHERE email = ?");
-            $checkStmt->bind_param("s", $userEmail);
-            $checkStmt->execute();
-            $emailResult = $checkStmt->get_result();
-            if ($emailResult->num_rows === 0) {
-                $msg = "Account not found.";
-                $togglePanel = 'signup';
-            } else {
-                $stmt = $db->prepare("SELECT * FROM users WHERE email = ? AND password = ?");
-                $stmt->bind_param("ss", $userEmail, $sha1Password);
-                $stmt->execute();
-                $res = $stmt->get_result();
-                if ($res->num_rows > 0) {
-                    $_SESSION['user_email'] = $userEmail;
-                    $_SESSION['user_type'] = $emailResult->fetch_assoc()['type'];
-                    header("Location: ../HomePage/index.php");
-                    exit();
-                } else {
-                    $msg = "Incorrect password.";
-                }
-                $stmt->close();
+            $stmt = $db->prepare("SELECT * FROM users WHERE email = ? AND password = ?");
+            $stmt->bind_param("ss", $userEmail, $sha1Password);
+            $stmt->execute();
+            $res = $stmt->get_result();
+
+            if ($res->num_rows > 0) {
+                $userData = $res->fetch_assoc();
+                $_SESSION['user'] = $userData;
+
+                // Optional: JSON success response
+                echo json_encode(["success" => true]);
+
+                // Redirect to home page
+                header("Location: ../HomePage/index.php");
+                exit();
             }
-            $checkStmt->close();
+            else {
+                $msg = "Incorrect email or password.";
+                echo json_encode(["success" => false, "error" => $msg]);
+            }
+            $stmt->close();
             $db->close();
         } catch (Exception $e) {
             $msg = "An error occurred: " . $e->getMessage();
+            echo json_encode(["success" => false, "error" => $msg]);
         }
         }
     }
@@ -161,9 +161,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="container"  id="container">
     <div class="form-container sign-up">
         <form method="POST" action="sign.php">
+            <?php if (!empty($msg) && (isset($_POST['txtName']) || $togglePanel === 'signin')): ?>
+                <div class="error-message show"><?php echo htmlspecialchars($msg); ?></div>
+            <?php endif; ?>
+            <?php if (!empty($success_msg) && isset($_POST['txtName'])): ?>
+                <div class="success-message show"><?php echo htmlspecialchars($success_msg); ?></div>
+            <?php endif; ?>
             <h1>Create Account</h1>
             <div class="social-icons">
-                <!-- Social sign in/up buttons removed -->
             </div>
             <span class="brief2" >Your Journey Starts Here</span>
             <label for="txtName"></label><input type="text" placeholder="Name" name="txtName" id="txtName" >
@@ -184,6 +189,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="form-container sign-in">
         <form method="POST" action="sign.php">
             <h1>Sign in</h1>
+            <?php if (!empty($msg) && (isset($_POST['txtEmailSignIn']) || $togglePanel === 'signup')): ?>
+                <div class="error-message show"><?php echo htmlspecialchars($msg); ?></div>
+            <?php endif; ?>
+            <?php if (!empty($success_msg) && isset($_POST['txtEmailSignIn'])): ?>
+                <div class="success-message show"><?php echo htmlspecialchars($success_msg); ?></div>
+            <?php endif; ?>
             <div class="social-icons">
                 <!-- Social sign in/up buttons removed -->
             </div>
