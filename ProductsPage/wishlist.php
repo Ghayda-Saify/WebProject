@@ -9,7 +9,7 @@ if (!isset($_SESSION['user'])) {
 }
 
 $user_id = $_SESSION['user']['id'];
-$product_id = intval($_POST['product_id']);
+$product_id = isset($_POST['product_id']) ? intval($_POST['product_id']) : null;
 
 if ($product_id <= 0) {
     echo json_encode(["status" => "error", "message" => "Invalid product"]);
