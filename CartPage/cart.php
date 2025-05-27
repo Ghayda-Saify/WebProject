@@ -159,7 +159,7 @@ $total = $subtotal + $shipping;
                             </div>
                         </div>
                     </div>
-                    <form method="post" action="checkout.php">
+                    <form method="post" action="../CheckoutPage/checkout.php">
                         <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg mt-6 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
                             Proceed to Checkout
                         </button>
