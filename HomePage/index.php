@@ -1,5 +1,7 @@
 <?php
 session_start();
+include '../connection.php';
+global $con;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -172,7 +174,7 @@ session_start();
             <li>
                 <a href="../CartPage/cart.php" class="relative">
                     <i class="fa-solid fa-cart-shopping text-primary"></i>
-                    <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center cart-count">0</span>
+                    <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center cart-count">5</span>
                 </a>
             </li>
             <li>
@@ -192,85 +194,72 @@ session_start();
     <!--        Home-->
     <section class="carousel next">
         <div class="list">
-            <article class="item other_1">
-                <div class="main-content"
-                     style="background-color: #ffffff;">
-                    <div class="content">
-                        <h2>Custom Hoodie</h2>
-                        <p class="price">₪ 60</p>
-                        <p class="description">
-                            PERSONALIZED CREATIONS, CRAFTED FOR YOU
-                        </p>
-                        <button class="addToCard" style="background-color: #122c6f;">
-                            Add To Card
-                        </button>
-                    </div>
-                </div>
-                <figure class="image">
-                    <img src="imgs/hoodi-removebg-preview.png" alt="">
-                    <figcaption>PERSONALIZED CREATIONS, CRAFTED FOR YOU</figcaption>
-                </figure>
-            </article>
-            <article class="item active">
-                <div class="main-content"
-                     style="background-color: #ADB5AA;">
-                    <div class="content">
-                        <h2>Custom Notebook</h2>
-                        <p class="price">₪ 20</p>
-                        <p class="description">
-                            PERSONALIZED CREATIONS, CRAFTED FOR YOU                            </p>
-                        <button class="addToCard">
-                            Add To Card
-                        </button>
-                    </div>
-                </div>
-                <figure class="image">
-                    <img src="imgs/notebook2-removebg-preview.png" alt="">
-                    <figcaption>PERSONALIZED CREATIONS, CRAFTED FOR YOU</figcaption>
-                </figure>
-            </article>
-            <article class="item other_2">
-                <div class="main-content"
-                     style="background-color: #AF9864;">
-                    <div class="content">
-                        <h2>Custom Cover</h2>
-                        <p class="price">₪ 20</p>
-                        <p class="description">
-                            PERSONALIZED CREATIONS, CRAFTED FOR YOU                            </p>
-                        <button class="addToCard">
-                            Add To Card
-                        </button>
-                    </div>
-                </div>
-                <figure class="image">
-                    <img src="imgs/cover2-removebg-preview.png" alt="">
-                    <figcaption>PERSONALIZED CREATIONS, CRAFTED FOR YOU</figcaption>
-                </figure>
-            </article>
-            <article class="item">
-                <div class="main-content"
-                     style="background-color: #D5CEB1;">
-                    <div class="content">
-                        <h2>Custom HandBag</h2>
-                        <p class="price">₪ 45</p>
-                        <p class="description">
-                            PERSONALIZED CREATIONS, CRAFTED FOR YOU                            </p>
-                        <button class="addToCard">
-                            Add To Card
-                        </button>
-                    </div>
-                </div>
-                <figure class="image">
-                    <img src="imgs/زرف-removebg-preview.png" alt="">
-                    <figcaption>PERSONALIZED CREATIONS, CRAFTED FOR YOU</figcaption>
-                </figure>
-            </article>
+            <?php
+            // Fetch products for the carousel (e.g., latest 4)
+            $carousel_sql = "SELECT * FROM product WHERE id BETWEEN 16 AND 19 Order By id ASC LIMIT 4";
+            $carousel_result = $con->query($carousel_sql);
+
+            $bg_colors = ['#ADB5AA', '#AF9864', '#D5CEB1','#ffffff'];
+            $item_index = 0;
+
+            if ($carousel_result && $carousel_result->num_rows > 0) {
+                while ($product = $carousel_result->fetch_assoc()) {
+                    $item_class = '';
+                    if ($item_index === 0) {
+                        $item_class = 'active';
+                    } elseif ($item_index === 1) {
+                        $item_class = 'other_1';
+                    } elseif ($item_index === 2) {
+                        $item_class = 'other_2';
+                    }
+
+                    $bg_color = $bg_colors[$item_index % count($bg_colors)];
+                    ?>
+                    <article class="item <?php echo $item_class; ?>" data-product-id="<?php echo htmlspecialchars($product['id']); ?>">
+                        <div class="main-content" style="background-color: <?php echo htmlspecialchars($bg_color); ?>;" data-bg="<?php echo htmlspecialchars($bg_color); ?>">
+                            <div class="content">
+                                <h2><?php echo htmlspecialchars($product['name']); ?></h2>
+                                <p class="price">₪<?php echo number_format($product['price'], 2); ?></p>
+                                <p class="description">
+                                    <?php echo htmlspecialchars($product['description'] ?? 'PERSONALIZED CREATIONS, CRAFTED FOR YOU'); // Assuming description column or using default ?>
+                                </p>
+                                <button class="addToCard" style="background-color: #122c6f;">
+                                    Add To Card
+                                </button>
+                            </div>
+                        </div>
+                        <figure class="image">
+                            <img src="imgs/<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>">
+                            <figcaption><?php echo htmlspecialchars($product['description'] ?? 'PERSONALIZED CREATIONS, CRAFTED FOR YOU'); ?></figcaption>
+                        </figure>
+                    </article>
+                    <?php
+                    $item_index++;
+                }
+            } else {
+                // Display placeholder items or a message if no products are found
+                ?>
+                 <article class="item active">
+                     <div class="main-content" style="background-color: #ffffff;" data-bg="#ffffff">
+                         <div class="content">
+                             <h2>No Products Yet</h2>
+                             <p class="price"></p>
+                             <p class="description">Check back later for new arrivals!</p>
+                             <button class="addToCard" style="background-color: #122c6f;">Browse Products</button>
+                         </div>
+                     </div>
+                     <figure class="image">
+                         <img src="imgs/default_placeholder.png" alt="Placeholder Image">
+                         <figcaption>No products available at the moment.</figcaption>
+                     </figure>
+                 </article>
+                <?php
+            }
+            ?>
         </div>
         <div class="arrows">
-            <button id="prev" style="--tw-text-opacity:1;
-    color: rgb(18 44 111 / var(--tw-text-opacity, 1))"><</button>
-            <button id="next" style="--tw-text-opacity:1;
-    color: rgb(18 44 111 / var(--tw-text-opacity, 1))">></button>
+            <button id="prev" style="--tw-text-opacity:1;color: rgb(18 44 111 / var(--tw-text-opacity, 1))"><</button>
+            <button id="next" style="--tw-text-opacity:1;color: rgb(18 44 111 / var(--tw-text-opacity, 1))">></button>
         </div>
     </section>
 
@@ -322,65 +311,66 @@ session_start();
             </p>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <?php
-                // Fetch 4 featured products from the database
-                $product_sql = "SELECT * FROM product LIMIT 4";
+                // Fetch specific featured products by ID range
+                $product_sql = "SELECT * FROM product WHERE id BETWEEN 6 AND 9 ORDER BY id ";
                 $product_result = $con->query($product_sql);
                 if ($product_result && $product_result->num_rows > 0) {
                     while ($product = $product_result->fetch_assoc()) {
-                        ?>
-                        <div class="product-card bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
-                            <div class="relative">
-                                <div class="h-64 overflow-hidden">
-                                    <img
-                                        src="imgs/<?php echo htmlspecialchars($product['image']); ?>"
-                                        alt="<?php echo htmlspecialchars($product['name']); ?>"
-                                        class="w-full h-full object-cover object-top"
-                                    />
-                                </div>
-                                <div class="quick-actions absolute top-4 right-4 flex flex-col gap-2">
-                                    <button class="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100">
-                                        <i class="ri-heart-line text-gray-700"></i>
-                                    </button>
-                                    <button class="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100">
-                                        <i class="ri-eye-line text-gray-700"></i>
-                                    </button>
-                                </div>
+                    ?>
+                    <div class="product-card bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300" data-product-id="<?php echo htmlspecialchars($product['id']); ?>">
+                        <div class="relative">
+                            <div class="h-64 overflow-hidden">
+                                <img
+                                    src="imgs/<?php echo htmlspecialchars($product['image']); ?>"
+                                    alt="<?php echo htmlspecialchars($product['name']); ?>"
+                                    class="w-full h-full object-cover object-top"
+                                />
                             </div>
-                            <div class="p-4">
-                                <h3 class="text-lg font-medium mb-1"><?php echo htmlspecialchars($product['name']); ?></h3>
-                                <div class="flex items-center mb-2">
-                                    <div class="flex text-yellow-400">
-                                        <i class="ri-star-fill ri-xs"></i>
-                                        <i class="ri-star-fill ri-xs"></i>
-                                        <i class="ri-star-fill ri-xs"></i>
-                                        <i class="ri-star-fill ri-xs"></i>
-                                        <i class="ri-star-line ri-xs"></i>
-                                    </div>
-                                    <span class="text-xs text-gray-500 ml-1">(0)</span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-primary font-semibold">₪<?php echo number_format($product['price'], 2); ?></span>
-                                    <button class="bg-primary text-white py-2 px-3 rounded-button text-sm hover:bg-opacity-90 transition-colors whitespace-nowrap">
-                                        Add to Cart
-                                    </button>
-                                </div>
+                            <div class="quick-actions absolute top-4 right-4 flex flex-col gap-2">
+                                <button class="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100">
+                                    <i class="ri-heart-line text-gray-700"></i>
+                                </button>
+                                <button class="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100">
+                                    <i class="ri-eye-line text-gray-700"></i>
+                                </button>
                             </div>
                         </div>
-                        <?php
-                    }
-                } else {
-                    echo '<div class="col-span-4 text-center text-gray-500">No featured products found.</div>';
+                        <div class="p-4">
+                            <h3 class="text-lg font-medium mb-1"><?php echo htmlspecialchars($product['name']); ?></h3>
+                            <div class="flex items-center mb-2">
+                                <div class="flex text-yellow-400">
+                                    <i class="ri-star-fill ri-xs"></i>
+                                    <i class="ri-star-fill ri-xs"></i>
+                                    <i class="ri-star-fill ri-xs"></i>
+                                    <i class="ri-star-fill ri-xs"></i>
+                                    <i class="ri-star-line ri-xs"></i>
+                                </div>
+                                <span class="text-xs text-gray-500 ml-1">(0)</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-primary font-semibold">₪<?php echo number_format($product['price'], 2); ?></span>
+                                <button class="addToCard bg-primary text-white py-2 px-3 rounded-button text-sm hover:bg-opacity-90 transition-colors whitespace-nowrap">
+                                    Add to Cart
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+                    <?php
                 }
-                ?>
-            </div>
-            <div class="text-center mt-10">
-                <a
-                    href="../ProductsPage/product.php"
-                    class="inline-block border-2 border-primary text-primary px-6 py-3 rounded-button font-medium hover:bg-primary hover:text-white transition-colors whitespace-nowrap"
-                >View All Products</a>
-            </div>
+            } else {
+                echo '<div class="col-span-4 text-center text-gray-500">No featured products found with IDs 15-18.</div>';
+            }
+            ?>
         </div>
-    </section>
+        <div class="text-center mt-10">
+            <a
+                href="../ProductsPage/product.php"
+                class="inline-block border-2 border-primary text-primary px-6 py-3 rounded-button font-medium hover:bg-primary hover:text-white transition-colors whitespace-nowrap"
+            >View All Products</a>
+        </div>
+    </div>
+</section>
     <!--        deals-->
     <section class="deals">
         <!-- Promotional Banner -->

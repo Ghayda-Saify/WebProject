@@ -178,6 +178,29 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// Add to cart button functionality (redirect to product page)
+document.addEventListener('DOMContentLoaded', () => {
+    const addToCartButtons = document.querySelectorAll('.addToCard');
+
+    addToCartButtons.forEach(button => {
+        button.addEventListener('click', (event) => {
+            event.preventDefault(); // Prevent default button action
+
+            // Find the nearest parent element with the data-product-id
+            const productElement = button.closest('[data-product-id]');
+
+            if (productElement) {
+                const productId = productElement.getAttribute('data-product-id');
+                // Redirect to the product page with the product ID and a flag to open modal
+                window.location.href = `../ProductsPage/product.php?id=${productId}&openModal=true`;
+            } else {
+                console.error('Could not find product ID for the clicked button.');
+                // Optionally provide user feedback, e.g., alert('Could not find product information.');
+            }
+        });
+    });
+});
+
 // Handle wishlist icon click
 const wishlistIcon = document.getElementById('wishlist-icon');
 if (wishlistIcon) {

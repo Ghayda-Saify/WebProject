@@ -79,18 +79,19 @@ $wishlist_stmt->close();
         .category__title {
             transition: color 0.3s ease;
         }
-        .category__container {
-            width: 100%; /* Ensure container takes full width of parent */
-            height: 100%; /* Fixed height for consistency */
-            overflow: hidden; /* Hide any overflow if image exceeds */
-            border-radius: 12px;
-        }
+        /*.category__container {*/
+        /*    width: 250px; !* Ensure container takes full width of parent *!*/
+        /*    height: 350px; !* Fixed height for consistency *!*/
+        /*    overflow: hidden; !* Hide any overflow if image exceeds *!*/
+        /*    border-radius: 12px;*/
+        /*}*/
         .category__img {
             width: 100%;
-            height: 100%;
+            height: 60%;
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            object-fit: contain;
+            object-fit: cover;
+            display: block;
             background-color: #fff;
             transition: transform 0.3s ease;
         }
@@ -384,12 +385,11 @@ $wishlist_stmt->close();
                         <p id="modal-product-price" class="text-2xl text-primary font-bold mb-4"></p>
                         <p id="modal-product-description" class="text-gray-600 mb-6"></p>
                         <div class="mb-6">
-                            <h3 class="text-lg font-semibold mb-4">Select Design Style:</h3>
-                            <div class="grid grid-cols-2 gap-4">
-                        <button class="design-option border rounded-lg p-4 hover:border-primary transition" data-design="arabic">Arabic Calligraphy</button>
-                        <button class="design-option border rounded-lg p-4 hover:border-primary transition" data-design="geometric">Geometric Pattern</button>
-                        <button class="design-option border rounded-lg p-4 hover:border-primary transition" data-design="modern">Modern Arabic</button>
-                        <button class="design-option border rounded-lg p-4 hover:border-primary transition" data-design="custom">Custom Design</button>
+                            <h3 class="text-lg font-semibold mb-4">Select Size:</h3>
+                            <div class="grid grid-cols-3 gap-4">
+                                <button class="size-option border rounded-lg p-4 hover:border-primary transition" data-size="small">Small</button>
+                                <button class="size-option border rounded-lg p-4 hover:border-primary transition" data-size="medium">Medium</button>
+                                <button class="size-option border rounded-lg p-4 hover:border-primary transition" data-size="large">Large</button>
                             </div>
                         </div>
                         <div class="mb-6">
@@ -407,7 +407,7 @@ $wishlist_stmt->close();
                 <button id="modal-add-to-wishlist" class="w-full bg-secondary text-white px-8 py-3 rounded-full text-lg font-medium hover:bg-opacity-90 transition flex items-center justify-center mt-4" data-product-id="">
                     <i class="fas fa-heart mr-2"></i>
                     Add To Wishlist
-                </button>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -591,11 +591,23 @@ $wishlist_stmt->close();
                 document.querySelectorAll('.category-link').forEach(l => l.classList.remove('bg-primary', 'text-white'));
                 this.classList.add('bg-primary', 'text-white');
                 selectedCategory = this.getAttribute('data-category-id');
+                // Update the URL to reflect the selected category
+                const url = new URL(window.location.href);
+                url.searchParams.set('category_id', selectedCategory);
+                window.history.pushState({}, '', url);
                 loadProducts(true);
             });
         });
         document.getElementById('priceFilter').addEventListener('change', function() {
             selectedPrice = this.value;
+            // Update the URL to reflect the selected price range
+            const url = new URL(window.location.href);
+            if (selectedPrice) {
+                url.searchParams.set('price', selectedPrice);
+            } else {
+                url.searchParams.delete('price');
+            }
+            window.history.pushState({}, '', url);
             loadProducts(true);
         });
         document.getElementById('loadMoreBtn').addEventListener('click', function() {
@@ -674,8 +686,8 @@ $wishlist_stmt->close();
         document.getElementById('review-product-id').value = productId;
 
             modalQuantity.value = 1;
-            document.querySelectorAll('.design-option').forEach(opt => opt.classList.remove('border-primary'));
-            document.querySelector('.design-option[data-design="arabic"]').classList.add('border-primary');
+            document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('border-primary'));
+            document.querySelector('.size-option[data-size="medium"]').classList.add('border-primary');
 
             if (images.length > 1) {
                 modalThumbnails.innerHTML = images.map(img => `
@@ -715,8 +727,8 @@ $wishlist_stmt->close();
         document.getElementById('review-product-id').value = product.id;
 
         modalQuantity.value = 1;
-        document.querySelectorAll('.design-option').forEach(opt => opt.classList.remove('border-primary'));
-        document.querySelector('.design-option[data-design="arabic"]').classList.add('border-primary');
+        document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('border-primary'));
+        document.querySelector('.size-option[data-size="medium"]').classList.add('border-primary');
 
         modalThumbnails.innerHTML = '';
         modalThumbnails.classList.add('hidden');
@@ -756,9 +768,9 @@ $wishlist_stmt->close();
             modalQuantity.value++;
         });
 
-        document.querySelectorAll('.design-option').forEach(option => {
+        document.querySelectorAll('.size-option').forEach(option => {
             option.addEventListener('click', () => {
-                document.querySelectorAll('.design-option').forEach(opt => opt.classList.remove('border-primary'));
+                document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('border-primary'));
                 option.classList.add('border-primary');
             });
         });
@@ -766,11 +778,11 @@ $wishlist_stmt->close();
         modalAddToCart.addEventListener('click', () => {
         const productId = modalAddToCart.dataset.productId;
         const quantity = parseInt(modalQuantity.value);
-        const design = document.querySelector('.design-option.border-primary')?.dataset.design || 'arabic';
+        const size = document.querySelector('.size-option.border-primary')?.dataset.size || 'medium';
         fetch('add_to_cart.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `product_id=${productId}&quantity=${quantity}&design=${design}`
+            body: `product_id=${productId}&quantity=${quantity}&size=${size}`
         })
             .then(response => response.json())
             .then(data => {
@@ -821,20 +833,67 @@ $wishlist_stmt->close();
                     `;
                         reviewList.appendChild(div);
                     });
-                } else {
+            } else {
                     reviewList.innerHTML = '<p class="text-gray-500">No reviews yet for this product.</p>';
                 }
             });
     }
 
     function showToast(message) {
-        const toast = document.getElementById('success-toast');
-        toast.querySelector('span').textContent = message;
-        toast.classList.remove('translate-y-full', 'opacity-0');
-        setTimeout(() => {
-            toast.classList.add('translate-y-full', 'opacity-0');
-        }, 3000);
-    }
+            const toast = document.getElementById('success-toast');
+            toast.querySelector('span').textContent = message;
+            toast.classList.remove('translate-y-full', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-full', 'opacity-0');
+            }, 3000);
+        }
+
+    // Check URL for modal flag and product ID on page load
+        document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+        const openModalFlag = urlParams.get('openModal');
+
+        if (productId && openModalFlag === 'true') {
+            // Fetch product details and open modal
+            fetch(`get_product_details.php?id=${productId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Use the existing function to open and populate the modal
+                        openProductModalFromSearch(data.product); // Reuse search modal function
+                } else {
+                        console.error('Error fetching product details:', data.message);
+                        // Optionally show an alert or message to the user
+                        alert('Could not load product details.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error during fetch:', error);
+                    // Optionally show an alert or message for network errors
+                    alert('An error occurred while loading product details.');
+                });
+        }
+
+        // Existing DOMContentLoaded logic (e.g., load products, filter handlers, etc.)
+        loadProducts(true);
+        document.querySelectorAll('.category-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.category-link').forEach(l => l.classList.remove('bg-primary', 'text-white'));
+                this.classList.add('bg-primary', 'text-white');
+                selectedCategory = this.getAttribute('data-category-id');
+                loadProducts(true);
+            });
+        });
+        document.getElementById('priceFilter').addEventListener('change', function() {
+            selectedPrice = this.value;
+            loadProducts(true);
+        });
+        document.getElementById('loadMoreBtn').addEventListener('click', function() {
+            loadProducts();
+            });
+        });
     </script>
 </body>
 </html> 
