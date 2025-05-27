@@ -9,16 +9,63 @@ if ($con->connect_error) {
 
 $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
 $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 36;
+$categoryId = isset($_GET['category_id']) ? (int)$_GET['category_id'] : null;
+$minPrice = isset($_GET['min_price']) ? (float)$_GET['min_price'] : null;
+$maxPrice = isset($_GET['max_price']) ? (float)$_GET['max_price'] : null;
 
-$sql = "SELECT * FROM product WHERE status = 1 LIMIT $offset, $limit";
-$result = $con->query($sql);
+$sql = "SELECT * FROM product WHERE status = 1";
+$params = [];
+$types = "";
+
+if ($categoryId) {
+    $sql .= " AND category_id = ?";
+    $params[] = $categoryId;
+    $types .= "i";
+}
+
+if ($minPrice !== null) {
+    $sql .= " AND price >= ?";
+    $params[] = $minPrice;
+    $types .= "d";
+}
+
+if ($maxPrice !== null) {
+    $sql .= " AND price <= ?";
+    $params[] = $maxPrice;
+    $types .= "d";
+}
+
+$sql .= " LIMIT ?, ?";
+$params[] = $offset;
+$params[] = $limit;
+$types .= "ii";
+
+$stmt = $con->prepare($sql);
+
+if (!empty($params)) {
+    // Dynamically bind parameters
+    $bind_names = [];
+    foreach ($params as $key => $value) {
+        $bind_name = "bind" . $key;
+        $$bind_name = $value;
+        $bind_names[] = &$$bind_name;
+    }
+    array_unshift($bind_names, $types);
+    call_user_func_array([$stmt, 'bind_param'], $bind_names);
+}
+
+$stmt->execute();
+$result = $stmt->get_result();
+
 
 if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
         echo '<div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer product-card group"
+                 data-id="' . htmlspecialchars($row["id"]) . '"
                  data-name="' . htmlspecialchars($row["name"]) . '" 
                  data-price="' . htmlspecialchars($row["price"]) . '"
                  data-description="' . htmlspecialchars($row["short_desc"]) . '"
+                 data-category_id="' . htmlspecialchars($row["category_id"]) . '"
                  data-images=\'["imgs/' . htmlspecialchars($row["image"]) . '"]\'>';
 
         echo '<div class="h-64 overflow-hidden relative">';
@@ -44,5 +91,6 @@ if ($result->num_rows > 0) {
     echo '</div>';
 }
 
+$stmt->close();
 $con->close();
 ?>

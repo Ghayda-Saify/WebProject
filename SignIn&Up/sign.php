@@ -25,8 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $msg = "Password must be at least 6 characters long";
             $togglePanel = 'signup';
         } elseif ($password !== $confirmPass) {
-        $msg = "Passwords do not match";
-        $togglePanel = 'signup';
+            $msg = "Passwords do not match";
+            $togglePanel = 'signup';
         }else {
             try {
                 $db = $con;
@@ -72,35 +72,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $msg = "Please fill in all fields";
         }
         else{
-        $sha1Password = sha1($userPassword);
-        try {
-            $db = $con;
-            $stmt = $db->prepare("SELECT * FROM users WHERE email = ? AND password = ?");
-            $stmt->bind_param("ss", $userEmail, $sha1Password);
-            $stmt->execute();
-            $res = $stmt->get_result();
+            $sha1Password = sha1($userPassword);
+            try {
+                $db = $con;
+                $stmt = $db->prepare("SELECT * FROM users WHERE email = ? AND password = ?");
+                $stmt->bind_param("ss", $userEmail, $sha1Password);
+                $stmt->execute();
+                $res = $stmt->get_result();
 
-            if ($res->num_rows > 0) {
-                $userData = $res->fetch_assoc();
-                $_SESSION['user'] = $userData;
+                if ($res->num_rows > 0) {
+                    $userData = $res->fetch_assoc();
+                    $_SESSION['user'] = $userData;
 
-                // Optional: JSON success response
-                echo json_encode(["success" => true]);
+                    // Optional: JSON success response
+                    echo json_encode(["success" => true]);
 
-                // Redirect to home page
-                header("Location: ../HomePage/index.php");
-                exit();
-            }
-            else {
-                $msg = "Incorrect email or password.";
+                    // Redirect to home page
+                    header("Location: ../HomePage/index.php");
+                    exit();
+                }
+                else {
+                    $msg = "Incorrect email or password.";
+                    echo json_encode(["success" => false, "error" => $msg]);
+                }
+                $stmt->close();
+                $db->close();
+            } catch (Exception $e) {
+                $msg = "An error occurred: " . $e->getMessage();
                 echo json_encode(["success" => false, "error" => $msg]);
             }
-            $stmt->close();
-            $db->close();
-        } catch (Exception $e) {
-            $msg = "An error occurred: " . $e->getMessage();
-            echo json_encode(["success" => false, "error" => $msg]);
-        }
         }
     }
 
@@ -256,7 +256,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         });
         <?php endif; ?>
 
-    <?php endif; ?>
+        <?php endif; ?>
 
         // Form validation function
         function setupValidation(form, actionText) {

@@ -1,5 +1,5 @@
 <?php
-global $con;
+global $con, $cart_count;
 session_start();
 include '../connection.php'; // Ensure this file establishes the $con variable
 
@@ -76,7 +76,7 @@ $total = $subtotal + $shipping;
                 <li>
                     <a href="cart.php" class="relative">
                         <i class="fa-solid fa-cart-shopping text-primary"></i>
-                        <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center cart-count">0</span>
+                        <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center cart-count"><?php echo $cart_count; ?></span>
                     </a>
                 </li>
                 <li>

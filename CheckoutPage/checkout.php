@@ -232,7 +232,7 @@ if (isset($_SESSION['user'])) {
                 .then(result => {
                     if (result.success) {
                         alert('Order placed successfully!');
-                        window.location.href = 'thank_you.php';
+                        window.location.href = 'thank_you.php?cart_id=4';
                     } else {
                         alert('Error placing order: ' + result.message);
                     }

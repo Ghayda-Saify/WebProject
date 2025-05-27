@@ -3,60 +3,33 @@ global $con;
 session_start();
 require '../connection.php'; // Adjust path if needed
 
-if ($con->connect_error) {
-    die("Connection failed: " . $con->connect_error);
-}
-
 if (!isset($_SESSION['user'])) {
-    // Redirect to login page or show an error message
-    header("Location: ../SignIn&Up/sign.php"); // Example: Redirect to login
+    echo json_encode(["status" => "error", "message" => "Not logged in"]);
     exit;
 }
 
 $user_id = $_SESSION['user']['id'];
+$product_id = intval($_POST['product_id']);
 
-// Fetch wishlist items for the current user
-$wishlist_items = [];
-$sql = "SELECT p.id, p.name, p.price, p.description, pi.image
-        FROM wishlist w
-        JOIN product p ON w.product_id = p.id
-        LEFT JOIN product_images pi ON p.id = pi.product_id
-        WHERE w.user_id = ?
-        GROUP BY p.id";
+if ($product_id <= 0) {
+    echo json_encode(["status" => "error", "message" => "Invalid product"]);
+    exit;
+}
 
-$stmt = $con->prepare($sql);
-$stmt->bind_param("i", $user_id);
+// Check if already in wishlist
+$stmt = $con->prepare("SELECT id FROM wishlist WHERE user_id = ? AND product_id = ?");
+$stmt->bind_param("ii", $user_id, $product_id);
 $stmt->execute();
-$result = $stmt->get_result();
+$stmt->store_result();
 
-while ($row = $result->fetch_assoc()) {
-    // Fetch all images for the product
-    $image_sql = "SELECT image FROM product_images WHERE product_id = ? LIMIT 1"; // Get only one image for display
-    $image_stmt = $con->prepare($image_sql);
-    $image_stmt->bind_param("i", $row['id']);
-    $image_stmt->execute();
-    $image_result = $image_stmt->get_result();
-    $image_row = $image_result->fetch_assoc();
-    $row['image'] = $image_row['image'] ?? 'placeholder.jpg'; // Use placeholder if no image
-    $wishlist_items[] = $row;
-    $image_stmt->close();
+if ($stmt->num_rows > 0) {
+    echo json_encode(["status" => "info", "message" => "Already in wishlist"]);
+} else {
+    $insert = $con->prepare("INSERT INTO wishlist (user_id, product_id) VALUES (?, ?)");
+    $insert->bind_param("ii", $user_id, $product_id);
+    $insert->execute();
+    echo json_encode(["status" => "success", "message" => "Added to wishlist"]);
 }
-
-$stmt->close();
-
-// Fetch cart and wishlist counts for header
-$cart_count = 0;
-$wishlist_count = count($wishlist_items);
-
-$cart_sql = "SELECT SUM(quantity) as total FROM cart WHERE user_id = ?";
-$cart_stmt = $con->prepare($cart_sql);
-$cart_stmt->bind_param("i", $user_id);
-$cart_stmt->execute();
-$cart_result = $cart_stmt->get_result();
-if ($row = $cart_result->fetch_assoc()) {
-    $cart_count = $row['total'] ?? 0;
-}
-$cart_stmt->close();
 
 ?>
 <!DOCTYPE html>
@@ -98,18 +71,17 @@ $cart_stmt->close();
                 <li>
                     <a href="../CartPage/cart.php" class="relative">
                         <i class="fa-solid fa-cart-shopping text-primary"></i>
-                        <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center cart-count"><?php echo $cart_count; ?></span>
+                        <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center cart-count">0</span>
                     </a>
                 </li>
                 <li>
-                    <a href="../ProfilePage/profile.php">
-                         <i class="fa-solid fa-user text-primary"></i>
-                    </a>
+                    <?php $profileLink = isset($_SESSION['user_email']) ? '../ProfilePage/profile.html' : '../SignIn&Up/sign.php'; ?>
+                    <a href="<?php echo $profileLink; ?>">
                 </li>
                 <li>
                     <a href="wishlist.php" class="relative text-primary font-bold">
                         <i class="fa-solid fa-heart text-primary"></i>
-                        <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center wishlist-count"><?php echo $wishlist_count; ?></span>
+                        <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center wishlist-count">0</span>
                     </a>
                 </li>
             </ul>
@@ -220,118 +192,89 @@ $cart_stmt->close();
     <!-- Success Toast -->
     <div id="success-toast" class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-full opacity-0 transition-all duration-300 flex items-center">
         <i class="fas fa-check-circle mr-2"></i>
-        <span></span>
+        <span>Item added to cart successfully!</span>
     </div>
 
     <script>
-        // Use PHP variable for initial wishlist data
-        let wishlistItemsData = <?php echo json_encode($wishlist_items); ?>;
-        const cartCountSpan = document.querySelector('.cart-count');
-        const wishlistCountSpan = document.querySelector('.wishlist-count');
-        const wishlistItemsContainer = document.getElementById('wishlist-items');
-        const emptyWishlistMessage = document.getElementById('empty-wishlist');
+        // Initialize cart and wishlist
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+        const cartCount = document.querySelector('.cart-count');
+        const wishlistCount = document.querySelector('.wishlist-count');
+        const wishlistItems = document.getElementById('wishlist-items');
+        const emptyWishlist = document.getElementById('empty-wishlist');
         const successToast = document.getElementById('success-toast');
 
         // Function to show toast notification
-        function showToast(message, isSuccess = true) {
-            successToast.classList.remove(isSuccess ? 'bg-red-500' : 'bg-green-500');
-            successToast.classList.add(isSuccess ? 'bg-green-500' : 'bg-red-500');
-            successToast.querySelector('span').textContent = message;
+        function showToast() {
             successToast.classList.remove('translate-y-full', 'opacity-0');
             setTimeout(() => {
                 successToast.classList.add('translate-y-full', 'opacity-0');
             }, 3000);
         }
 
-        // Update counts (initial load from PHP)
-        cartCountSpan.textContent = <?php echo $cart_count; ?>;
-        wishlistCountSpan.textContent = <?php echo $wishlist_count; ?>;
+        // Update counts
+        cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
+        wishlistCount.textContent = wishlist.length;
 
-        // Function to remove item from wishlist via AJAX
-        function removeFromWishlist(productId) {
-             fetch('add_to_wishlist.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `product_id=${productId}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                showToast(data.message, data.success);
-                if (data.success && !data.in_wishlist) { // Check !data.in_wishlist to confirm removal
-                    // Remove item from local data and re-render
-                    wishlistItemsData = wishlistItemsData.filter(item => item.id !== productId);
-                    renderWishlist();
-                    // Update wishlist count in header
-                    wishlistCountSpan.textContent = parseInt(wishlistCountSpan.textContent) - 1;
-                }
-            })
-            .catch(error => {
-                console.error('Error removing from wishlist:', error);
-                showToast('An error occurred while removing from wishlist', false);
-            });
+        // Function to remove item from wishlist
+        function removeFromWishlist(index) {
+            wishlist.splice(index, 1);
+            localStorage.setItem('wishlist', JSON.stringify(wishlist));
+            renderWishlist();
         }
 
-        // Function to add item to cart via AJAX (with default size for simplicity from wishlist page)
-        function addToCartFromWishlist(productId) {
-            const quantity = 1; // Default quantity when adding from wishlist page
-            const size = 'medium'; // Default size when adding from wishlist page
-
-            fetch('add_to_cart.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `product_id=${productId}&quantity=${quantity}&size=${size}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                showToast(data.message, data.success);
-                if (data.success) {
-                    // Update cart count in header
-                    cartCountSpan.textContent = data.cart_count;
-                    // Optionally remove from wishlist after adding to cart
-                    // removeFromWishlist(productId); // Uncomment if you want this behavior
-                }
-            })
-            .catch(error => {
-                console.error('Error adding to cart:', error);
-                 showToast('An error occurred while adding to cart', false);
-            });
-        }
-
-        // Render wishlist items from server data
-        function renderWishlist() {
-            if (wishlistItemsData.length === 0) {
-                emptyWishlistMessage.classList.remove('hidden');
-                wishlistItemsContainer.classList.add('hidden');
+        // Function to add item to cart
+        function addToCart(item) {
+            const existingItem = cart.find(cartItem => cartItem.name === item.name);
+            if (existingItem) {
+                existingItem.quantity += 1;
             } else {
-                emptyWishlistMessage.classList.add('hidden');
-                wishlistItemsContainer.classList.remove('hidden');
-                wishlistItemsContainer.innerHTML = wishlistItemsData.map(item => `
-                    <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all">
-                        <div class="h-64 overflow-hidden relative">
-                            <img src="../HomePage/imgs/${item.image}" alt="${item.name}" class="w-full h-full object-contain">
-                        </div>
-                        <div class="p-6">
-                            <h3 class="font-aboreto text-xl mb-2">${item.name}</h3>
-                            <p class="text-primary font-aboreto text-lg mb-4">₪ ${item.price}</p>
-                            <div class="flex justify-between items-center">
-                                <button onclick="addToCartFromWishlist(${item.id})" 
-                                        class="bg-primary text-white px-4 py-2 rounded-full hover:bg-opacity-90 transition">
-                                    Add to Cart
-                                </button>
-                                <button onclick="removeFromWishlist(${item.id})" 
-                                        class="text-red-500 hover:text-red-600 transition">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
+                cart.push({
+                    ...item,
+                    quantity: 1
+                });
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
+            showToast(); // Show notification when item is added
+        }
+
+        // Render wishlist items
+        function renderWishlist() {
+            if (wishlist.length === 0) {
+                emptyWishlist.classList.remove('hidden');
+                wishlistItems.classList.add('hidden');
+                return;
+            }
+
+            emptyWishlist.classList.add('hidden');
+            wishlistItems.classList.remove('hidden');
+            wishlistItems.innerHTML = wishlist.map((item, index) => `
+                <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all">
+                    <div class="h-64 overflow-hidden relative">
+                        <img src="${item.image}" alt="${item.name}" class="w-full h-full object-contain">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-aboreto text-xl mb-2">${item.name}</h3>
+                        <p class="text-primary font-aboreto text-lg mb-4">₪ ${item.price}</p>
+                        <div class="flex justify-between items-center">
+                            <button onclick="addToCart(wishlist[${index}])" 
+                                    class="bg-primary text-white px-4 py-2 rounded-full hover:bg-opacity-90 transition">
+                                Add to Cart
+                            </button>
+                            <button onclick="removeFromWishlist(${index})" 
+                                    class="text-red-500 hover:text-red-600 transition">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </div>
                     </div>
-                `).join('');
-            }
+                </div>
+            `).join('');
         }
 
-        // Initial render on page load
-        document.addEventListener('DOMContentLoaded', renderWishlist);
-
+        // Initial render
+        renderWishlist();
     </script>
 </body>
 </html> 
