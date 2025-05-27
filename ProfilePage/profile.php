@@ -49,9 +49,9 @@ if (isset($_SESSION['user_email'])) {
         <ul>
             <li><a href="../HomePage/index.php">Home</a></li>
             <li><a href="../ProductsPage/product.php">Products</a></li>
-            <li><a href="../ContactPage/contact.html">Connect</a></li>
+            <li><a href="../ContactPage/contact.php">Connect</a></li>
             <li>
-                <a href="../CartPage/cart.html" class="relative">
+                <a href="../CartPage/cart.php" class="relative">
                     <i class="fa-solid fa-cart-shopping text-primary"></i>
                     <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center cart-count">0</span>
                 </a>
@@ -107,10 +107,11 @@ if (isset($_SESSION['user_email'])) {
                         </button>
                         <button class="w-full text-left px-4 py-2 rounded-lg hover:bg-primary/5 transition tab-button" data-tab="settings">
                             <i class="fas fa-cog mr-2"></i> Settings
-                        </button>
-                        <a href="../SignIn&Up/sign.php"><button class="w-full text-left px-4 py-2 rounded-lg hover:bg-primary/5 transition text-red-500" id="logout-button">
-                                <i class="fas fa-sign-out-alt mr-2"></i> Logout
-                            </button></a>
+                            </button>
+                            <!-- Logout Button -->
+                        <button>    <a href="logout.php" class="w-full text-left px-4 py-2 rounded-lg hover:bg-primary/5 transition text-red-500" id="logout-button">
+                                <i class="fas fa-sign-out-alt mr-2" id="logout"></i> Logout
+                            </a></button>
                     </nav>
                 </div>
             </div>
@@ -298,8 +299,8 @@ if (isset($_SESSION['user_email'])) {
                 <ul class="space-y-2">
                     <li><a href="../HomePage/index.php" class="text-gray-600 hover:text-primary transition">Home</a></li>
                     <li><a href="../ProductsPage/product.php" class="text-gray-600 hover:text-primary transition">Products</a></li>
-                    <li><a href="../ContactPage/contact.html" class="text-gray-600 hover:text-primary transition">Contact</a></li>
-                    <li><a href="../CartPage/cart.html" class="text-gray-600 hover:text-primary transition">Cart</a></li>
+                    <li><a href="../ContactPage/contact.php" class="text-gray-600 hover:text-primary transition">Contact</a></li>
+                    <li><a href="../CartPage/cart.php" class="text-gray-600 hover:text-primary transition">Cart</a></li>
                 </ul>
             </div>
 
@@ -337,8 +338,7 @@ if (isset($_SESSION['user_email'])) {
 </div>
 
 <script>
-    // Initialize cart count
-    document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function() {
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
         const cartCount = document.querySelector('.cart-count');
         cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
@@ -348,50 +348,36 @@ if (isset($_SESSION['user_email'])) {
         const tabContents = document.querySelectorAll('.tab-content');
 
         tabButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const tabName = button.dataset.tab;
+        button.addEventListener('click', () => {
+        const tabName = button.dataset.tab;
 
-                // Update active states
-                tabButtons.forEach(btn => btn.classList.remove('active', 'bg-primary/5', 'text-primary'));
-                button.classList.add('active', 'bg-primary/5', 'text-primary');
+        // Update active states
+        tabButtons.forEach(btn => btn.classList.remove('active', 'bg-primary/5', 'text-primary'));
+        button.classList.add('active', 'bg-primary/5', 'text-primary');
 
-                // Show selected tab content
-                tabContents.forEach(content => {
-                    if (content.id === `${tabName}-tab`) {
-                        content.classList.remove('hidden');
-                    } else {
-                        content.classList.add('hidden');
-                    }
-                });
-            });
-        });
+        // Show selected tab content
+        tabContents.forEach(content => {
+        if (content.id === `${tabName}-tab`) {
+        content.classList.remove('hidden');
+    } else {
+        content.classList.add('hidden');
+    }
+    });
+    });
+    });
 
         // Form submission handling
         const profileForm = document.getElementById('profile-form');
         profileForm.addEventListener('submit', function(e) {
-            e.preventDefault();
+        e.preventDefault();
 
-            // Show success toast
-            const toast = document.getElementById('success-toast');
-            toast.classList.remove('translate-y-full', 'opacity-0');
-            setTimeout(() => {
-                toast.classList.add('translate-y-full', 'opacity-0');
-            }, 3000);
-        });
-
-        // Logout functionality
-        document.getElementById('logout-button').addEventListener('click', function() {
-            // Clear user session data
-            localStorage.removeItem('user');
-            localStorage.removeItem('isLoggedIn');
-
-            // Clear cart and wishlist data (optional - remove if you want to keep these)
-            localStorage.removeItem('cart');
-            localStorage.removeItem('wishlist');
-
-            // Redirect to sign in page
-            window.location.href = '../SignIn&Up/signUp.php';
-        });
+        // Show success toast
+        const toast = document.getElementById('success-toast');
+        toast.classList.remove('translate-y-full', 'opacity-0');
+        setTimeout(() => {
+        toast.classList.add('translate-y-full', 'opacity-0');
+    }, 3000);
+    });
     });
 </script>
 </body>

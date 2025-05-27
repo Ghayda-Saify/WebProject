@@ -1,14 +1,5 @@
 <?php
 session_start();
-//if (!isset($_SESSION['user'])) {
-//    header('Location: ../SignIn&Up/sign.php');
-//    exit;
-//}
-//else {
-//    header('Location: contact.php');
-//
-//}
-
 
 ?>
 
