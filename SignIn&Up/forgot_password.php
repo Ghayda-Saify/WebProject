@@ -99,74 +99,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['txtEmail'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot Password</title>
+    <link rel="stylesheet" href="forgot_password.css">
     <link rel="stylesheet" href="loginSignUp.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #f0f2f5;
-            font-family: 'Cairo', sans-serif;
-        }
-        .form-container {
-            background-color: #fff;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-        }
-        .form-container h1 {
-            margin-bottom: 20px;
-            color: #122c6f;
-        }
-        .form-container input[type="email"] {
-            width: calc(100% - 20px);
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .form-container button {
-            background-color: #122c6f;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
-        }
-        .form-container button:hover {
-            background-color: #0e235c;
-        }
-        .message {
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 4px;
-            font-family: 'Cairo', sans-serif;
-        }
-        .error-message {
-            color: #f13b1c;
-            background-color: #ffe5e5;
-        }
-        .success-message {
-            color: #28a745;
-            background-color: #e8f5e9;
-        }
-        .back-link {
-            display: block;
-            margin-top: 20px;
-            color: #122c6f;
-            text-decoration: none;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-        }
-    </style>
+
 </head>
 <body>
 <div class="form-container">
@@ -190,6 +126,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['txtEmail'])) {
             confirmButtonText: 'OK'
         });
         <?php endif; ?>
+
+        document.querySelectorAll('.toggle-password').forEach(function(span) {
+            span.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('data-target');
+                const input = document.getElementById(targetId);
+                const icon = this.querySelector('i');
+                if (input && icon) {
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                    } else {
+                        input.type = 'password';
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                    }
+                }
+            });
+        });
     });
 </script>
 </body>
