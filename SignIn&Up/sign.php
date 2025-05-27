@@ -39,14 +39,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 } else {
                     $sha1Password = sha1($password);
                     $insertStmt = $db->prepare("INSERT INTO users (name, email, password, phone_number, type) VALUES (?, ?, ?, ?, 'user')");
-                    $insertStmt->bind_param("ssss", $name, $email, $sha1Password, $phone);
+                    $insertStmt->bind_param("ssss", $id,$name, $email, $sha1Password, $phone);
                     if ($insertStmt->execute()) {
+                        echo json_encode(["success" => true]);
+                        $_SESSION['user_id'] = $id;
                         $_SESSION['user_email'] = $email;
                         $_SESSION['user_type'] = 'user';
                         header("Location: ../HomePage/index.php");
                         exit();
                     } else {
                         $msg = "Registration failed. Please try again.";
+                        echo json_encode(["success" => false, "error" => $con->error]);
                     }
                     $insertStmt->close();
                 }
@@ -54,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $db->close();
             } catch (Exception $e) {
                 $msg = "An error occurred: " . $e->getMessage();
+                echo json_encode(["success" => false, "error" => $conn->error]);
             }
         }
     }
@@ -65,44 +69,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $sha1Password = sha1($userPassword);
         try {
             $db = $con;
-            $checkStmt = $db->prepare("SELECT * FROM users WHERE email = ?");
-            $checkStmt->bind_param("s", $userEmail);
-            $checkStmt->execute();
-            $emailResult = $checkStmt->get_result();
-            if ($emailResult->num_rows === 0) {
-                $msg = "Account not found.";
-                $togglePanel = 'signup';
-            } else {
-                $stmt = $db->prepare("SELECT * FROM users WHERE email = ? AND password = ?");
-                $stmt->bind_param("ss", $userEmail, $sha1Password);
-                $stmt->execute();
-                $res = $stmt->get_result();
-                if ($res->num_rows > 0) {
-                    $_SESSION['user_email'] = $userEmail;
-                    $_SESSION['user_type'] = $emailResult->fetch_assoc()['type'];
-                    header("Location: ../HomePage/index.php");
-                    exit();
-                } else {
-                    $msg = "Incorrect password.";
-                }
-                $stmt->close();
+            $stmt = $db->prepare("SELECT * FROM users WHERE email = ? AND password = ?");
+            $stmt->bind_param("ss", $userEmail, $sha1Password);
+            $stmt->execute();
+            $res = $stmt->get_result();
+
+            if ($res->num_rows > 0) {
+                $userData = $res->fetch_assoc();
+                $_SESSION['user'] = $userData;
+
+                // Optional: JSON success response
+                echo json_encode(["success" => true]);
+
+                // Redirect to home page
+                header("Location: ../HomePage/index.php");
+                exit();
             }
-            $checkStmt->close();
+            else {
+                $msg = "Incorrect email or password.";
+//                echo json_encode(["success" => false, "error" => $msg]);
+
+            }
+            $stmt->close();
             $db->close();
         } catch (Exception $e) {
             $msg = "An error occurred: " . $e->getMessage();
+            echo json_encode(["success" => false, "error" => $msg]);
         }
     }
+}
 
-    // Get messages from session only after form submission
-    if (isset($_SESSION['error_msg'])) {
-        $msg = $_SESSION['error_msg'];
-        unset($_SESSION['error_msg']);
-    }
-    if (isset($_SESSION['success_msg'])) {
-        $success_msg = $_SESSION['success_msg'];
-        unset($_SESSION['success_msg']);
-    }
+// Get messages from session only after form submission
+if (isset($_SESSION['error_msg'])) {
+    $msg = $_SESSION['error_msg'];
+    unset($_SESSION['error_msg']);
+}
+if (isset($_SESSION['success_msg'])) {
+    $success_msg = $_SESSION['success_msg'];
+    unset($_SESSION['success_msg']);
 }
 ?>
 <!DOCTYPE html>
@@ -116,7 +120,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
-
+    <audio id="panel-sound" src="/sounds/Fast_Whoosh.mp3" preload="auto"></audio>
+    <style>
+        .error-message, .success-message {
+            display: none; /* Hide messages by default */
+        }
+        .error-message.show, .success-message.show {
+            display: block; /* Show only when has content */
+        }
+        .error-message {
+            color: #f13b1c;
+            background-color: #ffe5e5;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            text-align: center;
+            font-family: 'Cairo', sans-serif;
+        }
+        .success-message {
+            color: #28a745;
+            background-color: #e8f5e9;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            text-align: center;
+            font-family: 'Cairo', sans-serif;
+        }
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .password-wrapper input[type="password"] {
+            width: 100%;
+            padding-right: 40px;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #888;
+            font-size: 1.2rem;
+            z-index: 2;
+            transition: color 0.2s;
+        }
+        .toggle-password:hover {
+            color: #122c6f;
+        }
+        /* Add hover effect for Forget Password link */
+        .form-container a {
+            transition: color 0.3s ease;
+        }
+        .form-container a:hover {
+            color:rgb(67, 115, 238);
+        }
+    </style>
     <script>
         tailwind.config = {
             theme: {
@@ -146,11 +206,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="form-container sign-up">
         <form method="POST" action="sign.php">
             <h1>Create Account</h1>
-            <div class="social-icons">
-                <!-- Social sign in/up buttons removed -->
-            </div>
-            <span class="brief2" >Your Journey Starts Here</span>
-            <label for="txtName"></label><input type="text" placeholder="Name" name="txtName" id="txtName" >
+            <?php if (!empty($msg) && (isset($_POST['txtName']) || $togglePanel === 'signin')): ?>
+                <div class="error-message show"><?php echo htmlspecialchars($msg); ?></div>
+            <?php endif; ?>
+            <?php if (!empty($success_msg) && isset($_POST['txtName'])): ?>
+                <div class="success-message show"><?php echo htmlspecialchars($success_msg); ?></div>
+            <?php endif; ?>
+
+            <span>or use your email to register</span>
+            <label for="txtName"></label><input type="text" placeholder="Name" name="txtName" id="txtName">
             <label for="txtEmail"></label><input type="email" placeholder="Email" name="txtEmail" id="txtEmail">
             <label for="txtPhone"></label><input type="tel" placeholder="Phone Number" name="txtPhone" id="txtPhone" required>
             <div class="password-wrapper">
@@ -168,10 +232,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="form-container sign-in">
         <form method="POST" action="sign.php">
             <h1>Sign in</h1>
+            <?php if (!empty($msg) && (isset($_POST['txtEmailSignIn']) || $togglePanel === 'signup')): ?>
+                <div class="error-message show"><?php echo htmlspecialchars($msg); ?></div>
+            <?php endif; ?>
+            <?php if (!empty($success_msg) && isset($_POST['txtEmailSignIn'])): ?>
+                <div class="success-message show"><?php echo htmlspecialchars($success_msg); ?></div>
+            <?php endif; ?>
             <div class="social-icons">
                 <!-- Social sign in/up buttons removed -->
             </div>
-            <span class="brief">Welcome Back with Ease</span>
+            <span>or use your email & password</span>
             <label for="txtEmailSignIn"></label><input type="email" placeholder="Email" name="txtEmailSignIn" id="txtEmailSignIn">
             <div class="password-wrapper">
                 <input type="password" placeholder="Password" name="txtPasswordSignIn" id="txtPasswordSignIn">
@@ -186,18 +256,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="toggle-panel toggle-left">
                 <h1>Welcome Back!</h1>
                 <p>Enter your personal details to use all site features</p>
-                <button class="hidden sound" id="login">Sign In</button>
+                <button class="hidden" id="login">Sign In</button>
             </div>
             <div class="toggle-panel toggle-right">
                 <h1>Hello, New Friend!</h1>
                 <p>Register with your personal details to use all site features</p>
-                <button class="hidden sound" id="register">Sign Up</button>
+                <button class="hidden" id="register">Sign Up</button>
             </div>
         </div>
     </div>
 </div>
-<audio id="panel-sound" src="../sounds/fastwhoosh.mp3" preload="auto" autoplay></audio>
 
+
+<script src="script.js"></script>
+<script>
+    document.querySelectorAll('.toggle-password').forEach(icon => {
+        icon.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-target');
+            const input = document.getElementById(targetId);
+            if (input) {
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    this.innerHTML = '<i class="fa fa-eye-slash"></i>';
+                } else {
+                    input.type = 'password';
+                    this.innerHTML = '<i class="fa fa-eye"></i>';
+                }
+            }
+        });
+    });
+
+    function playPanelSound() {
+        const audio = document.getElementById('panel-sound');
+        if (audio) {
+            audio.currentTime = 0;
+            audio.play();
+        }
+    }
+
+    // Add sound to panel switch buttons
+    const loginBtn = document.getElementById('login');
+    const registerBtn = document.getElementById('register');
+    if (loginBtn) loginBtn.addEventListener('click', playPanelSound);
+    if (registerBtn) registerBtn.addEventListener('click', playPanelSound);
+
+    // Optionally, play sound on successful sign in/up
+    // document.querySelectorAll('form').forEach(form => {
+    //     form.addEventListener('submit', playPanelSound);
+    // });
+</script>
 <?php if (!empty($togglePanel)): ?>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -211,6 +318,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         });
     </script>
 <?php endif; ?>
-<script src="script.js"></script>
+
 </body>
 </html>

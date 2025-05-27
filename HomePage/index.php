@@ -161,6 +161,9 @@ session_start();
 
 <header>
     <a href="index.php" class="logo text-primary font-['Pacifico'] text-2xl">Alandalus Design</a>
+    <button class="mobile-menu-btn" aria-label="Toggle menu">
+        <i class="fas fa-bars"></i>
+    </button>
     <nav class="main-nav">
         <ul>
             <li><a href="index.php" class="text-primary font-bold">Home</a></li>
@@ -174,19 +177,16 @@ session_start();
             </li>
             <li>
                 <?php
-
-
-                    if (isset($_SESSION['user'])) {
-                        echo '<a href="../ProfilePage/profile.php"><i class="fa-solid fa-user text-primary"></i></a>'; // Show person icon
-                        echo '<span>',"  Welcome, " . $_SESSION['user']['name'],'</span>';
-                    } else {
-                        echo '<a href="../SignIn&Up/sign.php" class="btn btn-primary">Sign In</a>';
-                    }
-                    ?>
-
+                if (isset($_SESSION['user'])) {
+                    echo '<a href="../ProfilePage/profile.php" class="flex items-center gap-2"><i class="fa-solid fa-user text-primary"></i><span class="hidden md:inline">Welcome, ' . $_SESSION['user']['name'] . '</span></a>';
+                } else {
+                    echo '<a href="../SignIn&Up/sign.php" class="btn btn-primary">Sign In</a>';
+                }
+                ?>
             </li>
         </ul>
     </nav>
+    <div class="menu-overlay"></div>
 </header>
 <main>
     <!--        Home-->
@@ -321,224 +321,63 @@ session_start();
                 Discover our most popular items
             </p>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Product 1 -->
-                <div
-                        class="product-card bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
-                >
-                    <div class="relative">
-                        <div class="h-64 overflow-hidden">
-                            <img
-                                    src="imgs/weshah.jpg"
-                                    alt="Modern Armchair"
-                                    class="w-full h-full object-cover object-top"
-                            />
-                        </div>
-                        <div
-                                class="quick-actions absolute top-4 right-4 flex flex-col gap-2"
-                        >
-                            <button
-                                    class="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100"
-                            >
-                                <i class="ri-heart-line text-gray-700"></i>
-                            </button>
-                            <button
-                                    class="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100"
-                            >
-                                <i class="ri-eye-line text-gray-700"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="p-4">
-                        <h3 class="text-lg font-medium mb-1">Modern Armchair</h3>
-                        <div class="flex items-center mb-2">
-                            <div class="flex text-yellow-400">
-                                <i class="ri-star-fill ri-xs"></i>
-                                <i class="ri-star-fill ri-xs"></i>
-                                <i class="ri-star-fill ri-xs"></i>
-                                <i class="ri-star-fill ri-xs"></i>
-                                <i class="ri-star-half-fill ri-xs"></i>
+                <?php
+                // Fetch 4 featured products from the database
+                $product_sql = "SELECT * FROM product LIMIT 4";
+                $product_result = $con->query($product_sql);
+                if ($product_result && $product_result->num_rows > 0) {
+                    while ($product = $product_result->fetch_assoc()) {
+                        ?>
+                        <div class="product-card bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
+                            <div class="relative">
+                                <div class="h-64 overflow-hidden">
+                                    <img
+                                        src="imgs/<?php echo htmlspecialchars($product['image']); ?>"
+                                        alt="<?php echo htmlspecialchars($product['name']); ?>"
+                                        class="w-full h-full object-cover object-top"
+                                    />
+                                </div>
+                                <div class="quick-actions absolute top-4 right-4 flex flex-col gap-2">
+                                    <button class="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100">
+                                        <i class="ri-heart-line text-gray-700"></i>
+                                    </button>
+                                    <button class="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100">
+                                        <i class="ri-eye-line text-gray-700"></i>
+                                    </button>
+                                </div>
                             </div>
-                            <span class="text-xs text-gray-500 ml-1">(24)</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-primary font-semibold">$249.99</span>
-                            <button
-                                    class="bg-primary text-white py-2 px-3 rounded-button text-sm hover:bg-opacity-90 transition-colors whitespace-nowrap"
-                            >
-                                Add to Cart
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <!-- Product 2 -->
-                <div
-                        class="product-card bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
-                >
-                    <div class="relative">
-                        <div class="h-64 overflow-hidden">
-                            <img
-                                    src="imgs/maska.jpg"
-                                    alt="Glass Coffee Table"
-                                    class="w-full h-full object-cover object-top"
-                            />
-                        </div>
-                        <div
-                                class="quick-actions absolute top-4 right-4 flex flex-col gap-2"
-                        >
-                            <button
-                                    class="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100"
-                            >
-                                <i class="ri-heart-line text-gray-700"></i>
-                            </button>
-                            <button
-                                    class="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100"
-                            >
-                                <i class="ri-eye-line text-gray-700"></i>
-                            </button>
-                        </div>
-                        <div
-                                class="absolute top-4 left-4 bg-secondary text-white text-xs py-1 px-2 rounded"
-                        >
-                            New
-                        </div>
-                    </div>
-                    <div class="p-4">
-                        <h3 class="text-lg font-medium mb-1">Glass Coffee Table</h3>
-                        <div class="flex items-center mb-2">
-                            <div class="flex text-yellow-400">
-                                <i class="ri-star-fill ri-xs"></i>
-                                <i class="ri-star-fill ri-xs"></i>
-                                <i class="ri-star-fill ri-xs"></i>
-                                <i class="ri-star-fill ri-xs"></i>
-                                <i class="ri-star-line ri-xs"></i>
+                            <div class="p-4">
+                                <h3 class="text-lg font-medium mb-1"><?php echo htmlspecialchars($product['name']); ?></h3>
+                                <div class="flex items-center mb-2">
+                                    <div class="flex text-yellow-400">
+                                        <i class="ri-star-fill ri-xs"></i>
+                                        <i class="ri-star-fill ri-xs"></i>
+                                        <i class="ri-star-fill ri-xs"></i>
+                                        <i class="ri-star-fill ri-xs"></i>
+                                        <i class="ri-star-line ri-xs"></i>
+                                    </div>
+                                    <span class="text-xs text-gray-500 ml-1">(0)</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-primary font-semibold">₪<?php echo number_format($product['price'], 2); ?></span>
+                                    <button class="bg-primary text-white py-2 px-3 rounded-button text-sm hover:bg-opacity-90 transition-colors whitespace-nowrap">
+                                        Add to Cart
+                                    </button>
+                                </div>
                             </div>
-                            <span class="text-xs text-gray-500 ml-1">(18)</span>
                         </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-primary font-semibold">$179.99</span>
-                            <button
-                                    class="bg-primary text-white py-2 px-3 rounded-button text-sm hover:bg-opacity-90 transition-colors whitespace-nowrap"
-                            >
-                                Add to Cart
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <!-- Product 3 -->
-                <div
-                        class="product-card bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
-                >
-                    <div class="relative">
-                        <div class="h-64 overflow-hidden">
-                            <img
-                                    src="https://readdy.ai/api/search-image?query=modern%20pendant%20lamp%20with%20brass%20details%20and%20glass%20shade%2C%20professional%20product%20photography%20on%20white%20background%2C%20high%20quality%2C%20detailed&width=500&height=500&seq=11&orientation=squarish"
-                                    alt="Pendant Lamp"
-                                    class="w-full h-full object-cover object-top"
-                            />
-                        </div>
-                        <div
-                                class="quick-actions absolute top-4 right-4 flex flex-col gap-2"
-                        >
-                            <button
-                                    class="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100"
-                            >
-                                <i class="ri-heart-line text-gray-700"></i>
-                            </button>
-                            <button
-                                    class="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100"
-                            >
-                                <i class="ri-eye-line text-gray-700"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="p-4">
-                        <h3 class="text-lg font-medium mb-1">Pendant Lamp</h3>
-                        <div class="flex items-center mb-2">
-                            <div class="flex text-yellow-400">
-                                <i class="ri-star-fill ri-xs"></i>
-                                <i class="ri-star-fill ri-xs"></i>
-                                <i class="ri-star-fill ri-xs"></i>
-                                <i class="ri-star-fill ri-xs"></i>
-                                <i class="ri-star-fill ri-xs"></i>
-                            </div>
-                            <span class="text-xs text-gray-500 ml-1">(32)</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-primary font-semibold">$129.99</span>
-                            <button
-                                    class="bg-primary text-white py-2 px-3 rounded-button text-sm hover:bg-opacity-90 transition-colors whitespace-nowrap"
-                            >
-                                Add to Cart
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <!-- Product 4 -->
-                <div
-                        class="product-card bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
-                >
-                    <div class="relative">
-                        <div class="h-64 overflow-hidden">
-                            <img
-                                    src="https://readdy.ai/api/search-image?query=decorative%20ceramic%20vases%20set%20in%20different%20sizes%2C%20blue%20and%20white%20colors%2C%20professional%20product%20photography%20on%20white%20background%2C%20high%20quality%2C%20detailed&width=500&height=500&seq=12&orientation=squarish"
-                                    alt="Ceramic Vases Set"
-                                    class="w-full h-full object-cover object-top"
-                            />
-                        </div>
-                        <div
-                                class="quick-actions absolute top-4 right-4 flex flex-col gap-2"
-                        >
-                            <button
-                                    class="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100"
-                            >
-                                <i class="ri-heart-line text-gray-700"></i>
-                            </button>
-                            <button
-                                    class="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100"
-                            >
-                                <i class="ri-eye-line text-gray-700"></i>
-                            </button>
-                        </div>
-                        <div
-                                class="absolute top-4 left-4 bg-red-500 text-white text-xs py-1 px-2 rounded"
-                        >
-                            Sale
-                        </div>
-                    </div>
-                    <div class="p-4">
-                        <h3 class="text-lg font-medium mb-1">Ceramic Vases Set</h3>
-                        <div class="flex items-center mb-2">
-                            <div class="flex text-yellow-400">
-                                <i class="ri-star-fill ri-xs"></i>
-                                <i class="ri-star-fill ri-xs"></i>
-                                <i class="ri-star-fill ri-xs"></i>
-                                <i class="ri-star-fill ri-xs"></i>
-                                <i class="ri-star-line ri-xs"></i>
-                            </div>
-                            <span class="text-xs text-gray-500 ml-1">(12)</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <span class="text-primary font-semibold">$79.99</span>
-                                <span class="text-gray-400 text-sm line-through ml-2"
-                                >$99.99</span
-                                >
-                            </div>
-                            <button
-                                    class="bg-primary text-white py-2 px-3 rounded-button text-sm hover:bg-opacity-90 transition-colors whitespace-nowrap"
-                            >
-                                Add to Cart
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                        <?php
+                    }
+                } else {
+                    echo '<div class="col-span-4 text-center text-gray-500">No featured products found.</div>';
+                }
+                ?>
             </div>
             <div class="text-center mt-10">
                 <a
-                        href="../ProductsPage/product.php"
-                        class="inline-block border-2 border-primary text-primary px-6 py-3 rounded-button font-medium hover:bg-primary hover:text-white transition-colors whitespace-nowrap"
-                >View All Products</a
-                >
+                    href="../ProductsPage/product.php"
+                    class="inline-block border-2 border-primary text-primary px-6 py-3 rounded-button font-medium hover:bg-primary hover:text-white transition-colors whitespace-nowrap"
+                >View All Products</a>
             </div>
         </div>
     </section>
@@ -548,56 +387,46 @@ session_start();
         <section class="py-16 bg-gray-50">
             <div class="container mx-auto px-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Promo Banner 1 -->
-                    <div class="relative h-80 rounded-lg overflow-hidden">
-                        <img
-                                src="https://readdy.ai/api/search-image?query=luxurious%20living%20room%20interior%20with%20elegant%20furniture%20and%20decor%2C%20soft%20lighting%2C%20blue%20accent%20colors%2C%20professional%20interior%20photography&width=800&height=500&seq=13&orientation=landscape"
-                                alt="New Collection"
-                                class="w-full h-full object-cover object-top"
-                        />
-                        <div
-                                class="absolute inset-0 bg-gradient-to-r from-primary/80 to-primary/40 flex items-center"
-                        >
-                            <div class="p-8">
-                                <h3 class="text-white text-2xl font-bold mb-2">
-                                    Spring Collection 2025
-                                </h3>
-                                <p class="text-white text-sm mb-4">
-                                    Refresh your space with our latest designs
-                                </p>
-                                <a
-                                        href="#"
-                                        class="bg-white text-primary px-4 py-2 rounded-button text-sm font-medium hover:bg-gray-100 transition-colors inline-block whitespace-nowrap"
-                                >Shop Now</a
-                                >
+                    <?php
+                    // Fetch active promotions from the database
+                    $promo_sql = "SELECT * FROM promotions WHERE active = 1 ORDER BY id DESC LIMIT 2";
+                    $promo_result = $con->query($promo_sql);
+                    if ($promo_result && $promo_result->num_rows > 0) {
+                        while ($promo = $promo_result->fetch_assoc()) {
+                            $discount = '';
+                            if (!empty($promo['discount_value'])) {
+                                if (isset($promo['discount_type']) && $promo['discount_type'] === 'amount') {
+                                    $discount = 'Discount: ₪' . $promo['discount_value'];
+                                } else {
+                                    $discount = 'Discount: ' . $promo['discount_value'] . '%';
+                                }
+                            }
+                            ?>
+                            <div class="relative h-80 rounded-lg overflow-hidden" style="background: linear-gradient(to right, <?php echo htmlspecialchars($promo['color'] ?? '#122c6f'); ?>99, <?php echo htmlspecialchars($promo['color'] ?? '#122c6f'); ?>66), url('<?php echo htmlspecialchars($promo['image_url']); ?>'); background-size: cover; background-position: center;">
+                                <div class="absolute inset-0 flex items-center" style="background: linear-gradient(to right, <?php echo htmlspecialchars($promo['color'] ?? '#122c6f'); ?>/80, <?php echo htmlspecialchars($promo['color'] ?? '#122c6f'); ?>/40);">
+                                    <div class="p-8">
+                                        <h3 class="text-white text-2xl font-bold mb-2">
+                                            <?php echo htmlspecialchars($promo['title']); ?>
+                                        </h3>
+                                        <p class="text-white text-sm mb-4">
+                                            <?php echo htmlspecialchars($promo['subtitle']); ?>
+                                        </p>
+                                        <?php if ($discount) { ?>
+                                            <div class="text-white text-lg font-semibold mb-2"><?php echo $discount; ?></div>
+                                        <?php } ?>
+                                        <a
+                                            href="<?php echo htmlspecialchars($promo['btn_link']); ?>"
+                                            class="bg-white text-primary px-4 py-2 rounded-button text-sm font-medium hover:bg-gray-100 transition-colors inline-block whitespace-nowrap"
+                                        ><?php echo htmlspecialchars($promo['btn_text']); ?></a>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <!-- Promo Banner 2 -->
-                    <div class="relative h-80 rounded-lg overflow-hidden">
-                        <img
-                                src="https://readdy.ai/api/search-image?query=modern%20bedroom%20interior%20with%20elegant%20furniture%20and%20decor%2C%20soft%20lighting%2C%20orange%20accent%20colors%2C%20professional%20interior%20photography&width=800&height=500&seq=14&orientation=landscape"
-                                alt="Special Offer"
-                                class="w-full h-full object-cover object-top"
-                        />
-                        <div
-                                class="absolute inset-0 bg-gradient-to-r from-secondary/80 to-secondary/40 flex items-center"
-                        >
-                            <div class="p-8">
-                                <h3 class="text-white text-2xl font-bold mb-2">
-                                    Limited Time Offer
-                                </h3>
-                                <p class="text-white text-sm mb-4">
-                                    Get up to 30% off on selected items
-                                </p>
-                                <a
-                                        href="#"
-                                        class="bg-white text-secondary px-4 py-2 rounded-button text-sm font-medium hover:bg-gray-100 transition-colors inline-block whitespace-nowrap"
-                                >View Offers</a
-                                >
-                            </div>
-                        </div>
-                    </div>
+                            <?php
+                        }
+                    } else {
+                        echo '<div class="col-span-2 text-center text-gray-500">No promotions available.</div>';
+                    }
+                    ?>
                 </div>
             </div>
         </section>
@@ -707,40 +536,7 @@ session_start();
             </div>
         </div>
     </section>
-    <!--        new arrival-->
-    <section class="new-arrivals">
-        <!-- Newsletter -->
-        <section class="py-16 bg-primary">
-            <div class="container mx-auto px-4">
-                <div class="max-w-2xl mx-auto text-center">
-                    <h2 class="text-3xl font-bold text-white mb-2">
-                        Join Our Newsletter
-                    </h2>
-                    <p class="text-white/80 mb-8">
-                        Subscribe to receive updates on new products, special offers, and
-                        design tips.
-                    </p>
-                    <form class="flex flex-col sm:flex-row gap-3">
-                        <input
-                                type="email"
-                                placeholder="Your email address"
-                                class="flex-1 px-4 py-3 rounded-button border-none focus:outline-none focus:ring-2 focus:ring-white/30 text-sm"
-                        />
-                        <button
-                                type="submit"
-                                class="bg-secondary text-white px-6 py-3 rounded-button font-medium hover:bg-opacity-90 transition-colors whitespace-nowrap"
-                        >
-                            Subscribe
-                        </button>
-                    </form>
-                    <p class="text-white/60 text-sm mt-4">
-                        By subscribing, you agree to our Privacy Policy and consent to
-                        receive updates from our company.
-                    </p>
-                </div>
-            </div>
-        </section>
-    </section>
+
 
     <!-- Map + Footer -->
     <footer class="bg-gray-100 mt-16">
@@ -772,8 +568,8 @@ session_start();
                     <ul class="space-y-2">
                         <li><a href="index.php" class="text-gray-600 hover:text-primary transition">Home</a></li>
                         <li><a href="../ProductsPage/product.php" class="text-gray-600 hover:text-primary transition">Products</a></li>
-                        <li><a href="../ContactPage/contact.html" class="text-gray-600 hover:text-primary transition">Contact</a></li>
-                        <li><a href="../CartPage/cart.html" class="text-gray-600 hover:text-primary transition">Cart</a></li>
+                        <li><a href="../ContactPage/contact.php" class="text-gray-600 hover:text-primary transition">Contact</a></li>
+                        <li><a href="../CartPage/cart.php" class="text-gray-600 hover:text-primary transition">Cart</a></li>
                     </ul>
                 </div>
 
