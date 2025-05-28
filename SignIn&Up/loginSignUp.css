@@ -10,8 +10,8 @@
 }
 
 body{
-    /*background-color: #6695ed;*/
-    background: Linear-gradient(to right, #efeeee, #6695ed);
+/background-color: #6695ed;/
+background: Linear-gradient(to right, #efeeee, #6695ed);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -99,7 +99,7 @@ body{
 }
 
 .logo{
-    /*font-family: 'Brush Script MT', cursive; !* Cursive font for the logo *!*/
+/font-family: 'Brush Script MT', cursive; /! Cursive font for the logo !/
     font-size: 1.5em;
     color: #333;
     align-self: center; /* Moves the logo to the bottom of the header */
@@ -259,8 +259,8 @@ header nav{
 }
 
 .error-message, .success-message {
-     display: none; /* Hide messages by default */
- }
+    display: none; /* Hide messages by default */
+}
 .error-message.show, .success-message.show {
     display: block; /* Show only when has content */
 }
@@ -315,7 +315,7 @@ header nav{
 }
 
 input.highlight {
-    /*border-color: #d9534f; !* Red border *!*/
+/border-color: #d9534f; /! Red border !/
     border-color: #f0ad4e;
     box-shadow: 0 0 5px rgba(255, 94, 45, 0.5); /* Soft red glow */
     transition: all 0.3s ease;

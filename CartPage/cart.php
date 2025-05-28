@@ -1,5 +1,5 @@
 <?php
-global $con, $cart_count;
+global $con;
 session_start();
 include '../connection.php'; // Ensure this file establishes the $con variable
 
@@ -38,6 +38,48 @@ foreach ($cart_items as $item) {
 }
 $shipping = 20.00; // Fixed shipping cost
 $total = $subtotal + $shipping;
+
+// Fetch cart count
+//$session_id = session_id(); // This was problematic, using session_id() directly for anonymous carts without proper management can be insecure or inconsistent
+$user_id = isset($_SESSION['user']['id']) ? $_SESSION['user']['id'] : null;
+$cart_count = 0;
+// Using prepared statements for security against SQL injection
+if ($user_id) {
+    $cart_sql = "SELECT SUM(quantity) as total FROM cart WHERE user_id = ?";
+    $cart_stmt = $con->prepare($cart_sql);
+    $cart_stmt->bind_param("i", $user_id); // 'i' for integer user_id
+} else {
+    $session_id = session_id(); // Use session_id for guests
+    $cart_sql = "SELECT SUM(quantity) as total FROM cart WHERE session_id = ?";
+    $cart_stmt = $con->prepare($cart_sql);
+    $cart_stmt->bind_param("s", $session_id); // 's' for string session_id
+}
+$cart_stmt->execute();
+$cart_result = $cart_stmt->get_result();
+if ($row = $cart_result->fetch_assoc()) {
+    $cart_count = $row['total'] ?? 0;
+}
+$cart_stmt->close();
+
+// Fetch wishlist count
+$wishlist_count = 0;
+// Using prepared statements for security against SQL injection
+if ($user_id) {
+    $wishlist_sql = "SELECT COUNT(*) as total FROM wishlist WHERE user_id = ?";
+    $wishlist_stmt = $con->prepare($wishlist_sql);
+    $wishlist_stmt->bind_param("i", $user_id); // 'i' for integer user_id
+} else {
+    $session_id = session_id(); // Use session_id for guests
+    $wishlist_sql = "SELECT COUNT(*) as total FROM wishlist WHERE session_id = ?";
+    $wishlist_stmt = $con->prepare($wishlist_sql);
+    $wishlist_stmt->bind_param("s", $session_id); // 's' for string session_id
+}
+$wishlist_stmt->execute();
+$wishlist_result = $wishlist_stmt->get_result();
+if ($row = $wishlist_result->fetch_assoc()) {
+    $wishlist_count = $row['total'] ?? 0;
+}
+$wishlist_stmt->close();
 ?>
 
 
@@ -85,9 +127,9 @@ $total = $subtotal + $shipping;
                     </a>
                 </li>
                 <li>
-                    <a href="../ProductsPage/wishlist.php" class="relative">
+                    <a href="../ProductsPage/wishlist.php" class="relative" id="wishlist-icon">
                         <i class="fa-solid fa-heart text-primary"></i>
-                        <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center wishlist-count">0</span>
+                        <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center wishlist-count"><?php echo $wishlist_count; ?></span>
                     </a>
                 </li>
             </ul>
