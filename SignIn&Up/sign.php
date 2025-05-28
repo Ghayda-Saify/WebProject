@@ -44,14 +44,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 } else {
                     $sha1Password = sha1($password);
                     $insertStmt = $db->prepare("INSERT INTO users (name, email, password, phone_number, type) VALUES (?, ?, ?, ?, 'user')");
-                    $insertStmt->bind_param("ssss", $id,$name, $email, $sha1Password, $phone);                    if ($insertStmt->execute()) {
+                    $insertStmt->bind_param("ssss",$name, $email, $sha1Password, $phone);
+                    if ($insertStmt->execute()) {
                         $_SESSION['user_email'] = $email;
                         $_SESSION['user_type'] = 'user';
                         header("Location: ../HomePage/index.php");
                         exit();
                     } else {
                         $msg = "Registration failed. Please try again.";
-                        echo json_encode(["success" => false, "error" => $con->error]);
+
                     }
                     $insertStmt->close();
                 }
@@ -84,22 +85,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $userData = $res->fetch_assoc();
                 $_SESSION['user'] = $userData;
 
-                // Optional: JSON success response
-                echo json_encode(["success" => true]);
-
-                // Redirect to home page
-                header("Location: ../HomePage/index.php");
+                if ($userData['type'] === 'admin') {
+                    header("Location: ../AdminDashboard/index.php"); // عدلي المسار حسب ما عندك
+                } else {
+                    header("Location: ../HomePage/index.php");
+                }
                 exit();
             }
             else {
                 $msg = "Incorrect email or password.";
-                echo json_encode(["success" => false, "error" => $msg]);
+
             }
             $stmt->close();
             $db->close();
         } catch (Exception $e) {
             $msg = "An error occurred: " . $e->getMessage();
-            echo json_encode(["success" => false, "error" => $msg]);
+
         }
         }
     }
