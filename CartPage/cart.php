@@ -108,7 +108,7 @@ $wishlist_stmt->close();
 </head>
 <body class="font-poppins">
     <header>
-        <a href="../HomePage/index.php" class="logo text-primary font-['Pacifico'] text-3xl">Alandalus Design</a>
+        <a href="../HomePage/index.php" class="logo text-primary font-['Pacifico'] text-2xl">Alandalus Design</a>
         <!-- Navigation Bar -->
         <nav class="main-nav">
             <ul>

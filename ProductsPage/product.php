@@ -1,7 +1,8 @@
 <?php
 session_start();
-include '../connection.php';
-global $con;
+include '../connection.php'; // Adjust path based on your file structure
+global $con; // Ensure $con is globally accessible if needed for the connection
+
 if ($con->connect_error) {
     die("Connection failed: " . $con->connect_error);
 }
@@ -17,7 +18,6 @@ while ($row = $cat_res->fetch_assoc()) {
 }
 
 // Fetch cart count
-//$session_id = session_id(); // This was problematic, using session_id() directly for anonymous carts without proper management can be insecure or inconsistent
 $user_id = isset($_SESSION['user']['id']) ? $_SESSION['user']['id'] : null;
 $cart_count = 0;
 // Using prepared statements for security against SQL injection
@@ -73,6 +73,18 @@ $wishlist_stmt->close();
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
     <style>
+        /* General body styling */
+        body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', 'Tajawal', Arial, sans-serif;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Swiper styling */
         .swiper {
             width: 100%;
             padding: 20px;
@@ -86,6 +98,8 @@ $wishlist_stmt->close();
             padding: 40px 0;
             width: auto;
         }
+
+        /* Category item styling */
         .category__title {
             transition: color 0.3s ease;
         }
@@ -123,6 +137,8 @@ $wishlist_stmt->close();
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
             z-index: 2;
         }
+
+        /* Fancy bubbles background effect */
         .fancy-bubbles::before, .fancy-bubbles::after {
             content: '';
             position: absolute;
@@ -147,15 +163,8 @@ $wishlist_stmt->close();
             50% { transform: translateY(-30px); }
             100% { transform: translateY(0); }
         }
-        body {
-            min-height: 100vh;
-            margin: 0;
-            padding: 0;
-            font-family: 'Cairo', 'Tajawal', Arial, sans-serif;
-            background: linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%);
-            position: relative;
-            overflow-x: hidden;
-        }
+
+        /* Body background decorative elements */
         body::before, body::after {
             content: '';
             position: fixed;
@@ -179,7 +188,8 @@ $wishlist_stmt->close();
             bottom: -100px;
             right: -100px;
         }
-        /* Edgy card styling with subtle shadow and border */
+
+        /* Review card styling with subtle shadow and border */
         .review-card {
             position: relative;
             overflow: hidden;
@@ -242,7 +252,7 @@ $wishlist_stmt->close();
 </head>
 <body class="font-poppins bg-beige/10 fancy-bubbles">
 <header>
-    <a href="../HomePage/index.php" class="logo text-primary font-['Pacifico'] text-3xl">Alandalus Design</a>
+    <a href="../HomePage/index.php" class="logo text-primary font-['Pacifico'] text-2xl">Alandalus Design</a>
     <nav class="main-nav flex items-center w-full">
         <div class="flex-1 min-w-[150px]"></div>
         <ul class="flex items-center justify-center gap-8">
@@ -619,13 +629,24 @@ $wishlist_stmt->close();
         document.getElementById('review-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const productId = document.getElementById('review-product-id').value;
-            const rating = document.querySelector('.rating-star.fas')?.dataset.rating || 0;
-            const comment = this.querySelector('textarea').value;
+            // Get the rating from the currently filled stars
+            const rating = document.querySelectorAll('.rating-star.fas').length;
+            const comment = this.querySelector('textarea[name="comment"]').value; // Corrected selector
+
             if (!productId) {
-                showToast('Please select a product to review');
+                showToast('Please select a product to review.');
                 return;
             }
-            fetch('submit_review.php', {
+            if (rating === 0) {
+                showToast('Please provide a rating.');
+                return;
+            }
+            if (comment.trim() === '') {
+                showToast('Please write a comment.');
+                return;
+            }
+
+            fetch('submit_review.php', { // Ensure this path is correct
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: `product_id=${productId}&rating=${rating}&comment=${encodeURIComponent(comment)}`
@@ -634,23 +655,32 @@ $wishlist_stmt->close();
                 .then(data => {
                     showToast(data.message);
                     if (data.success) {
-                        loadReviews(productId);
-                        this.reset();
-                        document.querySelectorAll('.rating-star').forEach(star => star.classList.remove('fas', 'fa-star', 'far'));
+                        loadReviews(productId); // Reload reviews after successful submission
+                        this.reset(); // Reset the form
+                        // Reset star ratings
+                        document.querySelectorAll('.rating-star').forEach(star => {
+                            star.classList.remove('fas');
+                            star.classList.add('far');
+                        });
                     }
+                })
+                .catch(error => {
+                    console.error('Error during review submission:', error);
+                    showToast('An error occurred while submitting your review.');
                 });
         });
 
-        // Rating stars
+        // Rating stars functionality
         document.querySelectorAll('.rating-star').forEach(star => {
             star.addEventListener('click', function() {
-                const rating = this.dataset.rating;
+                const rating = parseInt(this.dataset.rating);
                 document.querySelectorAll('.rating-star').forEach(s => {
-                    s.classList.remove('fas', 'fa-star');
-                    s.classList.add('far');
-                    if (s.dataset.rating <= rating) {
-                        s.classList.add('fas', 'fa-star');
+                    if (parseInt(s.dataset.rating) <= rating) {
                         s.classList.remove('far');
+                        s.classList.add('fas');
+                    } else {
+                        s.classList.remove('fas');
+                        s.classList.add('far');
                     }
                 });
             });
@@ -685,7 +715,7 @@ $wishlist_stmt->close();
         modalMainImage.alt = name;
         modalAddToCart.dataset.productId = productId;
         modalAddToWishlist.dataset.productId = productId;
-        document.getElementById('review-product-id').value = productId;
+        document.getElementById('review-product-id').value = productId; // Set product ID for review form
 
         modalQuantity.value = 1;
         document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('border-primary'));
@@ -726,7 +756,7 @@ $wishlist_stmt->close();
         modalMainImage.alt = product.name;
         modalAddToCart.dataset.productId = product.id;
         modalAddToWishlist.dataset.productId = product.id;
-        document.getElementById('review-product-id').value = product.id;
+        document.getElementById('review-product-id').value = product.id; // Set product ID for review form
 
         modalQuantity.value = 1;
         document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('border-primary'));
@@ -829,31 +859,35 @@ $wishlist_stmt->close();
     });
 
     function loadReviews(productId) {
-        fetch(`load_reviews.php?product_id=${productId}`)
+        fetch(`load_reviews.php?product_id=${productId}`) // Ensure this path is correct
             .then(response => response.json())
             .then(data => {
                 const reviewList = document.getElementById('review-list');
-                reviewList.innerHTML = '';
+                reviewList.innerHTML = ''; // Clear existing reviews
                 if (data.length > 0) {
                     data.forEach(review => {
                         const div = document.createElement('div');
-                        div.className = 'bg-white p-6 rounded-lg shadow-sm';
+                        div.className = 'bg-white p-6 rounded-lg shadow-sm review-card'; // Added review-card class for consistent styling
                         div.innerHTML = `
                                 <div class="flex items-center mb-2">
                                     <div class="flex text-yellow-400">
                                         ${'<i class="fas fa-star"></i>'.repeat(review.rating)}
                                         ${'<i class="far fa-star"></i>'.repeat(5 - review.rating)}
-                        </div>
+                                    </div>
                                     <span class="ml-2 text-sm text-gray-500">${new Date(review.created_at).toLocaleDateString()}</span>
                                 </div>
                                 <p class="text-gray-700">${review.comment}</p>
                                 <p class="text-sm text-gray-500 mt-2">- ${review.user_name || 'Anonymous'}</p>
-                    `;
+                            `;
                         reviewList.appendChild(div);
                     });
                 } else {
                     reviewList.innerHTML = '<p class="text-gray-500">No reviews yet for this product.</p>';
                 }
+            })
+            .catch(error => {
+                console.error('Error loading reviews:', error);
+                document.getElementById('review-list').innerHTML = '<p class="text-red-500">Error loading reviews.</p>';
             });
     }
 
@@ -861,8 +895,10 @@ $wishlist_stmt->close();
         const toast = document.getElementById('success-toast');
         toast.querySelector('span').textContent = message;
         toast.classList.remove('translate-y-full', 'opacity-0');
+        toast.classList.add('translate-y-0', 'opacity-100'); // Show the toast
         setTimeout(() => {
-            toast.classList.add('translate-y-full', 'opacity-0');
+            toast.classList.remove('translate-y-0', 'opacity-100');
+            toast.classList.add('translate-y-full', 'opacity-0'); // Hide the toast
         }, 3000);
     }
 
@@ -896,14 +932,14 @@ $wishlist_stmt->close();
                         openProductModalFromSearch(data.product); // Reuse search modal function
                     } else {
                         console.error('Error fetching product details:', data.message);
-                        // Optionally show an alert or message to the user
-                        alert('Could not load product details.');
+                        // Using showToast instead of alert
+                        showToast('Could not load product details.');
                     }
                 })
                 .catch(error => {
                     console.error('Error during fetch:', error);
-                    // Optionally show an alert or message for network errors
-                    alert('An error occurred while loading product details.');
+                    // Using showToast instead of alert
+                    showToast('An error occurred while loading product details.');
                 });
         }
 
