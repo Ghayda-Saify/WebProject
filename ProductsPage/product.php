@@ -749,7 +749,20 @@ $wishlist_stmt->close();
     }
 
     function openProductModalFromSearch(product) {
-        modalProductName.textContent = product.name;
+
+            const modalProductName = document.querySelector('.modal-product-name');
+            const modalProductPrice = document.querySelector('.modal-product-price');
+            const modalProductDescription = document.querySelector('.modal-product-description');
+            const modalMainImage = document.getElementById('modal-main-image');
+            const modalAddToCart = document.getElementById('modal-add-to-cart');
+            const modalAddToWishlist = document.getElementById('modal-add-to-wishlist');
+            const modalQuantity = document.getElementById('modal-quantity');
+
+            modalProductPrice.textContent = `₪ ${product.price.toFixed(2)}`;
+            modalProductDescription.textContent = product.description || 'No description available.';
+            modalMainImage.src = "../HomePage/imgs/" + product.image;
+
+            modalProductName.textContent = product.name;
         modalProductPrice.textContent = `₪ ${product.price}`;
         modalProductDescription.textContent = product.description;
         modalMainImage.src = `../HomePage/imgs/${product.image}`;
@@ -772,6 +785,8 @@ $wishlist_stmt->close();
             productModal.querySelector('.bg-white').classList.add('scale-100');
             productModal.querySelector('.bg-white').classList.remove('scale-95');
         }, 10);
+        const productModal = document.getElementById('product-modal');
+
 
         loadReviews(product.id);
     }
@@ -962,6 +977,88 @@ $wishlist_stmt->close();
             loadProducts();
         });
     });
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+const searchInput = document.getElementById('search-input');
+const searchButton = document.getElementById('search-button');
+const searchResults = document.getElementById('search-results');
+
+
+function performSearch(query) {
+if (!query.trim()) {
+searchResults.classList.add('hidden');
+return;
+}
+
+fetch(`search_products.php?query=${encodeURIComponent(query)}`)
+.then(response => response.json())
+.then(data => {
+searchResults.innerHTML = '';
+
+if (data.products.length > 0) {
+data.products.forEach(product => {
+const div = document.createElement('div');
+div.className = 'px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center';
+div.innerHTML = `
+<img src="../HomePage/imgs/${product.image}" alt="${product.name}" class="w-10 h-10 object-contain mr-2">
+<div>
+    <p class="text-sm font-medium">${product.name}</p>
+    <p class="text-xs text-gray-500">₪ ${product.price.toFixed(2)}</p>
+</div>
+`;
+div.addEventListener('click', () => {
+openProductModalFromSearch(product);
+searchResults.classList.add('hidden');
+});
+searchResults.appendChild(div);
+});
+searchResults.classList.remove('hidden');
+} else {
+searchResults.innerHTML = '<p class="px-4 py-2 text-sm text-gray-500">No products found</p>';
+searchResults.classList.remove('hidden');
+}
+})
+.catch(error => {
+console.error('Error fetching search results:', error);
+searchResults.innerHTML = '<p class="px-4 py-2 text-sm text-red-500">Error loading results.</p>';
+searchResults.classList.remove('hidden');
+});
+}
+
+// Debounce function to avoid too many requests
+function debounce(fn, delay) {
+let timer;
+return function () {
+clearTimeout(timer);
+timer = setTimeout(() => fn.apply(this, arguments), delay);
+};
+}
+
+// Event Listeners
+searchInput.addEventListener('input', debounce((e) => {
+const query = e.target.value.trim();
+if (query.length >= 2) {
+performSearch(query);
+} else {
+searchResults.classList.add('hidden');
+}
+}, 300));
+
+searchButton.addEventListener('click', () => {
+const query = searchInput.value.trim();
+if (query) {
+performSearch(query);
+}
+});
+
+// Close results when clicking outside
+document.addEventListener('click', function (e) {
+if (!searchResults.contains(e.target) && !searchInput.contains(e.target)) {
+searchResults.classList.add('hidden');
+}
+});
+});
 </script>
 </body>
 </html>
