@@ -809,11 +809,11 @@ $wishlist_stmt->close();
     });
 
     modalAddToWishlist.addEventListener('click', () => {
-        const productId = modalAddToWishlist.dataset.productId;
+        const productId = modalAddToWishlist.dataset.productId; // This line gets the product ID
         fetch('add_to_wishlist.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `product_id=${productId}`
+            body: `product_id=${productId}` // This line sends the product ID
         })
             .then(response => response.json())
             .then(data => {

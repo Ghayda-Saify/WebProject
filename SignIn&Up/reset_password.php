@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new_password']) && is
             $sha1Password = sha1($newPassword);
             $updateStmt = $db->prepare("UPDATE users SET password = ? WHERE email = ?");
             $updateStmt->bind_param("ss", $sha1Password, $email);
-            
+
             if ($updateStmt->execute()) {
                 // Delete used token
                 $deleteStmt = $db->prepare("DELETE FROM password_resets WHERE token = ?");
@@ -84,31 +84,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new_password']) && is
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 <body>
-    <div class="form-container">
-        <h1>Reset Your Password</h1>
-        <?php if (!empty($msg)): ?>
-            <div class="message <?php echo $msgType === 'success' ? 'success-message' : 'error-message'; ?>">
-                <?php echo htmlspecialchars($msg); ?>
+<div class="form-container">
+    <h1>Reset Your Password</h1>
+    <?php if (!empty($msg)): ?>
+        <div class="message <?php echo $msgType === 'success' ? 'success-message' : 'error-message'; ?>">
+            <?php echo htmlspecialchars($msg); ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($validToken): ?>
+        <form method="POST" action="reset_password.php?token=<?php echo htmlspecialchars($token); ?>">
+            <div class="password-wrapper">
+                <input type="password" placeholder="New Password" name="new_password" id="new_password" required>
+                <span class="toggle-password" data-target="new_password"><i class="fa fa-eye"></i></span>
             </div>
-        <?php endif; ?>
+            <div class="password-wrapper">
+                <input type="password" placeholder="Confirm New Password" name="confirm_password" id="confirm_password" required>
+                <span class="toggle-password" data-target="confirm_password"><i class="fa fa-eye"></i></span>
+            </div>
+            <button type="submit">Reset Password</button>
+        </form>
+    <?php endif; ?>
+    <a href="sign.php" class="back-link">Back to Sign In</a>
+</div>
 
-        <?php if ($validToken): ?>
-            <form method="POST" action="reset_password.php?token=<?php echo htmlspecialchars($token); ?>">
-                <div class="password-wrapper">
-                    <input type="password" placeholder="New Password" name="new_password" id="new_password" required>
-                    <span class="toggle-password" data-target="new_password"><i class="fa fa-eye"></i></span>
-                </div>
-                <div class="password-wrapper">
-                    <input type="password" placeholder="Confirm New Password" name="confirm_password" id="confirm_password" required>
-                    <span class="toggle-password" data-target="confirm_password"><i class="fa fa-eye"></i></span>
-                </div>
-                <button type="submit">Reset Password</button>
-            </form>
-        <?php endif; ?>
-        <a href="sign.php" class="back-link">Back to Sign In</a>
-    </div>
-
-    <script>
+<script>
     document.querySelectorAll('.toggle-password').forEach(icon => {
         icon.addEventListener('click', function() {
             const targetId = this.getAttribute('data-target');
@@ -124,6 +124,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new_password']) && is
             }
         });
     });
-    </script>
+</script>
 </body>
-</html> 
+</html>
