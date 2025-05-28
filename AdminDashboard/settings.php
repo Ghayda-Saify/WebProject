@@ -114,6 +114,10 @@ echo "<script>alert('Current password is incorrect!');</script>";
                 <i class="fas fa-cog"></i>
                 <span>Settings</span>
             </a>
+            <a href="logout.php" class="flex items-center space-x-2 p-2 hover:bg-white/10 rounded transition mt-auto text-red-300 hover:text-red-100">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
         </nav>
     </aside>
 
@@ -202,6 +206,7 @@ echo "<script>alert('Current password is incorrect!');</script>";
         </div>
     </main>
 </div>
+
 
 <!-- Tailwind switch toggle styling -->
 <style>
