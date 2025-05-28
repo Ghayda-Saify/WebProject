@@ -1,69 +1,103 @@
 <?php
 session_start();
-require_once('../connection.php');
+require '../connection.php'; // Adjust path if needed
 global $con;
+
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['user']['id'])) {
-    echo json_encode(['success' => false, 'message' => 'Please login to add items to wishlist']);
-    exit;
-}
+$response = ['success' => false, 'message' => 'Invalid request', 'wishlist_count' => 0];
 
-if (!isset($_POST['product_id'])) {
-    echo json_encode(['success' => false, 'message' => 'Missing product ID']);
-    exit;
-}
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id'])) {
+    $product_id = (int)$_POST['product_id'];
 
-$user_id = $_SESSION['user']['id'];
-$product_id = intval($_POST['product_id']);
-
-// Check if connection is valid
-if ($con->connect_error) {
-    echo json_encode(['success' => false, 'message' => 'Database connection failed']);
-    exit;
-}
-
-try {
-    // Check if product exists
-    $stmt = $con->prepare("SELECT id FROM product WHERE id = ?");
-    $stmt->bind_param("i", $product_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    if ($result->num_rows === 0) {
-        echo json_encode(['success' => false, 'message' => 'Product not found']);
+    if ($product_id <= 0) {
+        $response['message'] = 'Invalid product ID provided.'; // More specific message
+        echo json_encode($response);
         exit;
     }
 
-    // Check if product is already in wishlist
-    $stmt = $con->prepare("SELECT id FROM wishlist WHERE user_id = ? AND product_id = ?");
-    $stmt->bind_param("ii", $user_id, $product_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    if ($result->num_rows > 0) {
-        // Remove from wishlist
-        $stmt = $con->prepare("DELETE FROM wishlist WHERE user_id = ? AND product_id = ?");
-        $stmt->bind_param("ii", $user_id, $product_id);
-        $stmt->execute();
-        $message = 'Product removed from wishlist';
-        $in_wishlist = false;
+    // Determine user_id or session_id
+    $user_id = isset($_SESSION['user']['id']) ? $_SESSION['user']['id'] : null;
+    $session_id = session_id();
+
+    // Determine the user identifier for the query
+    $bound_user_id = $user_id; // Will be null if guest, actual ID if logged in
+
+    // Check if product already exists in wishlist for the current user/session
+    $sql_check = "SELECT id FROM wishlist WHERE product_id = ? AND ";
+    $check_params = [$product_id];
+    $check_types = "i";
+
+    if ($user_id) {
+        $sql_check .= "user_id = ?";
+        $check_params[] = $bound_user_id;
+        $check_types .= "i";
     } else {
-        // Add to wishlist
-        $stmt = $con->prepare("INSERT INTO wishlist (user_id, product_id) VALUES (?, ?)");
-        $stmt->bind_param("ii", $user_id, $product_id);
-        $stmt->execute();
-        $message = 'Product added to wishlist';
-        $in_wishlist = true;
+        $sql_check .= "session_id = ?";
+        $check_params[] = $session_id;
+        $check_types .= "s";
     }
 
-    echo json_encode([
-        'success' => true,
-        'message' => $message,
-        'in_wishlist' => $in_wishlist
-    ]);
+    $stmt_check = $con->prepare($sql_check);
+    // Dynamically bind parameters for check statement
+    call_user_func_array([$stmt_check, 'bind_param'], array_merge([$check_types], $check_params));
+    $stmt_check->execute();
+    $result_check = $stmt_check->get_result();
 
-} catch (Exception $e) {
-    echo json_encode(['success' => false, 'message' => 'An error occurred while updating wishlist']);
+    if ($result_check->num_rows > 0) {
+        $response['success'] = true;
+        $response['message'] = 'Product is already in your wishlist!';
+    } else {
+        // Product does not exist, insert new record
+        $sql_insert = "INSERT INTO wishlist (user_id, session_id, product_id) VALUES (?, ?, ?)";
+        $stmt_insert = $con->prepare($sql_insert);
+
+        // Bind parameters for insert statement
+        // Note: 's' for session_id, 'i' for product_id.
+        // For user_id, if it's NULL, it will be bound as NULL. If your DB column is NOT NULL,
+        // you MUST change $bound_user_id to be 0 instead of null.
+        $stmt_insert->bind_param("isi", $bound_user_id, $session_id, $product_id);
+
+        if ($stmt_insert->execute()) {
+            $response['success'] = true;
+            $response['message'] = 'Product added to wishlist successfully!';
+        } else {
+            $response['message'] = 'Failed to add product to wishlist: ' . $con->error;
+        }
+        $stmt_insert->close();
+    }
+    $stmt_check->close();
+
+    // Get updated wishlist count
+    $wishlist_count = 0;
+    $sql_count = "SELECT COUNT(*) as total FROM wishlist WHERE ";
+    $count_params = [];
+    $count_types = "";
+
+    if ($user_id) {
+        $sql_count .= "user_id = ?";
+        $count_params[] = $bound_user_id;
+        $count_types .= "i";
+    } else {
+        $sql_count .= "session_id = ?";
+        $count_params[] = $session_id;
+        $count_types .= "s";
+    }
+    $stmt_count = $con->prepare($sql_count);
+    call_user_func_array([$stmt_count, 'bind_param'], array_merge([$count_types], $count_params));
+    $stmt_count->execute();
+    $result_count = $stmt_count->get_result();
+    if ($row_count = $result_count->fetch_assoc()) {
+        $wishlist_count = $row_count['total'] ?? 0;
+    }
+    $stmt_count->close();
+    $response['wishlist_count'] = $wishlist_count;
+
+} else {
+    $response['message'] = 'Required product ID is missing in POST data.'; // More specific message
 }
-?> 
+
+echo json_encode($response);
+$con->close();
+exit();
+?>

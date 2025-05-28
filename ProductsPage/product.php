@@ -17,15 +17,20 @@ while ($row = $cat_res->fetch_assoc()) {
 }
 
 // Fetch cart count
-//$session_id = session_id();
+//$session_id = session_id(); // This was problematic, using session_id() directly for anonymous carts without proper management can be insecure or inconsistent
 $user_id = isset($_SESSION['user']['id']) ? $_SESSION['user']['id'] : null;
 $cart_count = 0;
-$cart_sql = $user_id ?
-    "SELECT SUM(quantity) as total FROM cart WHERE user_id = ?" :
-    "SELECT SUM(quantity) as total FROM cart WHERE session_id = ?";
-$cart_stmt = $con->prepare($cart_sql);
-$var = $user_id ;
-$cart_stmt->bind_param("s", $var);
+// Using prepared statements for security against SQL injection
+if ($user_id) {
+    $cart_sql = "SELECT SUM(quantity) as total FROM cart WHERE user_id = ?";
+    $cart_stmt = $con->prepare($cart_sql);
+    $cart_stmt->bind_param("i", $user_id); // 'i' for integer user_id
+} else {
+    $session_id = session_id(); // Use session_id for guests
+    $cart_sql = "SELECT SUM(quantity) as total FROM cart WHERE session_id = ?";
+    $cart_stmt = $con->prepare($cart_sql);
+    $cart_stmt->bind_param("s", $session_id); // 's' for string session_id
+}
 $cart_stmt->execute();
 $cart_result = $cart_stmt->get_result();
 if ($row = $cart_result->fetch_assoc()) {
@@ -35,12 +40,17 @@ $cart_stmt->close();
 
 // Fetch wishlist count
 $wishlist_count = 0;
-$wishlist_sql = $user_id ?
-    "SELECT COUNT(*) as total FROM wishlist WHERE user_id = ?" :
-    "SELECT COUNT(*) as total FROM wishlist WHERE session_id = ?";
-$wishlist_stmt = $con->prepare($wishlist_sql);
-$var2 = $user_id ;
-$wishlist_stmt->bind_param("s", $var2);
+// Using prepared statements for security against SQL injection
+if ($user_id) {
+    $wishlist_sql = "SELECT COUNT(*) as total FROM wishlist WHERE user_id = ?";
+    $wishlist_stmt = $con->prepare($wishlist_sql);
+    $wishlist_stmt->bind_param("i", $user_id); // 'i' for integer user_id
+} else {
+    $session_id = session_id(); // Use session_id for guests
+    $wishlist_sql = "SELECT COUNT(*) as total FROM wishlist WHERE session_id = ?";
+    $wishlist_stmt = $con->prepare($wishlist_sql);
+    $wishlist_stmt->bind_param("s", $session_id); // 's' for string session_id
+}
 $wishlist_stmt->execute();
 $wishlist_result = $wishlist_stmt->get_result();
 if ($row = $wishlist_result->fetch_assoc()) {
@@ -79,19 +89,18 @@ $wishlist_stmt->close();
         .category__title {
             transition: color 0.3s ease;
         }
-        /*.category__container {*/
-        /*    width: 250px; !* Ensure container takes full width of parent *!*/
-        /*    height: 350px; !* Fixed height for consistency *!*/
-        /*    overflow: hidden; !* Hide any overflow if image exceeds *!*/
-        /*    border-radius: 12px;*/
-        /*}*/
+        .category__container {
+            width: 100%; /* Ensure container takes full width of parent */
+            height: 100%; /* Fixed height for consistency */
+            overflow: hidden; /* Hide any overflow if image exceeds */
+            border-radius: 12px;
+        }
         .category__img {
             width: 100%;
-            height: 60%;
+            height: 100%;
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            object-fit: cover;
-            display: block;
+            object-fit: contain;
             background-color: #fff;
             transition: transform 0.3s ease;
         }
@@ -170,15 +179,15 @@ $wishlist_stmt->close();
             bottom: -100px;
             right: -100px;
         }
-             /* Edgy card styling with subtle shadow and border */
-         .review-card {
-             position: relative;
-             overflow: hidden;
-             background: linear-gradient(135deg, #ffffff 70%, #f9f9f9 100%);
-             border-left: 4px solid rgba(18, 44, 111, 0.5);
-             border-radius: 12px;
-             transition: all 0.3s ease;
-         }
+        /* Edgy card styling with subtle shadow and border */
+        .review-card {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #ffffff 70%, #f9f9f9 100%);
+            border-left: 4px solid rgba(18, 44, 111, 0.5);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
         .review-card:hover {
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
             transform: translateY(-5px);
@@ -220,8 +229,8 @@ $wishlist_stmt->close();
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: { 
-                        primary: "#122c6f", 
+                    colors: {
+                        primary: "#122c6f",
                         secondary: "#f13b1c",
                         beige: "#F5F5DC",
                         gold: "#FFD700"
@@ -232,61 +241,60 @@ $wishlist_stmt->close();
     </script>
 </head>
 <body class="font-poppins bg-beige/10 fancy-bubbles">
-    <header>
+<header>
     <a href="../HomePage/index.php" class="logo text-primary font-['Pacifico'] text-3xl">Alandalus Design</a>
-        <nav class="main-nav flex items-center w-full">
+    <nav class="main-nav flex items-center w-full">
         <div class="flex-1 min-w-[150px]"></div>
-            <ul class="flex items-center justify-center gap-8">
-                <li><a href="../HomePage/index.php">Home</a></li>
+        <ul class="flex items-center justify-center gap-8">
+            <li><a href="../HomePage/index.php">Home</a></li>
             <li><a href="product.php" class="text-primary font-bold">Products</a></li>
             <li><a href="../ContactPage/contact.php">Connect</a></li>
-                <li>
+            <li>
                 <a href="../CartPage/cart.php" class="relative">
-                        <i class="fa-solid fa-cart-shopping text-primary"></i>
+                    <i class="fa-solid fa-cart-shopping text-primary"></i>
                     <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center cart-count"><?php echo $cart_count; ?></span>
-                    </a>
-                </li>
-                <li>
+                </a>
+            </li>
+            <li>
                 <a href="../ProfilePage/profile.php">
-                        <i class="fa-solid fa-user text-primary"></i>
-                    </a>
-                </li>
-                <li>
+                    <i class="fa-solid fa-user text-primary"></i>
+                </a>
+            </li>
+            <li>
                 <a href="wishlist.php" class="relative" id="wishlist-icon">
-                        <i class="fa-solid fa-heart text-primary"></i>
+                    <i class="fa-solid fa-heart text-primary"></i>
                     <span class="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center wishlist-count"><?php echo $wishlist_count; ?></span>
-                    </a>
-                </li>
-            </ul>
+                </a>
+            </li>
+        </ul>
         <div class="flex-1 flex justify-end">
-                <div class="search-container flex items-center bg-white rounded-full border border-gray-200 px-3 py-1">
-                    <input type="text" id="search-input" placeholder="Search products..." class="w-40 focus:outline-none text-sm">
-                    <button id="search-button" class="ml-2">
-                        <i class="fas fa-search text-gray-400 hover:text-primary transition"></i>
-                    </button>
-                    <div id="search-results" class="absolute top-full mt-2 w-64 bg-white rounded-lg shadow-lg hidden z-50 max-h-96 overflow-y-auto"></div>
-                </div>
+            <div class="search-container flex items-center bg-white rounded-full border border-gray-200 px-3 py-1">
+                <input type="text" id="search-input" placeholder="Search products..." class="w-40 focus:outline-none text-sm">
+                <button id="search-button" class="ml-2">
+                    <i class="fas fa-search text-gray-400 hover:text-primary transition"></i>
+                </button>
+                <div id="search-results" class="absolute top-full mt-2 w-64 bg-white rounded-lg shadow-lg hidden z-50 max-h-96 overflow-y-auto"></div>
             </div>
-        </nav>
-    </header>
+        </div>
+    </nav>
+</header>
 
-<!-- Categories Slider -->
 <section >
     <h3 class="section__title"><span style="color: #122c6f">Popular</span> Categories</h3>
     <p class="text-gray-600 text-center mb-12">Discover our range of customizable products</p>
-            <div class="swiper mySwiper">
-                <div class="swiper-wrapper">
+    <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
             <?php foreach ($slider_categories as $cat): ?>
-                <a href="?category_id=<?php echo $cat['id']; ?>" class="swiper-slide category__item" data-id="<?php echo $cat['id']; ?>">
+                <a href="product.php?category_id=<?php echo $cat['id']; ?>" class="swiper-slide category__item" data-id="<?php echo $cat['id']; ?>">
                     <img src="../HomePage/imgs/<?php echo htmlspecialchars($cat['image']); ?>" class="category__img" alt="">
                     <h3 class="category__title"><?php echo htmlspecialchars($cat['name']); ?></h3>
                 </a>
             <?php endforeach; ?>
-                        </div>
-                        <div class="swiper-button-next"></div>
-                        <div class="swiper-button-prev"></div>
-                    </div>
-        </section>
+        </div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+    </div>
+</section>
 
 <main class="container mx-auto px-4 py-8 flex gap-8">
     <aside class="w-64 p-4 bg-white rounded-lg shadow-md h-fit sticky top-0 self-start mt-0">
@@ -325,158 +333,150 @@ $wishlist_stmt->close();
     </div>
 </main>
 
-        <!-- Product Reviews Section -->
 <section class="mt-16 bg-white container mx-auto px-4 py-16 relative overflow-hidden">
     <h2 class="text-4xl font-bold mb-12 text-center text-primary font-['Cairo'] tracking-wide">Customer Reviews</h2>
     <div class="flex justify-center">
         <div class="grid grid-cols-1 md:grid-cols-1 gap-10 max-w-5xl w-full">
-                <!-- Review Form -->
             <div class="bg-white p-6 rounded-xl shadow-lg transform hover:scale-105 transition duration-300 border-l-4 border-primary/50">
                 <h3 class="text-xl font-semibold mb-6 text-gray-800 font-['Tajawal']">Write a Review</h3>
                 <form id="review-form" class="space-y-6">
                     <input type="hidden" id="review-product-id" name="product_id">
-                        <div>
+                    <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Rating</label>
-                            <div class="flex space-x-2">
+                        <div class="flex space-x-2">
                             <i class="far fa-star text-2xl cursor-pointer rating-star text-yellow-500 hover:text-yellow-600 transition" data-rating="1"></i>
                             <i class="far fa-star text-2xl cursor-pointer rating-star text-yellow-500 hover:text-yellow-600 transition" data-rating="2"></i>
                             <i class="far fa-star text-2xl cursor-pointer rating-star text-yellow-500 hover:text-yellow-600 transition" data-rating="3"></i>
                             <i class="far fa-star text-2xl cursor-pointer rating-star text-yellow-500 hover:text-yellow-600 transition" data-rating="4"></i>
                             <i class="far fa-star text-2xl cursor-pointer rating-star text-yellow-500 hover:text-yellow-600 transition" data-rating="5"></i>
-                            </div>
                         </div>
-                        <div>
+                    </div>
+                    <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Your Review</label>
                         <textarea class="w-full border border-gray-300 rounded-lg p-4 focus:ring-2 focus:ring-secondary focus:border-transparent resize-none transition" rows="5" name="comment" placeholder="Share your thoughts about the product..."></textarea>
-                        </div>
+                    </div>
                     <button type="submit" class="w-full bg-primary text-white px-6 py-3 rounded-lg hover:bg-secondary transition-all duration-300 transform hover:-translate-y-1 font-['Poppins'] font-medium">
-                            Submit Review
-                        </button>
-                    </form>
-                </div>
-                <!-- Review List -->
+                        Submit Review
+                    </button>
+                </form>
+            </div>
             <div id="review-list" class="space-y-6"></div>
-                            </div>
-                        </div>
-    <!-- Edgy Decorative Element -->
+        </div>
+    </div>
     <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/20 to-transparent transform -rotate-12 -translate-y-1/4 -translate-x-1/4"></div>
     <div class="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tl from-secondary/20 to-transparent transform rotate-12 translate-y-1/4 -translate-x-1/4"></div>
-        </section>
+</section>
 
 
 
-        <!-- Product Detail Modal -->
-        <div id="product-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-            <div class="bg-white rounded-lg p-8 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-                <div class="flex justify-end mb-4">
-                    <button class="text-gray-400 hover:text-gray-600" id="close-modal">
-                        <i class="fas fa-times text-xl"></i>
-                    </button>
+<div id="product-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-8 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-end mb-4">
+            <button class="text-gray-400 hover:text-gray-600" id="close-modal">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div>
+                <div class="mb-4 relative">
+                    <img src="" alt="" id="modal-main-image" class="w-full h-auto rounded-lg shadow-lg">
                 </div>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div>
-                        <div class="mb-4 relative">
-                            <img src="" alt="" id="modal-main-image" class="w-full h-auto rounded-lg shadow-lg">
-                        </div>
                 <div class="grid grid-cols-4 gap-4" id="modal-thumbnails"></div>
-                        </div>
-                    <div>
-                        <h2 id="modal-product-name" class="text-3xl font-bold mb-4"></h2>
-                        <p id="modal-product-price" class="text-2xl text-primary font-bold mb-4"></p>
-                        <p id="modal-product-description" class="text-gray-600 mb-6"></p>
-                        <div class="mb-6">
-                            <h3 class="text-lg font-semibold mb-4">Select Size:</h3>
-                            <div class="grid grid-cols-3 gap-4">
-                                <button class="size-option border rounded-lg p-4 hover:border-primary transition" data-size="small">Small</button>
-                                <button class="size-option border rounded-lg p-4 hover:border-primary transition" data-size="medium">Medium</button>
-                                <button class="size-option border rounded-lg p-4 hover:border-primary transition" data-size="large">Large</button>
-                            </div>
-                        </div>
-                        <div class="mb-6">
-                            <h3 class="text-lg font-semibold mb-4">Quantity:</h3>
-                            <div class="flex items-center space-x-4">
-                                <button class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:border-primary transition" id="modal-decrease-quantity">-</button>
-                                <input type="number" value="1" min="1" class="w-20 text-center border-gray-300 rounded" id="modal-quantity">
-                                <button class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:border-primary transition" id="modal-increase-quantity">+</button>
-                            </div>
-                        </div>
+            </div>
+            <div>
+                <h2 id="modal-product-name" class="text-3xl font-bold mb-4"></h2>
+                <p id="modal-product-price" class="text-2xl text-primary font-bold mb-4"></p>
+                <p id="modal-product-description" class="text-gray-600 mb-6"></p>
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-4">Select Size:</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <button class="size-option border rounded-lg p-4 hover:border-primary transition" data-size="small">Small</button>
+                        <button class="size-option border rounded-lg p-4 hover:border-primary transition" data-size="medium">Medium</button>
+                        <button class="size-option border rounded-lg p-4 hover:border-primary transition" data-size="large">Large</button>
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-4">Quantity:</h3>
+                    <div class="flex items-center space-x-4">
+                        <button class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:border-primary transition" id="modal-decrease-quantity">-</button>
+                        <input type="number" value="1" min="1" class="w-20 text-center border-gray-300 rounded" id="modal-quantity">
+                        <button class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:border-primary transition" id="modal-increase-quantity">+</button>
+                    </div>
+                </div>
                 <button id="modal-add-to-cart" class="w-full bg-primary text-white px-8 py-3 rounded-full text-lg font-medium hover:bg-opacity-90 transition flex items-center justify-center" data-product-id="">
-                            <i class="fas fa-shopping-cart mr-2"></i>
-                            Add To Cart | أضف إلى السلة
-                        </button>
+                    <i class="fas fa-shopping-cart mr-2"></i>
+                    Add To Cart | أضف إلى السلة
+                </button>
                 <button id="modal-add-to-wishlist" class="w-full bg-secondary text-white px-8 py-3 rounded-full text-lg font-medium hover:bg-opacity-90 transition flex items-center justify-center mt-4" data-product-id="">
                     <i class="fas fa-heart mr-2"></i>
                     Add To Wishlist
-                        </button>
-                    </div>
-                </div>
+                </button>
             </div>
         </div>
-
-    <!-- Footer -->
-    <footer class="bg-gray-100 mt-16">
-        <div class="container mx-auto px-4 py-12">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div class="col-span-1 md:col-span-2">
-                    <a href="../HomePage/index.php" class="text-primary font-['Pacifico'] text-2xl">Alandalus Design</a>
-                    <p class="mt-4 text-gray-600">Crafting personalized Arabic and Islamic designs that tell your unique story. Every piece is created with love and attention to detail.</p>
-                    <div class="mt-6 flex space-x-4">
-                        <a href="https://www.facebook.com/Al.Andalus.Design" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-secondary transition" title="Follow us on Facebook">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="https://www.instagram.com/andalus_design" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-secondary transition" title="Follow us on Instagram">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="https://t.me/andalusdesign" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-secondary transition" title="Join our Telegram Channel">
-                            <i class="fab fa-telegram"></i>
-                        </a>
-                        <a href="https://wa.me/message/7YZUEAMKO53SM1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-secondary transition" title="Contact us on WhatsApp">
-                            <i class="fab fa-whatsapp"></i>
-                        </a>
-                    </div>
-                </div>
-                <div>
-                    <h3 class="font-bold text-lg mb-4">Quick Links</h3>
-                    <ul class="space-y-2">
-                        <li><a href="../HomePage/index.php" class="text-gray-600 hover:text-primary transition">Home</a></li>
-                    <li><a href="product.php" class="text-gray-600 hover:text-primary transition">Products</a></li>
-                    <li><a href="../ContactPage/contact.php" class="text-gray-600 hover:text-primary transition">Contact</a></li>
-                    <li><a href="../CartPage/cart.php" class="text-gray-600 hover:text-primary transition">Cart</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="font-bold text-lg mb-4">Contact Us</h3>
-                    <ul class="space-y-2">
-                        <li class="flex items-center text-gray-600">
-                            <i class="fas fa-envelope w-6"></i>
-                            <span>info@alandalusdesign.com</span>
-                        </li>
-                        <li class="flex items-center text-gray-600">
-                            <i class="fas fa-phone w-6"></i>
-                            <span>+972 59-464-6503</span>
-                        </li>
-                        <li class="flex items-center text-gray-600">
-                            <i class="fas fa-map-marker-alt w-6"></i>
-                            <span>Sufyan Street - Raddad Building, Nablus 009709</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="border-t border-gray-200 mt-8 pt-8 text-center text-gray-600">
-            <p>© 2024 Alandalus Design. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Success Toast Notification -->
-    <div id="success-toast" class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-full opacity-0 transition-all duration-300 flex items-center">
-        <i class="fas fa-check-circle mr-2"></i>
-        <span>Item added to cart successfully!</span>
     </div>
+</div>
 
-    <!-- Swiper JS -->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script>
+<footer class="bg-gray-100 mt-16">
+    <div class="container mx-auto px-4 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="col-span-1 md:col-span-2">
+                <a href="../HomePage/index.php" class="text-primary font-['Pacifico'] text-2xl">Alandalus Design</a>
+                <p class="mt-4 text-gray-600">Crafting personalized Arabic and Islamic designs that tell your unique story. Every piece is created with love and attention to detail.</p>
+                <div class="mt-6 flex space-x-4">
+                    <a href="https://www.facebook.com/Al.Andalus.Design" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-secondary transition" title="Follow us on Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.instagram.com/andalus_design" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-secondary transition" title="Follow us on Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://t.me/andalusdesign" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-secondary transition" title="Join our Telegram Channel">
+                        <i class="fab fa-telegram"></i>
+                    </a>
+                    <a href="https://wa.me/message/7YZUEAMKO53SM1" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-secondary transition" title="Contact us on WhatsApp">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                </div>
+            </div>
+            <div>
+                <h3 class="font-bold text-lg mb-4">Quick Links</h3>
+                <ul class="space-y-2">
+                    <li><a href="../HomePage/index.php" class="text-gray-600 hover:text-primary transition">Home</a></li>
+                    <li><a href="product.php" class="text-gray-600 hover:text-primary transition">Products</a></li>
+                    <li><a href="../ContactPage/contact.php" class="text-gray-600 hover:text-primary transition">Connect</a></li>
+                    <li><a href="../CartPage/cart.php" class="text-gray-600 hover:text-primary transition">Cart</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="font-bold text-lg mb-4">Contact Us</h3>
+                <ul class="space-y-2">
+                    <li class="flex items-center text-gray-600">
+                        <i class="fas fa-envelope w-6"></i>
+                        <span>info@alandalusdesign.com</span>
+                    </li>
+                    <li class="flex items-center text-gray-600">
+                        <i class="fas fa-phone w-6"></i>
+                        <span>+972 59-464-6503</span>
+                    </li>
+                    <li class="flex items-center text-gray-600">
+                        <i class="fas fa-map-marker-alt w-6"></i>
+                        <span>Sufyan Street - Raddad Building, Nablus 009709</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="border-t border-gray-200 mt-8 pt-8 text-center text-gray-600">
+            <p>© 2024 Alandalus Design. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<div id="success-toast" class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-full opacity-0 transition-all duration-300 flex items-center">
+    <i class="fas fa-check-circle mr-2"></i>
+    <span>Item added to cart successfully!</span>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
     // Swiper initialization
     const swiper = new Swiper('.mySwiper', {
         slidesPerView: 4,
@@ -491,14 +491,14 @@ $wishlist_stmt->close();
     // Product loading
     let selectedCategory = '<?php echo isset($_GET['category_id']) ? $_GET['category_id'] : ''; ?>';
     let selectedPrice = '';
-        let offset = 0;
+    let offset = 0;
     const limit = 12;
-        let isLoading = false;
+    let isLoading = false;
 
     function loadProducts(reset = false) {
-            if (isLoading) return;
-            isLoading = true;
-            const loadBtn = document.getElementById("loadMoreBtn");
+        if (isLoading) return;
+        isLoading = true;
+        const loadBtn = document.getElementById("loadMoreBtn");
         if (reset) {
             offset = 0;
             document.getElementById("productContainer").innerHTML = '';
@@ -508,43 +508,52 @@ $wishlist_stmt->close();
             loadBtn.textContent = "Loading...";
             loadBtn.disabled = true;
         }
-        fetch(`load_products.php?offset=${offset}&limit=${limit}&category_id=${selectedCategory}&price=${selectedPrice}`)
-            .then(response => response.text())
-                .then(data => {
-                    if (data.trim() === '' || data.includes('No more products')) {
-                        loadBtn.textContent = "No More Products";
-                        loadBtn.disabled = true;
-                    } else {
-                        document.getElementById("productContainer").innerHTML += data;
-                        offset += limit;
-                        loadBtn.textContent = "Load More Products";
-                        loadBtn.disabled = false;
-                    }
-                    isLoading = false;
-                // Add event listeners to new product cards
-                addProductCardListeners();
-                // Add text-center class to product info divs
-                document.querySelectorAll('#productContainer .p-6').forEach(infoDiv => {
-                    infoDiv.classList.add('text-center');
-                });
-                })
-                .catch(error => {
-                    console.error('Error loading products:', error);
-                    loadBtn.textContent = "Error Loading Products";
-                    loadBtn.disabled = false;
-                    isLoading = false;
-                });
+
+        let url = `load_products.php?offset=${offset}&limit=${limit}`;
+        if (selectedCategory) {
+            url += `&category_id=${selectedCategory}`;
+        }
+        if (selectedPrice) {
+            const [min, max] = selectedPrice.split('-');
+            url += `&min_price=${min}`;
+            if (max && max !== '+') {
+                url += `&max_price=${max}`;
+            }
         }
 
+        fetch(url)
+            .then(response => response.text())
+            .then(data => {
+                if (data.trim() === '' || data.includes('No more products')) {
+                    loadBtn.textContent = "No More Products";
+                    loadBtn.disabled = true;
+                } else {
+                    document.getElementById("productContainer").innerHTML += data;
+                    offset += limit;
+                    loadBtn.textContent = "Load More Products";
+                    loadBtn.disabled = false;
+                }
+                isLoading = false;
+                // Add event listeners to new product cards
+                addProductCardListeners();
+            })
+            .catch(error => {
+                console.error('Error loading products:', error);
+                loadBtn.textContent = "Error Loading Products";
+                loadBtn.disabled = false;
+                isLoading = false;
+            });
+    }
+
     function addProductCardListeners() {
-            document.querySelectorAll('.product-card').forEach(card => {
-                const viewDetailsBtn = card.querySelector('.view-details');
-                    viewDetailsBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        openProductModal(card);
-                    });
-                    card.addEventListener('click', () => {
-                        openProductModal(card);
+        document.querySelectorAll('.product-card').forEach(card => {
+            const viewDetailsBtn = card.querySelector('.view-details');
+            viewDetailsBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openProductModal(card);
+            });
+            card.addEventListener('click', () => {
+                openProductModal(card);
             });
         });
     }
@@ -587,7 +596,7 @@ $wishlist_stmt->close();
     });
 
     // Category and price filter handlers
-        document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
         loadProducts(true);
         document.querySelectorAll('.category-link').forEach(link => {
             link.addEventListener('click', function(e) {
@@ -595,23 +604,11 @@ $wishlist_stmt->close();
                 document.querySelectorAll('.category-link').forEach(l => l.classList.remove('bg-primary', 'text-white'));
                 this.classList.add('bg-primary', 'text-white');
                 selectedCategory = this.getAttribute('data-category-id');
-                // Update the URL to reflect the selected category
-                const url = new URL(window.location.href);
-                url.searchParams.set('category_id', selectedCategory);
-                window.history.pushState({}, '', url);
                 loadProducts(true);
             });
         });
         document.getElementById('priceFilter').addEventListener('change', function() {
             selectedPrice = this.value;
-            // Update the URL to reflect the selected price range
-            const url = new URL(window.location.href);
-            if (selectedPrice) {
-                url.searchParams.set('price', selectedPrice);
-            } else {
-                url.searchParams.delete('price');
-            }
-            window.history.pushState({}, '', url);
             loadProducts(true);
         });
         document.getElementById('loadMoreBtn').addEventListener('click', function() {
@@ -661,60 +658,61 @@ $wishlist_stmt->close();
     });
 
     // Modal functionality
-        const productModal = document.getElementById('product-modal');
-        const closeModal = document.getElementById('close-modal');
-        const modalMainImage = document.getElementById('modal-main-image');
-        const modalThumbnails = document.getElementById('modal-thumbnails');
-        const modalProductName = document.getElementById('modal-product-name');
-        const modalProductPrice = document.getElementById('modal-product-price');
-        const modalProductDescription = document.getElementById('modal-product-description');
-        const modalQuantity = document.getElementById('modal-quantity');
-        const modalAddToCart = document.getElementById('modal-add-to-cart');
+    const productModal = document.getElementById('product-modal');
+    const closeModal = document.getElementById('close-modal');
+    const modalMainImage = document.getElementById('modal-main-image');
+    const modalThumbnails = document.getElementById('modal-thumbnails');
+    const modalProductName = document.getElementById('modal-product-name');
+    const modalProductPrice = document.getElementById('modal-product-price');
+    const modalProductDescription = document.getElementById('modal-product-description');
+    const modalQuantity = document.getElementById('modal-quantity');
+    const modalAddToCart = document.getElementById('modal-add-to-cart');
     const modalAddToWishlist = document.getElementById('modal-add-to-wishlist');
+    let selectedSize = ''; // Variable to store selected size
 
-        function openProductModal(card) {
+    function openProductModal(card) {
         const productId = card.dataset.id;
-            const name = card.dataset.name;
-            const price = card.dataset.price;
-            const description = card.dataset.description;
+        const name = card.dataset.name;
+        const price = card.dataset.price;
+        const description = card.dataset.description;
         const images = JSON.parse(card.dataset.images || '[]');
-        const categoryId = card.dataset.category_id;
+        const categoryId = card.dataset.category_id; // Added to dataset in load_products.php
 
-            modalProductName.textContent = name;
-            modalProductPrice.textContent = `₪ ${price}`;
-            modalProductDescription.textContent = description;
+        modalProductName.textContent = name;
+        modalProductPrice.textContent = `₪ ${price}`;
+        modalProductDescription.textContent = description;
         modalMainImage.src = images[0] || card.querySelector('img').src;
-            modalMainImage.alt = name;
+        modalMainImage.alt = name;
         modalAddToCart.dataset.productId = productId;
         modalAddToWishlist.dataset.productId = productId;
         document.getElementById('review-product-id').value = productId;
 
-            modalQuantity.value = 1;
-            document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('border-primary'));
-            document.querySelector('.size-option[data-size="medium"]').classList.add('border-primary');
+        modalQuantity.value = 1;
+        document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('border-primary'));
+        selectedSize = ''; // Reset selected size
 
-            if (images.length > 1) {
-                modalThumbnails.innerHTML = images.map(img => `
+        if (images.length > 1) {
+            modalThumbnails.innerHTML = images.map(img => `
                     <img src="../HomePage/imgs/${img}" alt="${name}" class="w-full h-auto rounded cursor-pointer hover:opacity-75 transition border border-gray-200 modal-thumbnail">
                 `).join('');
-                document.querySelectorAll('.modal-thumbnail').forEach(thumb => {
-                    thumb.addEventListener('click', () => {
-                        modalMainImage.src = thumb.src;
-                        modalMainImage.alt = thumb.alt;
-                    });
+            document.querySelectorAll('.modal-thumbnail').forEach(thumb => {
+                thumb.addEventListener('click', () => {
+                    modalMainImage.src = thumb.src;
+                    modalMainImage.alt = thumb.alt;
                 });
-                modalThumbnails.classList.remove('hidden');
-            } else {
-                modalThumbnails.innerHTML = '';
-                modalThumbnails.classList.add('hidden');
-            }
+            });
+            modalThumbnails.classList.remove('hidden');
+        } else {
+            modalThumbnails.innerHTML = '';
+            modalThumbnails.classList.add('hidden');
+        }
 
-            productModal.classList.remove('hidden');
-            productModal.classList.add('flex');
-            setTimeout(() => {
-                productModal.querySelector('.bg-white').classList.add('scale-100');
-                productModal.querySelector('.bg-white').classList.remove('scale-95');
-            }, 10);
+        productModal.classList.remove('hidden');
+        productModal.classList.add('flex');
+        setTimeout(() => {
+            productModal.querySelector('.bg-white').classList.add('scale-100');
+            productModal.querySelector('.bg-white').classList.remove('scale-95');
+        }, 10);
 
         // Load reviews for this product
         loadReviews(productId);
@@ -732,7 +730,8 @@ $wishlist_stmt->close();
 
         modalQuantity.value = 1;
         document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('border-primary'));
-        document.querySelector('.size-option[data-size="medium"]').classList.add('border-primary');
+        selectedSize = ''; // Reset selected size
+
 
         modalThumbnails.innerHTML = '';
         modalThumbnails.classList.add('hidden');
@@ -747,15 +746,15 @@ $wishlist_stmt->close();
         loadReviews(product.id);
     }
 
-        function closeProductModal() {
-            const modalContent = productModal.querySelector('.bg-white');
-            modalContent.classList.remove('scale-100');
-            modalContent.classList.add('scale-95');
-            setTimeout(() => {
-                productModal.classList.remove('flex');
-                productModal.classList.add('hidden');
-            }, 150);
-        }
+    function closeProductModal() {
+        const modalContent = productModal.querySelector('.bg-white');
+        modalContent.classList.remove('scale-100');
+        modalContent.classList.add('scale-95');
+        setTimeout(() => {
+            productModal.classList.remove('flex');
+            productModal.classList.add('hidden');
+        }, 150);
+    }
 
     closeModal.addEventListener('click', closeProductModal);
     productModal.addEventListener('click', (e) => {
@@ -764,46 +763,57 @@ $wishlist_stmt->close();
         }
     });
 
-        document.getElementById('modal-decrease-quantity').addEventListener('click', () => {
-            if (modalQuantity.value > 1) modalQuantity.value--;
-        });
+    document.getElementById('modal-decrease-quantity').addEventListener('click', () => {
+        if (modalQuantity.value > 1) modalQuantity.value--;
+    });
 
-        document.getElementById('modal-increase-quantity').addEventListener('click', () => {
-            modalQuantity.value++;
-        });
+    document.getElementById('modal-increase-quantity').addEventListener('click', () => {
+        modalQuantity.value++;
+    });
 
-        document.querySelectorAll('.size-option').forEach(option => {
-            option.addEventListener('click', () => {
-                document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('border-primary'));
-                option.classList.add('border-primary');
-            });
+    document.querySelectorAll('.size-option').forEach(option => {
+        option.addEventListener('click', () => {
+            document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('border-primary'));
+            option.classList.add('border-primary');
+            selectedSize = option.dataset.size; // Set selected size
         });
+    });
 
-        modalAddToCart.addEventListener('click', () => {
+    modalAddToCart.addEventListener('click', () => {
         const productId = modalAddToCart.dataset.productId;
         const quantity = parseInt(modalQuantity.value);
-        const size = document.querySelector('.size-option.border-primary')?.dataset.size || 'medium';
+
+        // Ensure a size is selected if applicable (or default if not)
+        if (!selectedSize) {
+            showToast('Please select a size!');
+            return;
+        }
+
         fetch('add_to_cart.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `product_id=${productId}&quantity=${quantity}&size=${size}`
+            body: `product_id=${productId}&quantity=${quantity}&size=${selectedSize}`
         })
             .then(response => response.json())
             .then(data => {
                 showToast(data.message);
                 if (data.success) {
                     document.querySelector('.cart-count').textContent = data.cart_count;
-            closeProductModal();
+                    closeProductModal();
                 }
+            })
+            .catch(error => {
+                console.error('Error adding to cart:', error);
+                showToast('Error adding to cart.');
             });
     });
 
     modalAddToWishlist.addEventListener('click', () => {
-        const productId = modalAddToWishlist.dataset.productId;
+        const productId = modalAddToWishlist.dataset.productId; // This line gets the product ID
         fetch('add_to_wishlist.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `product_id=${productId}`
+            body: `product_id=${productId}` // This line sends the product ID
         })
             .then(response => response.json())
             .then(data => {
@@ -811,6 +821,10 @@ $wishlist_stmt->close();
                 if (data.success) {
                     document.querySelector('.wishlist-count').textContent = data.wishlist_count;
                 }
+            })
+            .catch(error => {
+                console.error('Error adding to wishlist:', error);
+                showToast('Error adding to wishlist.');
             });
     });
 
@@ -837,26 +851,40 @@ $wishlist_stmt->close();
                     `;
                         reviewList.appendChild(div);
                     });
-            } else {
+                } else {
                     reviewList.innerHTML = '<p class="text-gray-500">No reviews yet for this product.</p>';
                 }
             });
     }
 
     function showToast(message) {
-            const toast = document.getElementById('success-toast');
-            toast.querySelector('span').textContent = message;
-            toast.classList.remove('translate-y-full', 'opacity-0');
-            setTimeout(() => {
-                toast.classList.add('translate-y-full', 'opacity-0');
-            }, 3000);
-        }
+        const toast = document.getElementById('success-toast');
+        toast.querySelector('span').textContent = message;
+        toast.classList.remove('translate-y-full', 'opacity-0');
+        setTimeout(() => {
+            toast.classList.add('translate-y-full', 'opacity-0');
+        }, 3000);
+    }
 
     // Check URL for modal flag and product ID on page load
-        document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
         const productId = urlParams.get('id');
         const openModalFlag = urlParams.get('openModal');
+        const initialCategoryId = urlParams.get('category_id');
+
+        if (initialCategoryId) {
+            selectedCategory = initialCategoryId;
+            // Highlight the category link if it's in the sidebar
+            document.querySelectorAll('.category-link').forEach(link => {
+                if (link.dataset.categoryId === initialCategoryId) {
+                    link.classList.add('bg-primary', 'text-white');
+                } else {
+                    link.classList.remove('bg-primary', 'text-white');
+                }
+            });
+        }
+
 
         if (productId && openModalFlag === 'true') {
             // Fetch product details and open modal
@@ -866,7 +894,7 @@ $wishlist_stmt->close();
                     if (data.success) {
                         // Use the existing function to open and populate the modal
                         openProductModalFromSearch(data.product); // Reuse search modal function
-                } else {
+                    } else {
                         console.error('Error fetching product details:', data.message);
                         // Optionally show an alert or message to the user
                         alert('Could not load product details.');
@@ -896,8 +924,8 @@ $wishlist_stmt->close();
         });
         document.getElementById('loadMoreBtn').addEventListener('click', function() {
             loadProducts();
-            });
         });
-    </script>
+    });
+</script>
 </body>
-</html> 
+</html>

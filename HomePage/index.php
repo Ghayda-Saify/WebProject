@@ -240,20 +240,20 @@ global $con;
             } else {
                 // Display placeholder items or a message if no products are found
                 ?>
-                 <article class="item active">
-                     <div class="main-content" style="background-color: #ffffff;" data-bg="#ffffff">
-                         <div class="content">
-                             <h2>No Products Yet</h2>
-                             <p class="price"></p>
-                             <p class="description">Check back later for new arrivals!</p>
-                             <button class="addToCard" style="background-color: #122c6f;">Browse Products</button>
-                         </div>
-                     </div>
-                     <figure class="image">
-                         <img src="imgs/default_placeholder.png" alt="Placeholder Image">
-                         <figcaption>No products available at the moment.</figcaption>
-                     </figure>
-                 </article>
+                <article class="item active">
+                    <div class="main-content" style="background-color: #ffffff;" data-bg="#ffffff">
+                        <div class="content">
+                            <h2>No Products Yet</h2>
+                            <p class="price"></p>
+                            <p class="description">Check back later for new arrivals!</p>
+                            <button class="addToCard" style="background-color: #122c6f;">Browse Products</button>
+                        </div>
+                    </div>
+                    <figure class="image">
+                        <img src="imgs/default_placeholder.png" alt="Placeholder Image">
+                        <figcaption>No products available at the moment.</figcaption>
+                    </figure>
+                </article>
                 <?php
             }
             ?>
@@ -267,13 +267,13 @@ global $con;
     <!--      categories  -->
     <!-- Featured Categories -->
     <?php
-        include_once '../connection.php';
-        global $con;
-        if ($con->connect_error) {
-            die("Connection failed: " . $con->connect_error);
-        }
-        $sql = "SELECT id, name, image FROM categories";
-        $result = $con->query($sql);
+    include_once '../connection.php';
+    global $con;
+    if ($con->connect_error) {
+        die("Connection failed: " . $con->connect_error);
+    }
+    $sql = "SELECT id, name, image FROM categories";
+    $result = $con->query($sql);
 
     ?>
     <section class="">
@@ -317,61 +317,61 @@ global $con;
                 $product_result = $con->query($product_sql);
                 if ($product_result && $product_result->num_rows > 0) {
                     while ($product = $product_result->fetch_assoc()) {
-                    ?>
-                    <div class="product-card bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300" data-product-id="<?php echo htmlspecialchars($product['id']); ?>">
-                        <div class="relative">
-                            <div class="h-64 overflow-hidden">
-                                <img
-                                    src="imgs/<?php echo htmlspecialchars($product['image']); ?>"
-                                    alt="<?php echo htmlspecialchars($product['name']); ?>"
-                                    class="w-full h-full object-cover object-top"
-                                />
-                            </div>
-                            <div class="quick-actions absolute top-4 right-4 flex flex-col gap-2">
-                                <button class="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100">
-                                    <i class="ri-heart-line text-gray-700"></i>
-                                </button>
-                                <button class="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100">
-                                    <i class="ri-eye-line text-gray-700"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="text-lg font-medium mb-1"><?php echo htmlspecialchars($product['name']); ?></h3>
-                            <div class="flex items-center mb-2">
-                                <div class="flex text-yellow-400">
-                                    <i class="ri-star-fill ri-xs"></i>
-                                    <i class="ri-star-fill ri-xs"></i>
-                                    <i class="ri-star-fill ri-xs"></i>
-                                    <i class="ri-star-fill ri-xs"></i>
-                                    <i class="ri-star-line ri-xs"></i>
+                        ?>
+                        <div class="product-card bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300" data-product-id="<?php echo htmlspecialchars($product['id']); ?>">
+                            <div class="relative">
+                                <div class="h-64 overflow-hidden">
+                                    <img
+                                            src="imgs/<?php echo htmlspecialchars($product['image']); ?>"
+                                            alt="<?php echo htmlspecialchars($product['name']); ?>"
+                                            class="w-full h-full object-cover object-top"
+                                    />
                                 </div>
-                                <span class="text-xs text-gray-500 ml-1">(0)</span>
+                                <div class="quick-actions absolute top-4 right-4 flex flex-col gap-2">
+                                    <button class="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100">
+                                        <i class="ri-heart-line text-gray-700"></i>
+                                    </button>
+                                    <button class="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100">
+                                        <i class="ri-eye-line text-gray-700"></i>
+                                    </button>
+                                </div>
                             </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-primary font-semibold">₪<?php echo number_format($product['price'], 2); ?></span>
-                                <button class="addToCard bg-primary text-white py-2 px-3 rounded-button text-sm hover:bg-opacity-90 transition-colors whitespace-nowrap">
-                                    Add to Cart
-                                </button>
+                            <div class="p-4">
+                                <h3 class="text-lg font-medium mb-1"><?php echo htmlspecialchars($product['name']); ?></h3>
+                                <div class="flex items-center mb-2">
+                                    <div class="flex text-yellow-400">
+                                        <i class="ri-star-fill ri-xs"></i>
+                                        <i class="ri-star-fill ri-xs"></i>
+                                        <i class="ri-star-fill ri-xs"></i>
+                                        <i class="ri-star-fill ri-xs"></i>
+                                        <i class="ri-star-line ri-xs"></i>
+                                    </div>
+                                    <span class="text-xs text-gray-500 ml-1">(0)</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-primary font-semibold">₪<?php echo number_format($product['price'], 2); ?></span>
+                                    <button class="addToCard bg-primary text-white py-2 px-3 rounded-button text-sm hover:bg-opacity-90 transition-colors whitespace-nowrap">
+                                        Add to Cart
+                                    </button>
 
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <?php
+                        <?php
+                    }
+                } else {
+                    echo '<div class="col-span-4 text-center text-gray-500">No featured products found with IDs 15-18.</div>';
                 }
-            } else {
-                echo '<div class="col-span-4 text-center text-gray-500">No featured products found with IDs 15-18.</div>';
-            }
-            ?>
+                ?>
+            </div>
+            <div class="text-center mt-10">
+                <a
+                        href="../ProductsPage/product.php"
+                        class="inline-block border-2 border-primary text-primary px-6 py-3 rounded-button font-medium hover:bg-primary hover:text-white transition-colors whitespace-nowrap"
+                >View All Products</a>
+            </div>
         </div>
-        <div class="text-center mt-10">
-            <a
-                href="../ProductsPage/product.php"
-                class="inline-block border-2 border-primary text-primary px-6 py-3 rounded-button font-medium hover:bg-primary hover:text-white transition-colors whitespace-nowrap"
-            >View All Products</a>
-        </div>
-    </div>
-</section>
+    </section>
     <!--        deals-->
     <section class="deals">
         <!-- Promotional Banner -->
@@ -406,8 +406,8 @@ global $con;
                                             <div class="text-white text-lg font-semibold mb-2"><?php echo $discount; ?></div>
                                         <?php } ?>
                                         <a
-                                            href="<?php echo htmlspecialchars($promo['btn_link']); ?>"
-                                            class="bg-white text-primary px-4 py-2 rounded-button text-sm font-medium hover:bg-gray-100 transition-colors inline-block whitespace-nowrap"
+                                                href="<?php echo htmlspecialchars($promo['btn_link']); ?>"
+                                                class="bg-white text-primary px-4 py-2 rounded-button text-sm font-medium hover:bg-gray-100 transition-colors inline-block whitespace-nowrap"
                                         ><?php echo htmlspecialchars($promo['btn_text']); ?></a>
                                     </div>
                                 </div>
@@ -619,12 +619,7 @@ global $con;
         loop: true,
     });
 
-    // // Initialize cart count from localStorage
-    // document.addEventListener('DOMContentLoaded', function() {
-    //     const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    //     const cartCount = document.querySelector('.cart-count');
-    //     cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
-    // });
+
 
 </script>
 <script>

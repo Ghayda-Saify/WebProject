@@ -16,7 +16,7 @@ if ($con->connect_error) {
 session_start();
 require('../connection.php');
 require('../functions.php');
-require __DIR__ . '/../vendor/autoload.php';
+require _DIR_ . '/../vendor/autoload.php';
 
 $msg = '';
 $msgType = 'error';

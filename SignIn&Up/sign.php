@@ -25,8 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $msg = "Password must be at least 6 characters long";
             $togglePanel = 'signup';
         } elseif ($password !== $confirmPass) {
-        $msg = "Passwords do not match";
-        $togglePanel = 'signup';
+            $msg = "Passwords do not match";
+            $togglePanel = 'signup';
         }else {
             try {
                 $db = $con;
@@ -44,14 +44,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 } else {
                     $sha1Password = sha1($password);
                     $insertStmt = $db->prepare("INSERT INTO users (name, email, password, phone_number, type) VALUES (?, ?, ?, ?, 'user')");
-                    $insertStmt->bind_param("ssss", $id,$name, $email, $sha1Password, $phone);                    if ($insertStmt->execute()) {
+                    $insertStmt->bind_param("ssss",$name, $email, $sha1Password, $phone);
+                    if ($insertStmt->execute()) {
                         $_SESSION['user_email'] = $email;
                         $_SESSION['user_type'] = 'user';
                         header("Location: ../HomePage/index.php");
                         exit();
                     } else {
                         $msg = "Registration failed. Please try again.";
-                        echo json_encode(["success" => false, "error" => $con->error]);
+
                     }
                     $insertStmt->close();
                 }
@@ -72,35 +73,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $msg = "Please fill in all fields";
         }
         else{
-        $sha1Password = sha1($userPassword);
-        try {
-            $db = $con;
-            $stmt = $db->prepare("SELECT * FROM users WHERE email = ? AND password = ?");
-            $stmt->bind_param("ss", $userEmail, $sha1Password);
-            $stmt->execute();
-            $res = $stmt->get_result();
+            $sha1Password = sha1($userPassword);
+            try {
+                $db = $con;
+                $stmt = $db->prepare("SELECT * FROM users WHERE email = ? AND password = ?");
+                $stmt->bind_param("ss", $userEmail, $sha1Password);
+                $stmt->execute();
+                $res = $stmt->get_result();
 
-            if ($res->num_rows > 0) {
-                $userData = $res->fetch_assoc();
-                $_SESSION['user'] = $userData;
+                if ($res->num_rows > 0) {
+                    $userData = $res->fetch_assoc();
+                    $_SESSION['user'] = $userData;
 
-                // Optional: JSON success response
-                echo json_encode(["success" => true]);
+                    if ($userData['type'] === 'admin') {
+                        header("Location: ../AdminDashboard/index.php"); // عدلي المسار حسب ما عندك
+                    } else {
+                        header("Location: ../HomePage/index.php");
+                    }
+                    exit();
+                }
+                else {
+                    $msg = "Incorrect email or password.";
 
-                // Redirect to home page
-                header("Location: ../HomePage/index.php");
-                exit();
+                }
+                $stmt->close();
+                $db->close();
+            } catch (Exception $e) {
+                $msg = "An error occurred: " . $e->getMessage();
+
             }
-            else {
-                $msg = "Incorrect email or password.";
-                echo json_encode(["success" => false, "error" => $msg]);
-            }
-            $stmt->close();
-            $db->close();
-        } catch (Exception $e) {
-            $msg = "An error occurred: " . $e->getMessage();
-            echo json_encode(["success" => false, "error" => $msg]);
-        }
         }
     }
 
@@ -256,7 +257,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         });
         <?php endif; ?>
 
-    <?php endif; ?>
+        <?php endif; ?>
 
         // Form validation function
         function setupValidation(form, actionText) {
@@ -283,7 +284,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Oops!',
-                        text: `Please fill in all fields to ${actionText}.`,
+                        text: Please fill in all fields to ${actionText}.,
                         confirmButtonText: 'OK'
                     }).then(() => {
                         if (firstEmptyInput) {

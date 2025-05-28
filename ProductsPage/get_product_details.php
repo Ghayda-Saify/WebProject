@@ -17,6 +17,9 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     if ($result && $result->num_rows > 0) {
         $product = $result->fetch_assoc();
 
+        // You might also want to fetch related data like images or variations here if needed
+        // For now, let's assume main product details are sufficient
+
         $response = ['success' => true, 'product' => $product];
     } else {
         $response = ['success' => false, 'message' => 'Product not found'];
