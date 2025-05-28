@@ -286,7 +286,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Oops!',
-                        text: Please fill in all fields to ${actionText}.,
+                        text: `Please fill in all fields to ${actionText}.`,
                         confirmButtonText: 'OK'
                     }).then(() => {
                         if (firstEmptyInput) {
