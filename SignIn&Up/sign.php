@@ -190,8 +190,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="form-container sign-in">
         <form method="POST" action="sign.php">
             <h1>Sign in</h1>
-            <?php if (!empty($msg) && (isset($_POST['txtEmailSignIn']) || $togglePanel === 'signup')): ?>
-                <div class="error-message show"><?php echo htmlspecialchars($msg); ?></div>
+            <?php if (!empty($msg)): ?>
+                <div class="error-message <?= isset($_POST['txtName']) ? 'show' : '' ?>">
+                    <?= htmlspecialchars($msg) ?>
+                </div>
             <?php endif; ?>
             <?php if (!empty($success_msg) && isset($_POST['txtEmailSignIn'])): ?>
                 <div class="success-message show"><?php echo htmlspecialchars($success_msg); ?></div>
@@ -284,7 +286,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Oops!',
-                        text: Please fill in all fields to ${actionText}.,
+                        text: `Please fill in all fields to ${actionText}.`,
                         confirmButtonText: 'OK'
                     }).then(() => {
                         if (firstEmptyInput) {
@@ -307,7 +309,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     });
 </script>
-
+<script>
+    <?php if (!empty($_SESSION['error_msg']) && $_SESSION['toggle_panel'] === 'signin'): ?>
+    Swal.fire({
+        icon: 'info',
+        title: 'Already Registered',
+        text: '<?= $_SESSION['error_msg'] ?>',
+        confirmButtonText: 'Go to Sign In'
+    }).then(() => {
+        const container = document.getElementById('container');
+        if (container) {
+            container.classList.add('right-panel-active');
+        }
+    });
+    <?php unset($_SESSION['error_msg'], $_SESSION['toggle_panel']); ?>
+    <?php endif; ?>
+</script>
 
 <script src="script.js"></script>
 
