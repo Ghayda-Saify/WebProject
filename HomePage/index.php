@@ -373,58 +373,89 @@ global $con;
         </div>
     </section>
     <!--        deals-->
-    <section class="deals">
-        <!-- Promotional Banner -->
-        <section class="py-16 bg-gray-50">
-            <div class="container mx-auto px-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <?php
-                    // Fetch active promotions from the database
-                    $promo_sql = "SELECT * FROM promotions WHERE active = 1 ORDER BY id DESC LIMIT 2";
-                    $promo_result = $con->query($promo_sql);
-                    if ($promo_result && $promo_result->num_rows > 0) {
-                        while ($promo = $promo_result->fetch_assoc()) {
-                            $discount = '';
-                            if (!empty($promo['discount_value'])) {
-                                if (isset($promo['discount_type']) && $promo['discount_type'] === 'amount') {
-                                    $discount = 'Discount: ₪' . $promo['discount_value'];
-                                } else {
-                                    $discount = 'Discount: ' . $promo['discount_value'] . '%';
-                                }
+    <section class="deals py-16 bg-gradient-to-br from-gray-100 to-gray-200">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-8 justify-center">
+                <?php
+                // Fetch active promotions from the database
+                $promo_sql = "SELECT * FROM promotions WHERE active = 1 ORDER BY id DESC LIMIT 3"; // Limit to 3 for better centering on lg:grid-cols-3
+                // Assuming $con is still open from previous connection.php include
+                $promo_result = $con->query($promo_sql);
+                if ($promo_result && $promo_result->num_rows > 0) {
+                    while ($promo = $promo_result->fetch_assoc()) {
+                        $discount = '';
+                        if (!empty($promo['discount_value'])) {
+                            if (isset($promo['discount_type']) && $promo['discount_type'] === 'amount') {
+                                $discount = 'Discount: ₪' . $promo['discount_value'];
+                            } else {
+                                $discount = 'Discount: ' . $promo['discount_value'] . '%';
                             }
-                            ?>
-                            <div class="relative h-80 rounded-lg overflow-hidden" style="background: linear-gradient(to right, <?php echo htmlspecialchars($promo['color'] ?? '#122c6f'); ?>99, <?php echo htmlspecialchars($promo['color'] ?? '#122c6f'); ?>66), url('<?php echo htmlspecialchars($promo['image_url']); ?>'); background-size: cover; background-position: center;">
-                                <div class="absolute inset-0 flex items-center" style="background: linear-gradient(to right, <?php echo htmlspecialchars($promo['color'] ?? '#122c6f'); ?>/80, <?php echo htmlspecialchars($promo['color'] ?? '#122c6f'); ?>/40);">
-                                    <div class="p-8">
-                                        <h3 class="text-white text-2xl font-bold mb-2">
-                                            <?php echo htmlspecialchars($promo['title']); ?>
-                                        </h3>
-                                        <p class="text-white text-sm mb-4">
-                                            <?php echo htmlspecialchars($promo['subtitle']); ?>
-                                        </p>
-                                        <?php if ($discount) { ?>
-                                            <div class="text-white text-lg font-semibold mb-2"><?php echo $discount; ?></div>
-                                        <?php } ?>
-                                        <a
-                                                href="<?php echo htmlspecialchars($promo['btn_link']); ?>"
-                                                class="bg-white text-primary px-4 py-2 rounded-button text-sm font-medium hover:bg-gray-100 transition-colors inline-block whitespace-nowrap"
-                                        ><?php echo htmlspecialchars($promo['btn_text']); ?></a>
-                                    </div>
-                                </div>
-                            </div>
-                            <?php
                         }
-                    } else {
-                        echo '<div class="col-span-2 text-center text-gray-500">No promotions available.</div>';
-                    }
-                    ?>
-                </div>
-            </div>
-        </section>
+                        // Fallback colors if not set in DB or for better contrast
+                        $fallback_color_strong = '#122c6f'; // primary
+                        $fallback_color_light = '#122c6f'; // primary (adjusted alpha below)
 
+                        // If promo['color'] is a valid hex, use it, else fallback
+                        $base_color = !empty($promo['color']) && preg_match('/^#([a-fA-F0-9]{3}){1,2}$/', $promo['color']) ? $promo['color'] : $fallback_color_strong;
+
+                        // Create gradient with dynamically generated RGBA values for better opacity control
+                        list($r, $g, $b) = sscanf($base_color, "#%02x%02x%02x");
+                        $gradient_start_rgba = "rgba({$r}, {$g}, {$b}, 0.8)"; // 80% opacity
+                        $gradient_end_rgba = "rgba({$r}, {$g}, {$b}, 0.5)";   // 50% opacity
+                        $gradient_overlay = "linear-gradient(to right, {$gradient_start_rgba}, {$gradient_end_rgba})";
+
+                        ?>
+                        <div class="relative h-80 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300"
+                             style="background-image: <?php echo htmlspecialchars($gradient_overlay); ?>, url('<?php echo htmlspecialchars($promo['image_url']); ?>'); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; text-align: center;">
+                            <div class="p-8 z-10 text-white">
+                                <h3 class="text-2xl font-bold mb-2">
+                                    <?php echo htmlspecialchars($promo['title']); ?>
+                                </h3>
+                                <p class="text-sm mb-4 opacity-90">
+                                    <?php echo htmlspecialchars($promo['subtitle']); ?>
+                                </p>
+                                <?php if ($discount) { ?>
+                                    <div class="text-lg font-semibold mb-2"><?php echo $discount; ?></div>
+                                <?php } ?>
+                                <a
+                                        href="<?php echo htmlspecialchars($promo['btn_link']); ?>"
+                                        class="bg-white text-primary px-4 py-2 rounded-button text-sm font-medium hover:bg-gray-100 transition-colors inline-block whitespace-nowrap mt-4"
+                                ><?php echo htmlspecialchars($promo['btn_text']); ?></a>
+                            </div>
+                        </div>
+                        <?php
+                    }
+                } else {
+                    echo '<div class="col-span-full text-center text-gray-500 py-8">No promotions available.</div>';
+                }
+                ?>
+            </div>
+        </div>
     </section>
-    <!--        feedback-->
-    <!-- Testimonials -->
+
+    <?php
+    // Assume connection.php is included at the very beginning of your index.php
+    // include 'connection.php'; // Or '../connection.php'; depending on your structure
+    // Ensure $con is available from connection.php
+
+    // Fetch a limited number of reviews for the homepage
+    $homepage_reviews = [];
+    // It's a good practice to limit the number of reviews and order them, e.g., by latest or highest rating.
+    // Let's fetch the latest 3 reviews for the homepage.
+    $sql_reviews = "SELECT user_name, rating, comment, created_at FROM reviews ORDER BY created_at DESC LIMIT 3";
+    $result_reviews = $con->query($sql_reviews);
+
+    if ($result_reviews) {
+        while ($row = $result_reviews->fetch_assoc()) {
+            $homepage_reviews[] = $row;
+        }
+    } else {
+        // Handle error if query fails
+        error_log("Error fetching homepage reviews: " . $con->error);
+    }
+
+    // ... rest of your index.php PHP code ...
+    ?>
     <section class="py-16">
         <div class="container mx-auto px-4">
             <h2 class="text-3xl font-bold text-center mb-2">
@@ -434,100 +465,49 @@ global $con;
                 Hear from our satisfied customers
             </p>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Testimonial 1 -->
-                <div class="bg-white p-6 rounded-lg shadow-sm">
-                    <div class="flex text-yellow-400 mb-4">
-                        <i class="ri-star-fill"></i>
-                        <i class="ri-star-fill"></i>
-                        <i class="ri-star-fill"></i>
-                        <i class="ri-star-fill"></i>
-                        <i class="ri-star-fill"></i>
-                    </div>
-                    <p class="text-gray-700 mb-6">
-                        "The quality of their furniture is exceptional. I purchased the
-                        Modern Armchair and it has transformed my living room. The
-                        customer service was also outstanding."
-                    </p>
-                    <div class="flex items-center">
-                        <div
-                                class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden mr-4"
-                        >
-                            <img
-                                    src="https://readdy.ai/api/search-image?query=professional%20headshot%20of%20a%20middle-aged%20woman%20with%20short%20brown%20hair%2C%20smiling%2C%20neutral%20background%2C%20high%20quality%20portrait&width=100&height=100&seq=15&orientation=squarish"
-                                    alt="Emily Robertson"
-                                    class="w-full h-full object-cover object-top"
-                            />
+                <?php if (!empty($homepage_reviews)): ?>
+                    <?php foreach ($homepage_reviews as $review): ?>
+                        <div class="bg-white p-6 rounded-lg shadow-sm">
+                            <div class="flex text-yellow-400 mb-4">
+                                <?php
+                                // Display stars based on rating
+                                for ($i = 1; $i <= 5; $i++) {
+                                    if ($i <= $review['rating']) {
+                                        echo '<i class="fas fa-star"></i>'; // Full star
+                                    } else {
+                                        echo '<i class="far fa-star"></i>'; // Empty star
+                                    }
+                                }
+                                ?>
+                            </div>
+                            <p class="text-gray-700 mb-6">
+                                "<?php echo htmlspecialchars($review['comment']); ?>"
+                            </p>
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden mr-4">
+                                    <img
+                                            src="https://via.placeholder.com/100?text=User"
+                                            alt="<?php echo htmlspecialchars($review['user_name']); ?>"
+                                            class="w-full h-full object-cover object-center"
+                                    />
+                                </div>
+                                <div>
+                                    <h4 class="font-medium"><?php echo htmlspecialchars($review['user_name'] ?? 'Anonymous'); ?></h4>
+                                    <p class="text-gray-500 text-sm">
+                                        <?php echo (new DateTime($review['created_at']))->format('F j, Y'); ?>
+                                    </p>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <h4 class="font-medium">Emily Robertson</h4>
-                            <p class="text-gray-500 text-sm">New York, USA</p>
-                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="md:col-span-3 text-center text-gray-500">
+                        No reviews yet. Be the first to leave one!
                     </div>
-                </div>
-                <!-- Testimonial 2 -->
-                <div class="bg-white p-6 rounded-lg shadow-sm">
-                    <div class="flex text-yellow-400 mb-4">
-                        <i class="ri-star-fill"></i>
-                        <i class="ri-star-fill"></i>
-                        <i class="ri-star-fill"></i>
-                        <i class="ri-star-fill"></i>
-                        <i class="ri-star-fill"></i>
-                    </div>
-                    <p class="text-gray-700 mb-6">
-                        "I've ordered multiple items from Alandalus Design and have
-                        never been disappointed. Their attention to detail and
-                        craftsmanship is unmatched. Highly recommend!"
-                    </p>
-                    <div class="flex items-center">
-                        <div
-                                class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden mr-4"
-                        >
-                            <img
-                                    src="https://readdy.ai/api/search-image?query=professional%20headshot%20of%20a%20young%20man%20with%20glasses%20and%20dark%20hair%2C%20smiling%2C%20neutral%20background%2C%20high%20quality%20portrait&width=100&height=100&seq=16&orientation=squarish"
-                                    alt="Michael Chen"
-                                    class="w-full h-full object-cover object-top"
-                            />
-                        </div>
-                        <div>
-                            <h4 class="font-medium">Michael Chen</h4>
-                            <p class="text-gray-500 text-sm">San Francisco, USA</p>
-                        </div>
-                    </div>
-                </div>
-                <!-- Testimonial 3 -->
-                <div class="bg-white p-6 rounded-lg shadow-sm">
-                    <div class="flex text-yellow-400 mb-4">
-                        <i class="ri-star-fill"></i>
-                        <i class="ri-star-fill"></i>
-                        <i class="ri-star-fill"></i>
-                        <i class="ri-star-fill"></i>
-                        <i class="ri-star-half-fill"></i>
-                    </div>
-                    <p class="text-gray-700 mb-6">
-                        "The pendant lamp I purchased exceeded my expectations. It's not
-                        just a lighting fixture but a piece of art. Delivery was prompt
-                        and packaging was secure."
-                    </p>
-                    <div class="flex items-center">
-                        <div
-                                class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden mr-4"
-                        >
-                            <img
-                                    src="https://readdy.ai/api/search-image?query=professional%20headshot%20of%20a%20woman%20with%20curly%20hair%2C%20smiling%2C%20neutral%20background%2C%20high%20quality%20portrait&width=100&height=100&seq=17&orientation=squarish"
-                                    alt="Sophia Martinez"
-                                    class="w-full h-full object-cover object-top"
-                            />
-                        </div>
-                        <div>
-                            <h4 class="font-medium">Sophia Martinez</h4>
-                            <p class="text-gray-500 text-sm">London, UK</p>
-                        </div>
-                    </div>
-                </div>
+                <?php endif; ?>
             </div>
         </div>
     </section>
-
 
     <!-- Map + Footer -->
     <footer class="bg-gray-100 mt-16">

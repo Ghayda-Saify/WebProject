@@ -286,8 +286,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="ml-3">
                             <h4 class="text-sm font-medium">${product.name}</h4>
                             <p class="text-xs text-gray-500">${product.description}</p>
-                            <span class="text-sm text-primary font-semibold">₪${product.price.toFixed(2)}</span>
+                            <span class="text-sm text-primary font-semibold">₪${parseFloat(product.price).toFixed(2)}</span>
                         </div>
+<!--                        modalProductPrice.textContent = \`₪ ${parseFloat(product.price).toFixed(2)}\`;-->
                     </div>
                 </a>
             `).join('');
