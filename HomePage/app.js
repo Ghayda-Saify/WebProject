@@ -135,11 +135,11 @@ function showToast(message) {
         `;
         document.body.appendChild(toast);
     }
-    
+
     // Update message and show toast
     toast.querySelector('span').textContent = message;
     toast.classList.remove('translate-y-full', 'opacity-0');
-    
+
     // Hide toast after 3 seconds
     setTimeout(() => {
         toast.classList.add('translate-y-full', 'opacity-0');
@@ -149,7 +149,7 @@ function showToast(message) {
 // Initialize counts when page loads
 document.addEventListener('DOMContentLoaded', () => {
     updateCounts();
-    
+
     // Add to cart functionality for carousel items
     const addToCardButtons = document.querySelectorAll('.addToCard');
     addToCardButtons.forEach(button => {
@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             localStorage.setItem('cart', JSON.stringify(cart));
             updateCounts();
-            
+
             // Show success message
             showToast('Product added to cart successfully!');
         });
@@ -263,7 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const results = products.filter(product => 
+        const results = products.filter(product =>
             product.name.toLowerCase().includes(query) ||
             product.description.toLowerCase().includes(query)
         );
@@ -286,9 +286,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="ml-3">
                             <h4 class="text-sm font-medium">${product.name}</h4>
                             <p class="text-xs text-gray-500">${product.description}</p>
-                            <span class="text-sm text-primary font-semibold">₪${parseFloat(product.price).toFixed(2)}</span>
+                            <span class="text-sm text-primary font-semibold">₪${product.price.toFixed(2)}</span>
                         </div>
-<!--                        modalProductPrice.textContent = \`₪ ${parseFloat(product.price).toFixed(2)}\`;-->
                     </div>
                 </a>
             `).join('');
